@@ -453,7 +453,7 @@
           </select>
 
           <div class="flex items-center gap-2">
-            <button onclick="openModal('modal-novo-item-galpao')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3.5 py-2 rounded-xl text-sm flex items-center gap-2 transition shadow-md shadow-amber-500/20 whitespace-nowrap">
+            <button onclick="abrirModalNovoItemGalpao()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3.5 py-2 rounded-xl text-sm flex items-center gap-2 transition shadow-md shadow-amber-500/20 whitespace-nowrap">
               <i class="fa-solid fa-plus"></i>
               <span>Novo Item</span>
             </button>
@@ -1021,13 +1021,20 @@
     <div class="bg-[#151f32] border border-[#23324d] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden my-auto fade-in">
       
       <div class="bg-gradient-to-r from-amber-600/30 via-[#151f32] to-[#151f32] border-b border-[#23324d] p-4 flex items-center justify-between">
-        <h3 class="text-base font-bold text-white">Cadastrar Item no Galpão</h3>
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center text-sm border border-amber-500/30">
+            <i id="modal-item-galpao-icon" class="fa-solid fa-box-open"></i>
+          </div>
+          <h3 id="modal-item-galpao-title" class="text-base font-bold text-white">Cadastrar Item no Galpão</h3>
+        </div>
         <button onclick="closeModal('modal-novo-item-galpao')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
       <form id="form-item-galpao" onsubmit="salvarNovoItemGalpao(event)" class="p-4 space-y-3.5">
+        <input type="hidden" id="item-galpao-edit-id" value="">
+
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Nome do Item / Móvel *</label>
           <input type="text" id="item-galpao-nome" required placeholder="Ex: Cadeira de Plástico Reforçada" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
@@ -1064,7 +1071,7 @@
           </div>
 
           <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">Saldo Inicial</label>
+            <label id="lbl-item-galpao-saldo" class="block text-xs font-semibold text-slate-300 mb-1">Saldo Atual</label>
             <input type="number" id="item-galpao-saldo" min="0" step="1" placeholder="Ex: 10" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
           </div>
         </div>
@@ -1081,15 +1088,41 @@
           </div>
         </div>
 
+        <!-- CAMPO URL DA FOTO COM PRÉVIA VISUAL EM TEMPO REAL -->
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1">URL da Foto / Imagem do Produto (Opcional)</label>
-          <input type="url" id="item-galpao-foto" placeholder="https://images.unsplash.com/..." class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
-          <p class="text-[10px] text-slate-400 mt-1">Cole o link direto de uma foto da internet para ilustrar o produto no estoque.</p>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-semibold text-slate-300">URL da Foto / Imagem do Produto</label>
+            <span class="text-[10px] text-amber-400 font-medium">Link da internet</span>
+          </div>
+          <div class="flex gap-2">
+            <input type="url" id="item-galpao-foto" oninput="atualizarPreviewFotoGalpao()" placeholder="https://exemplo.com/foto.jpg" class="flex-1 bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+            <button type="button" onclick="limparFotoGalpao()" title="Limpar URL da foto" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-rose-400 border border-slate-700 rounded-xl text-xs transition">
+              <i class="fa-solid fa-eraser"></i>
+            </button>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-1">Cole o link direto de uma foto de qualquer site (Google Imagens, Mercado Livre, etc.) para alterar a imagem.</p>
+
+          <!-- Card de Pré-visualização da Foto -->
+          <div id="preview-foto-galpao-box" class="mt-2.5 p-2 bg-[#0b1120] border border-[#23324d] rounded-xl flex items-center gap-3">
+            <div class="w-16 h-16 rounded-lg bg-slate-900 border border-slate-800 overflow-hidden flex items-center justify-center shrink-0 relative">
+              <img id="preview-foto-galpao-img" src="" alt="Prévia" class="w-full h-full object-cover hidden">
+              <i id="preview-foto-galpao-placeholder" class="fa-solid fa-image text-slate-600 text-2xl"></i>
+            </div>
+            <div class="text-xs flex-1 min-w-0">
+              <p id="preview-foto-galpao-status" class="font-semibold text-slate-300 truncate">Sem foto informada</p>
+              <p class="text-[11px] text-slate-500 leading-tight mt-0.5">A foto será exibida no card do Galpão, nas saídas de materiais e nos relatórios.</p>
+            </div>
+          </div>
         </div>
 
         <div class="pt-3 border-t border-[#23324d] flex items-center justify-end gap-2">
-          <button type="button" onclick="closeModal('modal-novo-item-galpao')" class="px-4 py-2 rounded-xl text-sm text-slate-400 bg-slate-800 hover:bg-slate-700">Cancelar</button>
-          <button type="submit" class="px-5 py-2 rounded-xl text-sm font-bold bg-amber-500 hover:bg-amber-400 text-slate-950">Salvar Item</button>
+          <button type="button" onclick="closeModal('modal-novo-item-galpao')" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition">
+            Cancelar
+          </button>
+          <button type="submit" id="btn-salvar-item-galpao" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-lg shadow-amber-500/20 flex items-center gap-2">
+            <i class="fa-solid fa-save"></i>
+            <span>Salvar Item</span>
+          </button>
         </div>
       </form>
 

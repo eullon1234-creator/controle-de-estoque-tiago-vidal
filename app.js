@@ -1271,7 +1271,7 @@ function renderGalpao() {
     return `
       <div class="bg-[#151f32] border border-[#23324d] hover:border-slate-600 rounded-2xl p-3 sm:p-4 flex flex-col justify-between transition group shadow-lg">
         <div>
-          <!-- Foto do Produto com Badge de Status -->
+          <!-- Foto do Produto com Badges de Status e Edição -->
           <div class="relative w-full h-36 mb-3 rounded-xl overflow-hidden bg-slate-900 border border-slate-800/80 group-hover:border-amber-500/40 transition">
             ${fotoItem ? `
               <img src="${fotoItem}" alt="${item.nome}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300 cursor-pointer" onclick="abrirFotoZoom('${fotoItem}', '${item.nome.replace(/'/g, "\\'")}')">
@@ -1280,6 +1280,12 @@ function renderGalpao() {
                 <i class="fa-solid ${item.icone || 'fa-box'} text-3xl text-amber-500/40"></i>
               </div>
             `}
+            <div class="absolute top-2 left-2 z-10">
+              <button type="button" onclick="event.stopPropagation(); abrirModalEditarItemGalpao('${item.id}')" title="Editar produto e foto" class="px-2 py-1 bg-black/80 hover:bg-amber-500 hover:text-slate-950 text-amber-400 rounded-lg backdrop-blur-md border border-amber-500/40 transition text-[11px] font-bold flex items-center gap-1 shadow-md">
+                <i class="fa-solid fa-pen-to-square"></i>
+                <span>Editar</span>
+              </button>
+            </div>
             <div class="absolute top-2 right-2">
               <span class="text-[10px] px-2 py-0.5 rounded-full font-bold border ${badgeCor} backdrop-blur-md shadow-md">
                 ${statusTxt}
@@ -1314,15 +1320,20 @@ function renderGalpao() {
           </div>
         </div>
 
-        <div class="pt-3 border-t border-[#23324d] mt-3 grid grid-cols-2 gap-2">
-          <button onclick="prepararEntradaItem('${item.id}')" class="py-2 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition">
-            <i class="fa-solid fa-plus"></i>
-            <span>+ Entrada</span>
+        <div class="pt-3 border-t border-[#23324d] mt-3 grid grid-cols-3 gap-1.5">
+          <button onclick="prepararEntradaItem('${item.id}')" class="py-2 bg-emerald-600/10 hover:bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition" title="Dar entrada de estoque">
+            <i class="fa-solid fa-plus text-[10px]"></i>
+            <span>Entrada</span>
           </button>
 
-          <button onclick="prepararEntregaItem('${item.id}')" class="py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition">
-            <i class="fa-solid fa-truck-ramp-box"></i>
-            <span>Entregar p/ Casa</span>
+          <button onclick="prepararEntregaItem('${item.id}')" class="py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition" title="Entregar p/ Casa">
+            <i class="fa-solid fa-truck-ramp-box text-[10px]"></i>
+            <span>Entregar</span>
+          </button>
+
+          <button onclick="abrirModalEditarItemGalpao('${item.id}')" class="py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition" title="Editar produto e foto">
+            <i class="fa-solid fa-pen-to-square text-[10px]"></i>
+            <span>Editar</span>
           </button>
         </div>
       </div>
@@ -1716,43 +1727,184 @@ function salvarCasa(e) {
   }
 }
 
+function abrirModalNovoItemGalpao() {
+  const form = document.getElementById('form-item-galpao');
+  if (form) form.reset();
+  const editInput = document.getElementById('item-galpao-edit-id');
+  if (editInput) editInput.value = '';
+  const title = document.getElementById('modal-item-galpao-title');
+  if (title) title.textContent = 'Cadastrar Item no Galpão';
+  const icon = document.getElementById('modal-item-galpao-icon');
+  if (icon) icon.className = 'fa-solid fa-box-open';
+  const lblSaldo = document.getElementById('lbl-item-galpao-saldo');
+  if (lblSaldo) lblSaldo.textContent = 'Saldo Inicial';
+  const btn = document.getElementById('btn-salvar-item-galpao');
+  if (btn) {
+    const span = btn.querySelector('span');
+    if (span) span.textContent = 'Salvar Item';
+  }
+  atualizarPreviewFotoGalpao();
+  openModal('modal-novo-item-galpao');
+}
+
+function abrirModalEditarItemGalpao(itemId) {
+  const item = appState.galpao.find(i => i.id === itemId);
+  if (!item) return;
+
+  const form = document.getElementById('form-item-galpao');
+  if (form) form.reset();
+
+  const editInput = document.getElementById('item-galpao-edit-id');
+  if (editInput) editInput.value = item.id;
+  const title = document.getElementById('modal-item-galpao-title');
+  if (title) title.textContent = 'Editar Produto do Galpão';
+  const icon = document.getElementById('modal-item-galpao-icon');
+  if (icon) icon.className = 'fa-solid fa-pen-to-square';
+  const lblSaldo = document.getElementById('lbl-item-galpao-saldo');
+  if (lblSaldo) lblSaldo.textContent = 'Saldo Atual em Estoque';
+  const btn = document.getElementById('btn-salvar-item-galpao');
+  if (btn) {
+    const span = btn.querySelector('span');
+    if (span) span.textContent = 'Salvar Alterações';
+  }
+
+  document.getElementById('item-galpao-nome').value = item.nome || '';
+  document.getElementById('item-galpao-categoria').value = item.categoria || 'Móveis & Equipamentos';
+  document.getElementById('item-galpao-unidade').value = item.unidade || 'Unidade';
+  document.getElementById('item-galpao-minimo').value = item.estoqueMinimo ?? 0;
+  document.getElementById('item-galpao-saldo').value = item.saldoAtual ?? 0;
+  document.getElementById('item-galpao-localizacao').value = item.localizacao || '';
+  document.getElementById('item-galpao-custo').value = item.custoUnitario ?? '';
+  document.getElementById('item-galpao-foto').value = item.fotoUrl || '';
+
+  atualizarPreviewFotoGalpao();
+  openModal('modal-novo-item-galpao');
+}
+
+function limparFotoGalpao() {
+  const input = document.getElementById('item-galpao-foto');
+  if (input) {
+    input.value = '';
+    atualizarPreviewFotoGalpao();
+  }
+}
+
+function atualizarPreviewFotoGalpao() {
+  const url = (document.getElementById('item-galpao-foto')?.value || '').trim();
+  const nome = (document.getElementById('item-galpao-nome')?.value || '').trim();
+  const img = document.getElementById('preview-foto-galpao-img');
+  const placeholder = document.getElementById('preview-foto-galpao-placeholder');
+  const status = document.getElementById('preview-foto-galpao-status');
+  if (!img || !placeholder || !status) return;
+
+  const urlFinal = url || (nome ? getFotoProduto(nome) : '');
+
+  if (urlFinal) {
+    img.src = urlFinal;
+    img.classList.remove('hidden');
+    placeholder.classList.add('hidden');
+    status.innerHTML = `<span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> ${url ? 'Foto personalizada' : 'Foto sugerida do sistema'}</span>`;
+  } else {
+    img.src = '';
+    img.classList.add('hidden');
+    placeholder.classList.remove('hidden');
+    status.textContent = 'Sem foto informada';
+  }
+}
+
 function salvarNovoItemGalpao(e) {
   e.preventDefault();
+  const editId = document.getElementById('item-galpao-edit-id')?.value.trim();
   const nome = document.getElementById('item-galpao-nome').value.trim();
   const categoria = document.getElementById('item-galpao-categoria').value;
   const unidade = document.getElementById('item-galpao-unidade').value;
   const estoqueMinimo = parseInt(document.getElementById('item-galpao-minimo').value, 10) || 0;
-  const saldoInicial = parseInt(document.getElementById('item-galpao-saldo').value, 10) || 0;
+  const saldo = parseInt(document.getElementById('item-galpao-saldo').value, 10) || 0;
   const localizacao = document.getElementById('item-galpao-localizacao').value.trim();
   const custo = parseFloat(document.getElementById('item-galpao-custo').value) || 0;
   const fotoInput = document.getElementById('item-galpao-foto')?.value.trim();
   const fotoFinal = fotoInput || getFotoProduto(nome);
+  const icone = categoria === 'Móveis & Equipamentos' ? 'fa-couch' : (categoria === 'Produtos de Limpeza' ? 'fa-broom' : 'fa-box');
 
-  const novoItem = {
-    id: 'item-' + Date.now(),
-    nome: nome,
-    categoria: categoria,
-    unidade: unidade,
-    saldoAtual: saldoInicial,
-    estoqueMinimo: estoqueMinimo,
-    localizacao: localizacao,
-    custoUnitario: custo,
-    icone: categoria === 'Móveis & Equipamentos' ? 'fa-couch' : (categoria === 'Produtos de Limpeza' ? 'fa-broom' : 'fa-box'),
-    fotoUrl: fotoFinal
-  };
+  if (editId) {
+    // Modo Edição
+    const item = appState.galpao.find(i => i.id === editId);
+    if (!item) {
+      mostrarToast('Item não encontrado para edição.', 'error');
+      return;
+    }
 
-  appState.galpao.push(novoItem);
-  salvarLocalmente();
-  closeModal('modal-novo-item-galpao');
-  document.getElementById('form-item-galpao').reset();
-  renderApp();
-  mostrarToast(`Item "${nome}" cadastrado no Galpão com sucesso!`, 'success');
+    const nomeAnterior = item.nome;
+    item.nome = nome;
+    item.categoria = categoria;
+    item.unidade = unidade;
+    item.saldoAtual = saldo;
+    item.estoqueMinimo = estoqueMinimo;
+    item.localizacao = localizacao;
+    item.custoUnitario = custo;
+    item.icone = icone;
+    item.fotoUrl = fotoFinal;
 
-  if (appState.config.turso?.ativo) {
-    executarTurso(`INSERT INTO galpao_itens (id, nome, categoria, unidade, saldo_atual, estoque_minimo, localizacao, custo_unitario, icone, foto_url, data_cadastro)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [novoItem.id, novoItem.nome, novoItem.categoria, novoItem.unidade, novoItem.saldoAtual, novoItem.estoqueMinimo, novoItem.localizacao, novoItem.custoUnitario, novoItem.icone, novoItem.fotoUrl, new Date().toISOString()]
-    ).catch(console.error);
+    // Sincroniza a foto nos móveis de casas se for o mesmo item
+    if (fotoFinal) {
+      appState.casaMoveis.forEach(m => {
+        if (m.itemNome.toLowerCase() === nomeAnterior.toLowerCase() || m.itemNome.toLowerCase() === nome.toLowerCase()) {
+          m.fotoUrl = fotoFinal;
+        }
+      });
+    }
+
+    salvarLocalmente();
+    closeModal('modal-novo-item-galpao');
+    document.getElementById('form-item-galpao').reset();
+    document.getElementById('item-galpao-edit-id').value = '';
+    renderApp();
+    mostrarToast(`Produto "${nome}" atualizado com sucesso!`, 'success');
+
+    if (appState.config.turso?.ativo) {
+      executarTurso(
+        `UPDATE galpao_itens 
+         SET nome = ?, categoria = ?, unidade = ?, saldo_atual = ?, estoque_minimo = ?, localizacao = ?, custo_unitario = ?, icone = ?, foto_url = ?
+         WHERE id = ?`,
+        [item.nome, item.categoria, item.unidade, item.saldoAtual, item.estoqueMinimo, item.localizacao, item.custoUnitario, item.icone, item.fotoUrl, item.id]
+      ).catch(console.error);
+
+      if (fotoFinal) {
+        executarTurso(
+          `UPDATE casa_moveis SET foto_url = ? WHERE LOWER(item_nome) = ? OR LOWER(item_nome) = ?`,
+          [fotoFinal, nomeAnterior.toLowerCase(), nome.toLowerCase()]
+        ).catch(console.error);
+      }
+    }
+  } else {
+    // Modo Novo Item
+    const novoItem = {
+      id: 'item-' + Date.now(),
+      nome: nome,
+      categoria: categoria,
+      unidade: unidade,
+      saldoAtual: saldo,
+      estoqueMinimo: estoqueMinimo,
+      localizacao: localizacao,
+      custoUnitario: custo,
+      icone: icone,
+      fotoUrl: fotoFinal
+    };
+
+    appState.galpao.push(novoItem);
+    salvarLocalmente();
+    closeModal('modal-novo-item-galpao');
+    document.getElementById('form-item-galpao').reset();
+    renderApp();
+    mostrarToast(`Item "${nome}" cadastrado no Galpão com sucesso!`, 'success');
+
+    if (appState.config.turso?.ativo) {
+      executarTurso(
+        `INSERT INTO galpao_itens (id, nome, categoria, unidade, saldo_atual, estoque_minimo, localizacao, custo_unitario, icone, foto_url, data_cadastro)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [novoItem.id, novoItem.nome, novoItem.categoria, novoItem.unidade, novoItem.saldoAtual, novoItem.estoqueMinimo, novoItem.localizacao, novoItem.custoUnitario, novoItem.icone, novoItem.fotoUrl, new Date().toISOString()]
+      ).catch(console.error);
+    }
   }
 }
 
