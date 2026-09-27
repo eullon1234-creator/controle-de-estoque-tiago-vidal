@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#f59e0b">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Almox Canteiro">
+  <meta name="description" content="Controle de Estoque e Almoxarifado para Alojamentos e Canteiros de Obras">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
+  <title>Almoxarifado Canteiro PRO | Prefeitura de Alojamento</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fffbeb',
+              100: '#fef3c7',
+              200: '#fde68a',
+              300: '#fcd34d',
+              400: '#fbbf24',
+              500: '#f59e0b',
+              600: '#d97706',
+              700: '#b45309',
+              800: '#92400e',
+              900: '#78350f'
+            },
+            dark: {
+              bg: '#0b1120',
+              card: '#151f32',
+              cardHover: '#1c2842',
+              border: '#23324d',
+              input: '#0f172a'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- SheetJS para Excel (.xlsx) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <!-- Chart.js para gráficos -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Firebase SDK modular via compat para simplicidade em cliente web -->
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+
+  <style>
+    /* Estilos para impressão de relatórios e cautelas */
+    @media print {
+      body {
+        background: white !important;
+        color: black !important;
+      }
+      .no-print, header, nav, #bottom-nav, .floating-actions, button:not(.allow-print) {
+        display: none !important;
+      }
+      .print-only {
+        display: block !important;
+      }
+      .card-printable {
+        border: 1px solid #ddd !important;
+        box-shadow: none !important;
+        background: white !important;
+        color: black !important;
+      }
+      #print-area {
+        display: block !important;
+        width: 100% !important;
+      }
+    }
+
+    /* Scrollbar personalizada */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b1120;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #23324d;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #f59e0b;
+    }
+
+    /* Canvas de assinatura touch */
+    #signature-canvas {
+      touch-action: none;
+      cursor: crosshair;
+    }
+
+    /* Animações suaves */
+    .fade-in {
+      animation: fadeIn 0.2s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-[#0b1120] text-slate-100 min-h-screen flex flex-col font-sans pb-24 md:pb-8 selection:bg-amber-500 selection:text-black">
+
+  <!-- TOP HEADER / APP BAR -->
+  <header class="no-print sticky top-0 z-40 bg-[#151f32]/95 backdrop-blur-md border-b border-[#23324d] px-4 py-3 shadow-lg">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <!-- Logo & Título da Obra -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center text-slate-950 font-black shadow-md shadow-amber-500/20 text-lg">
+          <i class="fa-solid fa-helmet-safety"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base md:text-lg font-bold text-white tracking-tight flex items-center gap-1.5">
+              Almox Canteiro
+              <span class="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-semibold">PRO</span>
+            </h1>
+          </div>
+          <p class="text-xs text-slate-400 flex items-center gap-1.5">
+            <span id="cidade-obra-txt">Prefeitura de Canteiro & Alojamentos</span>
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Ações do Topo -->
+      <div class="flex items-center gap-2">
+        <!-- Status de Conexão Cloud / Offline -->
+        <button id="btn-cloud-status" onclick="openConfigModal()" title="Status da Nuvem e Configurações" class="flex items-center gap-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 border border-[#23324d] px-2.5 py-1.5 rounded-lg transition">
+          <i id="cloud-icon" class="fa-solid fa-database text-amber-400"></i>
+          <span id="cloud-label" class="hidden sm:inline">Modo Local</span>
+        </button>
+
+        <!-- Botão Novo Registro Rápido (Desktop/Tablet) -->
+        <button onclick="openModal('modal-saida')" class="hidden md:flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold px-3.5 py-1.5 rounded-lg text-sm transition shadow-md shadow-amber-500/10">
+          <i class="fa-solid fa-arrow-up-from-bracket"></i>
+          <span>Registrar Saída</span>
+        </button>
+
+        <button onclick="openModal('modal-entrada')" class="hidden md:flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-3.5 py-1.5 rounded-lg text-sm transition shadow-md shadow-emerald-600/10">
+          <i class="fa-solid fa-truck-ramp-box"></i>
+          <span>Nova Entrada</span>
+        </button>
+
+        <!-- Botão Instalar App (PWA) -->
+        <button id="btn-install-pwa" class="hidden flex items-center gap-1.5 text-xs bg-brand-500/20 text-brand-400 border border-brand-500/40 px-2.5 py-1.5 rounded-lg hover:bg-brand-500/30 transition">
+          <i class="fa-solid fa-download"></i>
+          <span class="hidden sm:inline">Instalar App</span>
+        </button>
+
+        <!-- Menu Configurações / Backup -->
+        <button onclick="openConfigModal()" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 border border-[#23324d] transition" title="Configurações & Backup">
+          <i class="fa-solid fa-gear"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAVEGAÇÃO PRINCIPAL (DESKTOP) -->
+  <nav class="no-print hidden md:block bg-[#111927] border-b border-[#23324d]/80 px-4 py-2">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-1">
+        <button onclick="switchTab('dashboard')" class="nav-tab active px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition text-amber-400 bg-amber-500/10" data-target="dashboard">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Painel Principal</span>
+        </button>
+        <button onclick="switchTab('estoque')" class="nav-tab px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition text-slate-400 hover:text-slate-200 hover:bg-slate-800" data-target="estoque">
+          <i class="fa-solid fa-boxes-stacked"></i>
+          <span>Catálogo & Estoque</span>
+          <span id="badge-itens-total" class="ml-1 text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full border border-slate-700">0</span>
+        </button>
+        <button onclick="switchTab('kardex')" class="nav-tab px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition text-slate-400 hover:text-slate-200 hover:bg-slate-800" data-target="kardex">
+          <i class="fa-solid fa-timeline"></i>
+          <span>Extrato de Movimentações (Kardex)</span>
+        </button>
+        <button onclick="switchTab('relatorios')" class="nav-tab px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition text-slate-400 hover:text-slate-200 hover:bg-slate-800" data-target="relatorios">
+          <i class="fa-solid fa-file-invoice"></i>
+          <span>Relatórios & Consumo</span>
+        </button>
+      </div>
+      <div class="text-xs text-slate-400 flex items-center gap-2">
+        <span class="text-slate-500">Hoje:</span>
+        <span id="data-topo" class="font-medium text-slate-300"></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- BANNER DE ALERTA DE COMPRA URGENTE -->
+  <div id="urgent-banner" class="no-print hidden max-w-7xl mx-auto w-full px-4 pt-3">
+    <div class="bg-gradient-to-r from-rose-950/80 via-rose-900/40 to-slate-900 border border-rose-700/50 rounded-xl p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400 shrink-0">
+          <i class="fa-solid fa-triangle-exclamation text-base animate-pulse"></i>
+        </div>
+        <div>
+          <p class="text-sm font-bold text-rose-200" id="urgent-banner-title">Itens Críticos ou em Falta!</p>
+          <p class="text-xs text-rose-300/80" id="urgent-banner-desc">Existem itens no alojamento que atingiram o limite mínimo ou estão zerados.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+        <button onclick="filterEstoqueAlertas()" class="text-xs bg-rose-600 hover:bg-rose-500 text-white font-semibold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
+          <i class="fa-solid fa-list-check"></i>
+          <span>Ver Itens Críticos</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTEÚDO PRINCIPAL (TELAS VIA TABS) -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:py-6">
+
+    <!-- ========================================== -->
+    <!-- 1. ABA: DASHBOARD / PAINEL PRINCIPAL      -->
+    <!-- ========================================== -->
+    <section id="tab-dashboard" class="tab-content fade-in space-y-6">
+      
+      <!-- CARDS DE KPIS -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+        
+        <!-- Total Itens -->
+        <div class="bg-[#151f32] border border-[#23324d] rounded-2xl p-4 flex flex-col justify-between hover:border-slate-600 transition">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-semibold uppercase tracking-wider">Itens Cadastrados</span>
+            <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-boxes-stacked"></i>
+            </div>
+          </div>
+          <div class="mt-3">
+            <span id="kpi-total-itens" class="text-2xl md:text-3xl font-extrabold text-white">0</span>
+            <p class="text-xs text-slate-400 mt-0.5">no catálogo geral</p>
+          </div>
+        </div>
+
+        <!-- Total de Unidades em Estoque -->
+        <div class="bg-[#151f32] border border-[#23324d] rounded-2xl p-4 flex flex-col justify-between hover:border-slate-600 transition">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-semibold uppercase tracking-wider">Saldo Total (Peças)</span>
+            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-cubes-stacked"></i>
+            </div>
+          </div>
+          <div class="mt-3">
+            <span id="kpi-total-unidades" class="text-2xl md:text-3xl font-extrabold text-emerald-400">0</span>
+            <p class="text-xs text-slate-400 mt-0.5">unidades físicas</p>
+          </div>
+        </div>
+
+        <!-- Alertas de Estoque Baixo/Crítico -->
+        <div onclick="switchTab('estoque'); filterEstoqueAlertas();" class="cursor-pointer bg-[#151f32] border border-[#23324d] hover:border-rose-500/60 rounded-2xl p-4 flex flex-col justify-between transition group">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-semibold uppercase tracking-wider text-rose-300">Reposição Urgente</span>
+            <div class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center text-sm group-hover:scale-110 transition">
+              <i class="fa-solid fa-bell animate-bounce"></i>
+            </div>
+          </div>
+          <div class="mt-3">
+            <div class="flex items-baseline gap-2">
+              <span id="kpi-alertas-criticos" class="text-2xl md:text-3xl font-extrabold text-rose-400">0</span>
+              <span class="text-xs text-slate-400">itens em alerta</span>
+            </div>
+            <p class="text-[11px] text-rose-400/80 mt-0.5 flex items-center gap-1">
+              <span>Clique para auditar</span>
+              <i class="fa-solid fa-arrow-right text-[9px]"></i>
+            </p>
+          </div>
+        </div>
+
+        <!-- Saídas no Mês -->
+        <div class="bg-[#151f32] border border-[#23324d] rounded-2xl p-4 flex flex-col justify-between hover:border-slate-600 transition">
+          <div class="flex items-center justify-between text-slate-400">
+            <span class="text-xs font-semibold uppercase tracking-wider">Entregas no Mês</span>
+            <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center text-sm">
+              <i class="fa-solid fa-hand-holding-hand"></i>
+            </div>
+          </div>
+          <div class="mt-3">
+            <span id="kpi-saidas-mes" class="text-2xl md:text-3xl font-extrabold text-amber-400">0</span>
+            <p class="text-xs text-slate-400 mt-0.5">cautelas realizadas</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- AÇÕES RÁPIDAS MOBILE-FIRST -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <button onclick="openModal('modal-saida')" class="p-3.5 bg-gradient-to-br from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-slate-950 font-bold rounded-xl flex items-center justify-center gap-2.5 shadow-lg shadow-amber-600/20 transition active:scale-95">
+          <i class="fa-solid fa-arrow-up-from-bracket text-lg"></i>
+          <span class="text-sm">Nova Saída / Cautela</span>
+        </button>
+
+        <button onclick="openModal('modal-entrada')" class="p-3.5 bg-gradient-to-br from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-bold rounded-xl flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-600/20 transition active:scale-95">
+          <i class="fa-solid fa-truck-ramp-box text-lg"></i>
+          <span class="text-sm">Nova Entrada</span>
+        </button>
+
+        <button onclick="openModal('modal-novo-item')" class="p-3.5 bg-[#1a263d] hover:bg-[#202e49] text-slate-200 border border-[#2d3f60] font-semibold rounded-xl flex items-center justify-center gap-2 transition active:scale-95">
+          <i class="fa-solid fa-plus text-amber-400"></i>
+          <span class="text-sm">Cadastrar Item</span>
+        </button>
+
+        <button onclick="exportarExcelKardex()" class="p-3.5 bg-[#1a263d] hover:bg-[#202e49] text-slate-200 border border-[#2d3f60] font-semibold rounded-xl flex items-center justify-center gap-2 transition active:scale-95">
+          <i class="fa-solid fa-file-excel text-emerald-400"></i>
+          <span class="text-sm">Exportar (.xlsx)</span>
+        </button>
+      </div>
+
+      <!-- SEÇÃO DE GRÁFICOS & LISTA RÁPIDA -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Gráfico de Movimentações nos Últimos 7 dias -->
+        <div class="lg:col-span-2 bg-[#151f32] border border-[#23324d] rounded-2xl p-4 md:p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-chart-column text-amber-400"></i>
+                Fluxo de Movimentações (Últimos 7 dias)
+              </h3>
+              <p class="text-xs text-slate-400">Comparativo diário entre Entradas e Saídas</p>
+            </div>
+            <div class="flex items-center gap-3 text-xs">
+              <span class="flex items-center gap-1.5 text-emerald-400 font-medium"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Entradas</span>
+              <span class="flex items-center gap-1.5 text-amber-400 font-medium"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Saídas</span>
+            </div>
+          </div>
+          <div class="h-64 relative">
+            <canvas id="chart-fluxo-semanal"></canvas>
+          </div>
+        </div>
+
+        <!-- Gráfico de Distribuição por Categoria -->
+        <div class="bg-[#151f32] border border-[#23324d] rounded-2xl p-4 md:p-5 flex flex-col justify-between">
+          <div class="mb-2">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-chart-pie text-amber-400"></i>
+              Estoque por Categoria
+            </h3>
+            <p class="text-xs text-slate-400">Distribuição percentual das unidades físicas</p>
+          </div>
+          <div class="h-56 relative flex items-center justify-center">
+            <canvas id="chart-categorias"></canvas>
+          </div>
+          <div id="chart-legend-categorias" class="grid grid-cols-2 gap-1 text-[11px] text-slate-300 mt-2 pt-2 border-t border-[#23324d]"></div>
+        </div>
+
+      </div>
+
+      <!-- ÚLTIMAS MOVIMENTAÇÕES NO CANTEIRO -->
+      <div class="bg-[#151f32] border border-[#23324d] rounded-2xl p-4 md:p-5">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-clock-rotate-left text-amber-400"></i>
+              Últimas Entregas e Abastecimentos
+            </h3>
+            <p class="text-xs text-slate-400">Atividades mais recentes no almoxarifado</p>
+          </div>
+          <button onclick="switchTab('kardex')" class="text-xs text-amber-400 hover:text-amber-300 font-semibold flex items-center gap-1">
+            Ver Extrato Completo
+            <i class="fa-solid fa-chevron-right text-[10px]"></i>
+          </button>
+        </div>
+
+        <div id="lista-ultimas-movimentacoes" class="divide-y divide-[#23324d]/60">
+          <!-- Gerado dinamicamente via JS -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 2. ABA: CATÁLOGO & ESTOQUE DE ITENS       -->
+    <!-- ========================================== -->
+    <section id="tab-estoque" class="tab-content hidden fade-in space-y-4">
+      
+      <!-- BARRA DE CONTROLE & FILTROS -->
+      <div class="bg-[#151f32] border border-[#23324d] rounded-2xl p-4 space-y-3">
+        <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          
+          <!-- Campo de Busca -->
+          <div class="relative flex-1">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+            <input type="text" id="filtro-busca-item" oninput="renderEstoque()" placeholder="Buscar por item, categoria ou localização..." class="w-full pl-10 pr-4 py-2 bg-[#0b1120] border border-[#23324d] rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500 transition">
+          </div>
+
+          <!-- Filtro por Categoria -->
+          <select id="filtro-categoria" onchange="renderEstoque()" class="bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+            <option value="">Todas as Categorias</option>
+            <option value="Roupas de Cama">Roupas de Cama / Enxoval</option>
+            <option value="Higiene & Limpeza">Higiene & Limpeza</option>
+            <option value="Manutenção">Manutenção Predial</option>
+            <option value="Utensílios">Utensílios & Utilitários</option>
+            <option value="Alimentação/Copa">Alimentação & Copa</option>
+            <option value="Outros">Outros Insumos</option>
+          </select>
+
+          <!-- Filtro por Status do Estoque -->
+          <select id="filtro-status" onchange="renderEstoque()" class="bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+            <option value="">Todos os Status</option>
+            <option value="critico">🔴 Crítico (Zerado)</option>
+            <option value="alerta">🟡 Alerta (Abaixo do Mínimo)</option>
+            <option value="normal">🟢 Normal (Saudável)</option>
+          </select>
+
+          <!-- Alternar Modo de Visualização (Cards vs Tabela) e Botão Novo Item -->
+          <div class="flex items-center gap-2">
+            <div class="flex bg-[#0b1120] p-1 rounded-xl border border-[#23324d]">
+              <button id="btn-view-cards" onclick="setEstoqueView('cards')" class="p-1.5 px-2.5 rounded-lg text-xs font-semibold bg-amber-500 text-slate-950 transition" title="Visualização em Cards">
+                <i class="fa-solid fa-grip"></i>
+              </button>
+              <button id="btn-view-table" onclick="setEstoqueView('table')" class="p-1.5 px-2.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition" title="Visualização em Tabela">
+                <i class="fa-solid fa-table-list"></i>
+              </button>
+            </div>
+
+            <button onclick="openModal('modal-novo-item')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3.5 py-2 rounded-xl text-sm flex items-center gap-2 transition shadow-md shadow-amber-500/20 whitespace-nowrap">
+              <i class="fa-solid fa-plus"></i>
+              <span class="hidden sm:inline">Novo Item</span>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Badges de Legenda Rápida -->
+        <div class="flex items-center flex-wrap gap-2 pt-2 border-t border-[#23324d]/60 text-xs text-slate-400">
+          <span>Legenda:</span>
+          <span class="inline-flex items-center gap-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded-md">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Normal (Estoque > Mínimo)
+          </span>
+          <span class="inline-flex items-center gap-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-md">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Alerta (&le; Mínimo)
+          </span>
+          <span class="inline-flex items-center gap-1 bg-rose-500/10 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded-md">
+            <span class="w-2 h-2 rounded-full bg-rose-500"></span> Crítico (Zerado)
+          </span>
+          <span class="ml-auto text-slate-500 font-medium" id="txt-contador-filtrados">Exibindo 0 itens</span>
+        </div>
+      </div>
+
+      <!-- CONTAINER DE CARDS (MOBILE-FIRST) -->
+      <div id="container-estoque-cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+
+      <!-- CONTAINER DE TABELA (DESKTOP) -->
+      <div id="container-estoque-table" class="hidden bg-[#151f32] border border-[#23324d] rounded-2xl overflow-hidden shadow-xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-[#0f172a] text-slate-400 border-b border-[#23324d] text-xs uppercase tracking-wider">
+                <th class="py-3 px-4">Status</th>
+                <th class="py-3 px-4">Item / Insumo</th>
+                <th class="py-3 px-4">Categoria</th>
+                <th class="py-3 px-4 text-center">Unidade</th>
+                <th class="py-3 px-4 text-center">Mínimo</th>
+                <th class="py-3 px-4 text-center">Saldo Atual</th>
+                <th class="py-3 px-4 text-right">Ações Rápidas</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-estoque" class="divide-y divide-[#23324d]/60 text-slate-200">
+              <!-- Renderizado dinamicamente via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 3. ABA: EXTRATO KARDEX DE MOVIMENTAÇÕES   -->
+    <!-- ========================================== -->
+    <section id="tab-kardex" class="tab-content hidden fade-in space-y-4">
+      
+      <!-- CONTROLES DO EXTRATO -->
+      <div class="bg-[#151f32] border border-[#23324d] rounded-2xl p-4 space-y-3">
+        <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          
+          <!-- Busca Geral no Kardex -->
+          <div class="relative flex-1">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+            <input type="text" id="filtro-busca-kardex" oninput="renderKardex()" placeholder="Buscar por responsável, empresa, NF ou item..." class="w-full pl-10 pr-4 py-2 bg-[#0b1120] border border-[#23324d] rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500">
+          </div>
+
+          <!-- Filtro de Tipo (Entrada/Saída) -->
+          <select id="filtro-tipo-kardex" onchange="renderKardex()" class="bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+            <option value="">Todas as Operações</option>
+            <option value="ENTRADA">Apenas Entradas (Abastecimento)</option>
+            <option value="SAIDA">Apenas Saídas (Cautelas/Entregas)</option>
+          </select>
+
+          <!-- Filtro de Período -->
+          <select id="filtro-periodo-kardex" onchange="renderKardex()" class="bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+            <option value="todos">Todo o Histórico</option>
+            <option value="hoje">Apenas Hoje</option>
+            <option value="7dias">Últimos 7 Dias</option>
+            <option value="mes">Este Mês</option>
+          </select>
+
+          <!-- Botões de Exportação -->
+          <div class="flex items-center gap-2">
+            <button onclick="exportarExcelKardex()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-file-excel"></i>
+              <span>Excel</span>
+            </button>
+            <button onclick="imprimirKardex()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-[#23324d] font-semibold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-print"></i>
+              <span>Imprimir</span>
+            </button>
+          </div>
+
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
+          <span id="txt-contador-kardex">0 movimentações registradas</span>
+          <span class="text-slate-500 italic">Cada lançamento possui saldo calculado após o evento</span>
+        </div>
+      </div>
+
+      <!-- TABELA KARDEX -->
+      <div class="bg-[#151f32] border border-[#23324d] rounded-2xl overflow-hidden shadow-xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-[#0f172a] text-slate-400 border-b border-[#23324d] text-xs uppercase tracking-wider">
+                <th class="py-3 px-4">Data / Hora</th>
+                <th class="py-3 px-4 text-center">Tipo</th>
+                <th class="py-3 px-4">Item</th>
+                <th class="py-3 px-4 text-center">Qtd.</th>
+                <th class="py-3 px-4">Responsável / Fornecedor</th>
+                <th class="py-3 px-4">Empresa / Destino</th>
+                <th class="py-3 px-4 text-center">Saldo Resultante</th>
+                <th class="py-3 px-4 text-right">Comprovante</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-kardex" class="divide-y divide-[#23324d]/60 text-slate-200">
+              <!-- Renderizado dinamicamente via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- 4. ABA: RELATÓRIOS & ANÁLISE DE CONSUMO   -->
+    <!-- ========================================== -->
+    <section id="tab-relatorios" class="tab-content hidden fade-in space-y-6">
+      
+      <!-- CABEÇALHO DO RELATÓRIO -->
+      <div class="bg-[#151f32] border border-[#23324d] rounded-2xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-chart-line text-amber-400"></i>
+            Relatório de Consumo por Subempreiteira e Colaborador
+          </h2>
+          <p class="text-xs text-slate-400 mt-0.5">Auditoria para saber quais frentes de serviço e empresas mais consomem insumos</p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="gerarRelatorioPDF()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3.5 py-2 rounded-xl text-sm flex items-center gap-2 transition">
+            <i class="fa-solid fa-print"></i>
+            <span>Imprimir Relatório Oficial</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- RANKINGS EM CARDS -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Ranking por Empresa / Subempreiteira -->
+        <div class="bg-[#151f32] border border-[#23324d] rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-building text-amber-400"></i>
+              Consumo por Empresa / Empreiteira
+            </h3>
+            <span class="text-xs text-slate-400">Total de itens retirados</span>
+          </div>
+
+          <div id="lista-consumo-empresas" class="space-y-3">
+            <!-- Renderizado dinamicamente -->
+          </div>
+        </div>
+
+        <!-- Ranking por Colaborador que Retirou -->
+        <div class="bg-[#151f32] border border-[#23324d] rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-users text-amber-400"></i>
+              Colaboradores que Mais Retiraram Itens
+            </h3>
+            <span class="text-xs text-slate-400">Total acumulado</span>
+          </div>
+
+          <div id="lista-consumo-pessoas" class="space-y-3">
+            <!-- Renderizado dinamicamente -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TABELA DE PREVISÃO DE COMPRAS E REPOSIÇÃO -->
+      <div class="bg-[#151f32] border border-[#23324d] rounded-2xl p-5">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-cart-shopping text-rose-400"></i>
+              Lista de Compras Sugerida (Reposição de Canteiro)
+            </h3>
+            <p class="text-xs text-slate-400">Calculado automaticamente com base no Estoque Mínimo cadastrado</p>
+          </div>
+          <button onclick="copiarListaCompras()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-[#23324d] px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-copy"></i>
+            <span>Copiar para WhatsApp</span>
+          </button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-[#0f172a] text-slate-400 border-b border-[#23324d] text-xs uppercase tracking-wider">
+                <th class="py-2.5 px-4">Item</th>
+                <th class="py-2.5 px-4">Categoria</th>
+                <th class="py-2.5 px-4 text-center">Saldo Atual</th>
+                <th class="py-2.5 px-4 text-center">Estoque Mínimo</th>
+                <th class="py-2.5 px-4 text-center text-amber-400">Sugestão de Compra</th>
+                <th class="py-2.5 px-4 text-right">Status</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-previsao-compras" class="divide-y divide-[#23324d]/60 text-slate-200">
+              <!-- Renderizado dinamicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- BARRA DE NAVEGAÇÃO TOUCH INFERIOR (MOBILE) -->
+  <!-- ========================================== -->
+  <nav id="bottom-nav" class="no-print md:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#111927]/95 backdrop-blur-lg border-t border-[#23324d] py-2 px-3 shadow-2xl">
+    <div class="grid grid-cols-5 gap-1">
+      
+      <button onclick="switchTab('dashboard')" class="mobile-nav-btn active flex flex-col items-center justify-center py-1 text-amber-400 transition" data-target="dashboard">
+        <i class="fa-solid fa-chart-pie text-lg"></i>
+        <span class="text-[10px] font-semibold mt-1">Painel</span>
+      </button>
+
+      <button onclick="switchTab('estoque')" class="mobile-nav-btn flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-200 transition" data-target="estoque">
+        <i class="fa-solid fa-boxes-stacked text-lg"></i>
+        <span class="text-[10px] font-semibold mt-1">Estoque</span>
+      </button>
+
+      <!-- Botão Central de Ação Rápida (Saída/Cautela) -->
+      <button onclick="openModal('modal-saida')" class="flex flex-col items-center justify-center -mt-5 transition group" title="Registrar Saída">
+        <div class="w-12 h-12 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center justify-center text-xl shadow-lg shadow-amber-500/30 font-bold active:scale-90 transition">
+          <i class="fa-solid fa-arrow-up-from-bracket"></i>
+        </div>
+        <span class="text-[10px] font-bold text-amber-400 mt-1">Cautela</span>
+      </button>
+
+      <button onclick="switchTab('kardex')" class="mobile-nav-btn flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-200 transition" data-target="kardex">
+        <i class="fa-solid fa-timeline text-lg"></i>
+        <span class="text-[10px] font-semibold mt-1">Kardex</span>
+      </button>
+
+      <button onclick="switchTab('relatorios')" class="mobile-nav-btn flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-200 transition" data-target="relatorios">
+        <i class="fa-solid fa-file-invoice text-lg"></i>
+        <span class="text-[10px] font-semibold mt-1">Relatórios</span>
+      </button>
+
+    </div>
+  </nav>
+
+  <!-- ========================================== -->
+  <!-- MODAL: REGISTRAR SAÍDA / CAUTELA (TOUCH)   -->
+  <!-- ========================================== -->
+  <div id="modal-saida" class="no-print fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-[#151f32] border border-[#23324d] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden my-auto fade-in">
+      
+      <!-- Cabeçalho Modal -->
+      <div class="bg-gradient-to-r from-amber-600/30 via-[#151f32] to-[#151f32] border-b border-[#23324d] p-4 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center text-base">
+            <i class="fa-solid fa-arrow-up-from-bracket"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Nova Saída / Cautela</h3>
+            <p class="text-xs text-slate-400">Entrega nominal de insumo com assinatura</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-saida')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Formulário de Saída -->
+      <form id="form-saida" onsubmit="salvarSaida(event)" class="p-4 space-y-4 max-h-[80vh] overflow-y-auto">
+        
+        <!-- Seleção do Item e Quantidade -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Item a Retirar *</label>
+            <select id="saida-item-id" onchange="atualizarInfoItemSaida()" required class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+              <option value="">Selecione o item...</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Quantidade *</label>
+            <input type="number" id="saida-quantidade" min="1" step="1" required placeholder="Ex: 2" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+
+        <!-- Indicador de Saldo Disponível -->
+        <div id="saida-saldo-box" class="hidden p-2.5 rounded-xl bg-slate-900/80 border border-slate-700/60 flex items-center justify-between text-xs">
+          <span class="text-slate-400">Saldo Atual em Estoque:</span>
+          <span id="saida-saldo-val" class="font-bold text-emerald-400 text-sm">0 unidades</span>
+        </div>
+
+        <!-- Identificação Obrigatória do Recebedor -->
+        <div class="border-t border-[#23324d] pt-3 space-y-3">
+          <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-user-check"></i>
+            Identificação de Quem Recebeu
+          </h4>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Nome Completo do Colaborador *</label>
+            <input type="text" id="saida-nome-colaborador" required placeholder="Ex: José Carlos da Silva" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Empresa / Subempreiteira *</label>
+              <input type="text" id="saida-empresa" required placeholder="Ex: Construtora Alfa, Elétrica Souza" list="lista-empresas-sugestoes" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+              <datalist id="lista-empresas-sugestoes">
+                <option value="Equipe Própria / Direta">
+                <option value="Empreiteira de Alvenaria">
+                <option value="Subempreiteira Elétrica">
+                <option value="Subempreiteira Hidráulica">
+                <option value="Equipe de Limpeza e Governança">
+              </datalist>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Alojamento / Quarto / Bloco</label>
+              <input type="text" id="saida-quarto" placeholder="Ex: Quarto 04 - Bloco B" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Motivo / Finalidade da Retirada *</label>
+            <select id="saida-motivo" required class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+              <option value="Troca quinzenal de enxoval">Troca quinzenal de enxoval</option>
+              <option value="Admissão / Novo alojado">Admissão / Novo alojado</option>
+              <option value="Reposição de limpeza de quarto/bloco">Reposição de limpeza de quarto/bloco</option>
+              <option value="Uso no refeitório / área comum">Uso no refeitório / área comum</option>
+              <option value="Manutenção predial emergencial">Manutenção predial emergencial</option>
+              <option value="Substituição por dano/desgaste">Substituição por dano/desgaste</option>
+              <option value="Outro motivo">Outro motivo (especificar nas observações)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Observações Adicionais</label>
+            <input type="text" id="saida-obs" placeholder="Ex: Devolveu fronha rasgada para descarte" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+
+        <!-- ASSINATURA DIGITAL TOUCH INTERATIVA -->
+        <div class="border-t border-[#23324d] pt-3">
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-signature"></i>
+              Assinatura Digital do Recebedor
+            </label>
+            <button type="button" onclick="limparCanvasAssinatura()" class="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1">
+              <i class="fa-solid fa-eraser"></i> Limpar
+            </button>
+          </div>
+          <p class="text-[11px] text-slate-400 mb-2">Assine com o dedo na tela do celular ou com o cursor do mouse:</p>
+          
+          <div class="border-2 border-dashed border-[#23324d] rounded-xl bg-slate-900/90 overflow-hidden relative">
+            <canvas id="signature-canvas" width="450" height="140" class="w-full bg-slate-950/60 block"></canvas>
+            <div id="signature-hint" class="pointer-events-none absolute inset-0 flex items-center justify-center text-slate-600 text-xs">
+              <i class="fa-solid fa-pen-nib mr-1.5"></i> Desenhe a assinatura aqui
+            </div>
+          </div>
+        </div>
+
+        <!-- Botões de Ação do Modal -->
+        <div class="pt-3 border-t border-[#23324d] flex items-center justify-end gap-2">
+          <button type="button" onclick="closeModal('modal-saida')" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition">
+            Cancelar
+          </button>
+          <button type="submit" id="btn-submit-saida" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-lg shadow-amber-500/20 flex items-center gap-2">
+            <i class="fa-solid fa-check"></i>
+            <span>Confirmar Entrega</span>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: REGISTRAR ENTRADA / ABASTECIMENTO  -->
+  <!-- ========================================== -->
+  <div id="modal-entrada" class="no-print fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-[#151f32] border border-[#23324d] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden my-auto fade-in">
+      
+      <!-- Cabeçalho Modal -->
+      <div class="bg-gradient-to-r from-emerald-600/30 via-[#151f32] to-[#151f32] border-b border-[#23324d] p-4 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center text-base">
+            <i class="fa-solid fa-truck-ramp-box"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white">Nova Entrada no Estoque</h3>
+            <p class="text-xs text-slate-400">Abastecimento com ou sem Nota Fiscal</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-entrada')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Formulário de Entrada -->
+      <form id="form-entrada" onsubmit="salvarEntrada(event)" class="p-4 space-y-4 max-h-[80vh] overflow-y-auto">
+        
+        <!-- SELETOR DE MODALIDADE DE ENTRADA (COM NF OU SEM NF) -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Tipo de Abastecimento</label>
+          <div class="grid grid-cols-2 gap-2 bg-[#0b1120] p-1.5 rounded-xl border border-[#23324d]">
+            <button type="button" id="btn-tipo-nf" onclick="setTipoEntrada('com_nf')" class="py-2 px-3 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow-md flex items-center justify-center gap-2 transition">
+              <i class="fa-solid fa-receipt"></i>
+              <span>Com Nota Fiscal</span>
+            </button>
+            <button type="button" id="btn-tipo-avulsa" onclick="setTipoEntrada('sem_nf')" class="py-2 px-3 rounded-lg text-xs font-medium text-slate-400 hover:text-white flex items-center justify-center gap-2 transition">
+              <i class="fa-solid fa-boxes-packing"></i>
+              <span>Avulsa / Sem NF</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Item e Quantidade -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Item a Abastecer *</label>
+            <select id="entrada-item-id" required class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500">
+              <option value="">Selecione o item...</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Qtd. Recebida *</label>
+            <input type="number" id="entrada-quantidade" min="1" step="1" required placeholder="Ex: 50" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-emerald-500">
+          </div>
+        </div>
+
+        <!-- CAMPOS ESPECÍFICOS: COM NOTA FISCAL -->
+        <div id="secao-nf" class="space-y-3 p-3 bg-slate-900/60 rounded-xl border border-[#23324d]">
+          <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-file-invoice-dollar"></i>
+            Dados da Nota Fiscal
+          </h4>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Número da NF *</label>
+              <input type="text" id="entrada-nf-numero" placeholder="Ex: NF-e 004821" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Fornecedor / Razão Social *</label>
+              <input type="text" id="entrada-fornecedor" placeholder="Ex: Atacadão Distribuidora Ltda" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Data de Emissão da NF</label>
+              <input type="date" id="entrada-nf-data" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500">
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Valor Unitário R$ (Opcional)</label>
+              <input type="number" id="entrada-valor-unitario" step="0.01" min="0" placeholder="Ex: 14.50" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500">
+            </div>
+          </div>
+
+          <!-- Upload / Foto da NF -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Foto ou Anexo da Nota Fiscal</label>
+            <div class="flex items-center gap-2">
+              <input type="file" id="entrada-foto-nf" accept="image/*" onchange="previewFotoNF(event)" class="text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-slate-200 hover:file:bg-slate-700">
+              <span id="preview-nf-indicator" class="hidden text-xs text-emerald-400 flex items-center gap-1">
+                <i class="fa-solid fa-check"></i> Foto carregada
+              </span>
+            </div>
+            <div id="container-preview-nf" class="hidden mt-2 relative w-32 h-20 border border-slate-700 rounded-lg overflow-hidden">
+              <img id="img-preview-nf" src="" alt="NF Preview" class="w-full h-full object-cover">
+              <button type="button" onclick="removerFotoNF()" class="absolute top-1 right-1 w-5 h-5 bg-rose-600 text-white rounded-full flex items-center justify-center text-[10px]">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- CAMPOS ESPECÍFICOS: ENTRADA AVULSA / SEM NF -->
+        <div id="secao-avulsa" class="hidden space-y-3 p-3 bg-slate-900/60 rounded-xl border border-[#23324d]">
+          <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-truck-moving"></i>
+            Origem e Justificativa da Entrada Avulsa
+          </h4>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Origem do Insumo *</label>
+            <select id="entrada-origem-avulsa" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+              <option value="Compra Local Emergencial (Comércio local)">Compra Local Emergencial (Comércio da cidade)</option>
+              <option value="Transferência de Outro Canteiro/Obra">Transferência de Outro Canteiro/Obra</option>
+              <option value="Devolução de Colaborador">Devolução de Colaborador ao Almoxarifado</option>
+              <option value="Doação / Empréstimo">Doação / Empréstimo de Parceiro</option>
+              <option value="Ajuste de Saldo / Inventário Inicial">Ajuste de Saldo / Inventário Inicial</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Motivo / Descrição Detalhada *</label>
+            <input type="text" id="entrada-motivo-avulsa" placeholder="Ex: Compra de 10 pacotes no mercadinho do bairro para urgência" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+
+        <!-- Quem recebeu no almoxarifado -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Responsável pelo Recebimento na Obra *</label>
+          <input type="text" id="entrada-recebedor-obra" required placeholder="Ex: Carlos Almoxarife" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500">
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="pt-3 border-t border-[#23324d] flex items-center justify-end gap-2">
+          <button type="button" onclick="closeModal('modal-entrada')" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition">
+            Cancelar
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition shadow-lg shadow-emerald-600/20 flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i>
+            <span>Adicionar ao Saldo</span>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: CADASTRAR / EDITAR ITEM DO CATÁLOGO -->
+  <!-- ========================================== -->
+  <div id="modal-novo-item" class="no-print fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-[#151f32] border border-[#23324d] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden my-auto fade-in">
+      
+      <div class="bg-gradient-to-r from-amber-600/30 via-[#151f32] to-[#151f32] border-b border-[#23324d] p-4 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center text-base">
+            <i class="fa-solid fa-box-open"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white" id="modal-item-title">Cadastrar Novo Item</h3>
+            <p class="text-xs text-slate-400">Insumos para o alojamento e canteiro</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-novo-item')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="form-item" onsubmit="salvarItem(event)" class="p-4 space-y-3.5">
+        <input type="hidden" id="item-edit-id" value="">
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Nome do Item / Insumo *</label>
+          <input type="text" id="item-nome" required placeholder="Ex: Travesseiro com Capa Impermeável" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Categoria *</label>
+            <select id="item-categoria" required class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+              <option value="Roupas de Cama">Roupas de Cama</option>
+              <option value="Higiene & Limpeza">Higiene & Limpeza</option>
+              <option value="Manutenção">Manutenção</option>
+              <option value="Utensílios">Utensílios</option>
+              <option value="Alimentação/Copa">Alimentação/Copa</option>
+              <option value="Outros">Outros</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Unidade de Medida *</label>
+            <select id="item-unidade" required class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+              <option value="Unidade">Unidade (un)</option>
+              <option value="Pacote">Pacote (pct)</option>
+              <option value="Litro">Litro (L)</option>
+              <option value="Caixa">Caixa (cx)</option>
+              <option value="Kg">Quilo (kg)</option>
+              <option value="Fardo">Fardo (fd)</option>
+              <option value="Rolo">Rolo (rl)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Estoque Mínimo de Alerta *</label>
+            <input type="number" id="item-estoque-minimo" min="0" step="1" required placeholder="Ex: 10" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Saldo Inicial</label>
+            <input type="number" id="item-estoque-inicial" min="0" step="1" placeholder="Ex: 25" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Localização no Almoxarifado / Observações</label>
+          <input type="text" id="item-localizacao" placeholder="Ex: Prateleira B2, Caixa 03" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+        </div>
+
+        <div class="pt-3 border-t border-[#23324d] flex items-center justify-end gap-2">
+          <button type="button" onclick="closeModal('modal-novo-item')" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition">
+            Cancelar
+          </button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-lg shadow-amber-500/20 flex items-center gap-2">
+            <i class="fa-solid fa-save"></i>
+            <span>Salvar Item</span>
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: DETALHES DA MOVIMENTAÇÃO / COMPROVANTE -->
+  <!-- ========================================== -->
+  <div id="modal-comprovante" class="no-print fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-[#151f32] border border-[#23324d] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden my-auto fade-in">
+      
+      <div class="border-b border-[#23324d] p-4 flex items-center justify-between bg-slate-900/80">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-receipt text-amber-400"></i>
+          Comprovante de Movimentação
+        </h3>
+        <button onclick="closeModal('modal-comprovante')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div id="conteudo-comprovante" class="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
+        <!-- Preenchido dinamicamente via JS -->
+      </div>
+
+      <div class="p-4 border-t border-[#23324d] bg-slate-900/60 flex items-center justify-between">
+        <button onclick="compartilharWhatsAppCautela()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-1.5 transition">
+          <i class="fa-brands fa-whatsapp text-sm"></i>
+          <span>Enviar WhatsApp</span>
+        </button>
+
+        <div class="flex items-center gap-2">
+          <button onclick="imprimirComprovante()" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-print"></i>
+            <span>Imprimir Cautela</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: CONFIGURAÇÕES, BACKUP & FIREBASE   -->
+  <!-- ========================================== -->
+  <div id="modal-config" class="no-print fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-[#151f32] border border-[#23324d] rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden my-auto fade-in">
+      
+      <div class="border-b border-[#23324d] p-4 flex items-center justify-between bg-slate-900/80">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-gear text-amber-400"></i>
+          Configurações & Sincronização
+        </h3>
+        <button onclick="closeModal('modal-config')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-4 space-y-5 max-h-[75vh] overflow-y-auto">
+        
+        <!-- Identificação da Obra -->
+        <div>
+          <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1">Nome da Obra / Canteiro</label>
+          <input type="text" id="cfg-nome-obra" placeholder="Ex: Canteiro Central - Alojamento Tiago Vidal" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+        </div>
+
+        <!-- Sincronização em Nuvem Turso Database (LibSQL) -->
+        <div class="p-3.5 bg-slate-900/90 rounded-xl border border-emerald-500/40 space-y-3 shadow-lg">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center text-xs">
+                <i class="fa-solid fa-server"></i>
+              </div>
+              <div>
+                <span class="text-sm font-bold text-white">Banco de Dados Turso (Nuvem)</span>
+                <span class="text-[10px] text-emerald-400 block font-medium">9 GB Grátis • SQLite Distribuído</span>
+              </div>
+            </div>
+            <span id="badge-turso-status" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-semibold flex items-center gap-1.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+              <span id="badge-turso-txt">Não Conectado</span>
+            </span>
+          </div>
+          <p class="text-xs text-slate-400">
+            Sincronização em tempo real entre celulares e computadores com banco de dados Turso na nuvem.
+          </p>
+
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Turso Database URL:</label>
+            <input type="text" id="cfg-turso-url" placeholder="https://[seu-banco].turso.io" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-xs text-slate-200 font-mono focus:outline-none focus:border-emerald-500">
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Turso Auth Token:</label>
+            <div class="relative">
+              <input type="password" id="cfg-turso-token" placeholder="eyJ..." class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-xs text-slate-200 font-mono focus:outline-none focus:border-emerald-500 pr-10">
+              <button type="button" onclick="toggleMostrarTokenTurso()" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white text-xs">
+                <i id="icone-ver-token" class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button type="button" onclick="testarEConectarTurso()" class="py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20 active:scale-95">
+              <i class="fa-solid fa-plug"></i>
+              <span>Testar e Conectar</span>
+            </button>
+            <button type="button" onclick="sincronizarTudoParaTurso()" class="py-2.5 bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 active:scale-95">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <span>Enviar Dados Locais</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Sincronização em Nuvem Firebase Firestore (Alternativa) -->
+        <div class="p-3.5 bg-slate-900/60 rounded-xl border border-[#23324d] space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <i class="fa-solid fa-cloud text-amber-400"></i>
+              <span class="text-sm font-bold text-white">Firebase Firestore (Opcional)</span>
+            </div>
+            <span id="badge-firebase-status" class="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700">Modo Local (Offline)</span>
+          </div>
+          <p class="text-xs text-slate-400">
+            Conecte seu projeto Firebase gratuito caso prefira o Firestore como nuvem secundária.
+          </p>
+
+          <div>
+            <label class="block text-[11px] font-semibold text-slate-300 mb-1">Firebase Config JSON (Opcional):</label>
+            <textarea id="cfg-firebase-json" rows="3" placeholder='{"apiKey": "...", "projectId": "...", "storageBucket": "..."}' class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl p-2.5 text-xs text-slate-300 font-mono focus:outline-none focus:border-amber-500"></textarea>
+          </div>
+          <button type="button" onclick="conectarFirebase()" class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-arrows-rotate"></i>
+            <span>Salvar e Conectar Firebase</span>
+          </button>
+        </div>
+
+        <!-- Backup e Restauração de Dados -->
+        <div class="p-3.5 bg-slate-900/80 rounded-xl border border-[#23324d] space-y-3">
+          <span class="text-sm font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-floppy-disk text-emerald-400"></i>
+            Backup e Segurança de Dados
+          </span>
+          <p class="text-xs text-slate-400">Faça o download do arquivo de segurança de todos os itens e histórico de movimentações.</p>
+
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="fazerBackupJSON()" class="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition">
+              <i class="fa-solid fa-download text-emerald-400"></i>
+              <span>Baixar Backup</span>
+            </button>
+
+            <label class="py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition cursor-pointer text-center">
+              <i class="fa-solid fa-upload text-amber-400"></i>
+              <span>Restaurar Backup</span>
+              <input type="file" id="input-restore-backup" accept=".json" onchange="restaurarBackupJSON(event)" class="hidden">
+            </label>
+          </div>
+
+          <button onclick="carregarDadosDemonstracao()" class="w-full py-2 bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700 rounded-xl text-xs font-medium transition flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-rotate-left text-blue-400"></i>
+            <span>Recarregar Itens Padrão de Canteiro</span>
+          </button>
+        </div>
+
+      </div>
+
+      <div class="p-4 border-t border-[#23324d] bg-slate-900/60 flex items-center justify-end">
+        <button onclick="salvarConfiguracoesGerais()" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition">
+          Salvar Alterações
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- ÁREA DE IMPRESSÃO (PRINT ONLY)             -->
+  <!-- ========================================== -->
+  <div id="print-area" class="hidden print-only p-8 text-black">
+    <!-- Formatado dinamicamente para gerar PDFs perfeitos -->
+  </div>
+
+  <!-- TOAST NOTIFICAÇÃO FLUTUANTE -->
+  <div id="toast" class="fixed top-5 right-5 z-50 bg-[#151f32] border border-[#23324d] text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 transition-all duration-300 transform translate-y-[-150%] opacity-0 pointer-events-none">
+    <div id="toast-icon" class="text-amber-400 text-lg"></div>
+    <div id="toast-msg" class="text-sm font-medium"></div>
+  </div>
+
+  <!-- APP LOGIC -->
+  <script src="app.js"></script>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Service Worker registrado:', reg.scope))
+          .catch(err => console.log('Falha ao registrar Service Worker:', err));
+      });
+    }
+
+    // Gerenciador de Instalação PWA
+    let deferredPrompt;
+    const btnInstall = document.getElementById('btn-install-pwa');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      if (btnInstall) {
+        btnInstall.classList.remove('hidden');
+        btnInstall.addEventListener('click', async () => {
+          if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            console.log(`Resposta do usuário para PWA: ${outcome}`);
+            deferredPrompt = null;
+            btnInstall.classList.add('hidden');
+          }
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>
