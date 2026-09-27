@@ -42,29 +42,29 @@ let appState = {
 // CATÁLOGO DE FOTOS REAIS DOS PRODUTOS & CASAS
 // ==========================================
 const FOTOS_PRODUTOS_MAP = {
-  'Beliche Metálica Tubular Reforçada': 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=600&q=80',
-  'Colchão Solteiro Espuma D33 Antiácaro': 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=600&q=80',
-  'Ar-Condicionado Split 12.000 BTUs Frio': 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80',
-  'Armário Metálico Vestiário 4 Portas c/ Chave': 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=600&q=80',
-  'Geladeira Duplex Frost Free 380L': 'https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?auto=format&fit=crop&w=600&q=80',
-  'Mesa de Refeição 6 Lugares c/ Cadeiras': 'https://images.unsplash.com/photo-1615066390971-03e4e1c36ddf?auto=format&fit=crop&w=600&q=80',
-  'Desinfetante Concentrado Pinho 5 Litros (Caixa c/ 4)': 'https://images.unsplash.com/photo-1585421514738-01798e348b17?auto=format&fit=crop&w=600&q=80',
-  'Papel Higiênico Folha Dupla (Fardo c/ 64 rolos)': 'https://images.unsplash.com/photo-1584556812952-905ffd0c611a?auto=format&fit=crop&w=600&q=80',
-  'Água Sanitária 5 Litros (Galão)': 'https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?auto=format&fit=crop&w=600&q=80',
-  'Vassoura de Piaçava c/ Cabo Reforçado': 'https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?auto=format&fit=crop&w=600&q=80',
-  'Saco de Lixo Reforçado 100L (Pacote c/ 100)': 'https://images.unsplash.com/photo-1605600659908-0ef719419d41?auto=format&fit=crop&w=600&q=80',
-  'Travesseiro Alojamento c/ Capa Impermeável': 'https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&w=600&q=80',
-  'Lençol Solteiro com Elástico Percal': 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=600&q=80',
-  'Lâmpada LED 15W Bivolt E27': 'https://images.unsplash.com/photo-1550985616-10810253b84d?auto=format&fit=crop&w=600&q=80',
-  'Chuveiro Elétrico 220V 5500W Blindado': 'https://images.unsplash.com/photo-1584622781564-1d987f7333c1?auto=format&fit=crop&w=600&q=80',
-  'Fechadura Tubular para Porta com Chave': 'https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=600&q=80'
+  'Beliche Metálica Tubular Reforçada': 'https://brindustria.com.br/wp-content/uploads/2021/08/beliche-para-dormitorio-de-aco.jpg',
+  'Colchão Solteiro Espuma D33 Antiácaro': 'https://moveisparaalojamento.com.br/wp-content/uploads/2024/06/colchao-solteiro-D33-selo-Inmetro.png',
+  'Ar-Condicionado Split 12.000 BTUs Frio': 'https://sipolatti.vtexassets.com/arquivos/ids/215768/ar1.png',
+  'Armário Metálico Vestiário 4 Portas c/ Chave': 'https://www.eliteaco.com.br/wp-content/uploads/2022/08/EA701CT-001-CINZA.jpg',
+  'Geladeira Duplex Frost Free 380L': 'https://tfcz36.vtexassets.com/arquivos/ids/207712/917472_2.jpg.jpg',
+  'Mesa de Refeição 6 Lugares c/ Cadeiras': 'https://cdn.awsli.com.br/600x450/1128/1128392/produto/96920479/whatsapp-image-2024-08-19-at-11-53-38--5--photoroom-twz3n4c2t7.jpg',
+  'Desinfetante Concentrado Pinho 5 Litros (Caixa c/ 4)': 'https://superprobettanin.com.br/wp-content/uploads/2024/03/SP15565_DESINFETANTE-PINHO_2.jpg',
+  'Papel Higiênico Folha Dupla (Fardo c/ 64 rolos)': 'https://milium.vtexassets.com/arquivos/ids/295801-800-450',
+  'Água Sanitária 5 Litros (Galão)': 'https://fotos.oceanob2b.com/High/038546.jpg',
+  'Vassoura de Piaçava c/ Cabo Reforçado': 'https://grupo3colinas.com.br/wp-content/uploads/2022/07/b7559a3661a9c8164341510d9062b7a0.png',
+  'Saco de Lixo Reforçado 100L (Pacote c/ 100)': 'https://protelimp.com.br/wp-content/uploads/2022/04/saco-de-lixo-preto-100-litros-p5.png',
+  'Travesseiro Alojamento c/ Capa Impermeável': 'https://images.tcdn.com.br/img/img_prod/452956/90_travesseiro_hospitalar_em_courvin_impermevel_50x70_1_20251111083100_472e282962c5.jpg',
+  'Lençol Solteiro com Elástico Percal': 'https://precolandia.vtexassets.com/arquivos/ids/314111/Lenol-de-Solteiro-com-Elstico-Trigo---Tecebem.jpg',
+  'Lâmpada LED 15W Bivolt E27': 'https://upload.wikimedia.org/wikipedia/commons/3/32/LED_bulb.jpg',
+  'Chuveiro Elétrico 220V 5500W Blindado': 'https://chatuba.vtexassets.com/arquivos/ids/161809/Chuveiro-Maxi-Ducha-Branco-220V-4600W-Lorenzetti.jpg',
+  'Fechadura Tubular para Porta com Chave': 'https://upload.wikimedia.org/wikipedia/commons/d/db/Door_lock.jpg'
 };
 
 const FOTOS_CASAS_MAP = {
-  'casa-1': 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=600&q=80',
-  'casa-2': 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=600&q=80',
-  'casa-3': 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=600&q=80',
-  'casa-4': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80'
+  'casa-1': 'https://images.unsplash.com/photo-1590725140246-2015fa68f7b5?auto=format&fit=crop&w=600&q=80',
+  'casa-2': 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=600&q=80',
+  'casa-3': 'https://images.unsplash.com/photo-1541123437800-1bb1317badc2?auto=format&fit=crop&w=600&q=80',
+  'casa-4': 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&w=600&q=80'
 };
 
 function getFotoProduto(nome, fotoExistente) {
