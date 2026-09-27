@@ -39,25 +39,83 @@ let appState = {
 };
 
 // ==========================================
+// CATÁLOGO DE FOTOS REAIS DOS PRODUTOS & CASAS
+// ==========================================
+const FOTOS_PRODUTOS_MAP = {
+  'Beliche Metálica Tubular Reforçada': 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=600&q=80',
+  'Colchão Solteiro Espuma D33 Antiácaro': 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=600&q=80',
+  'Ar-Condicionado Split 12.000 BTUs Frio': 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=600&q=80',
+  'Armário Metálico Vestiário 4 Portas c/ Chave': 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&w=600&q=80',
+  'Geladeira Duplex Frost Free 380L': 'https://images.unsplash.com/photo-1571175443880-49e1d25b2bc5?auto=format&fit=crop&w=600&q=80',
+  'Mesa de Refeição 6 Lugares c/ Cadeiras': 'https://images.unsplash.com/photo-1615066390971-03e4e1c36ddf?auto=format&fit=crop&w=600&q=80',
+  'Desinfetante Concentrado Pinho 5 Litros (Caixa c/ 4)': 'https://images.unsplash.com/photo-1585421514738-01798e348b17?auto=format&fit=crop&w=600&q=80',
+  'Papel Higiênico Folha Dupla (Fardo c/ 64 rolos)': 'https://images.unsplash.com/photo-1584556812952-905ffd0c611a?auto=format&fit=crop&w=600&q=80',
+  'Água Sanitária 5 Litros (Galão)': 'https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?auto=format&fit=crop&w=600&q=80',
+  'Vassoura de Piaçava c/ Cabo Reforçado': 'https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?auto=format&fit=crop&w=600&q=80',
+  'Saco de Lixo Reforçado 100L (Pacote c/ 100)': 'https://images.unsplash.com/photo-1605600659908-0ef719419d41?auto=format&fit=crop&w=600&q=80',
+  'Travesseiro Alojamento c/ Capa Impermeável': 'https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&w=600&q=80',
+  'Lençol Solteiro com Elástico Percal': 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&w=600&q=80',
+  'Lâmpada LED 15W Bivolt E27': 'https://images.unsplash.com/photo-1550985616-10810253b84d?auto=format&fit=crop&w=600&q=80',
+  'Chuveiro Elétrico 220V 5500W Blindado': 'https://images.unsplash.com/photo-1584622781564-1d987f7333c1?auto=format&fit=crop&w=600&q=80',
+  'Fechadura Tubular para Porta com Chave': 'https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=600&q=80'
+};
+
+const FOTOS_CASAS_MAP = {
+  'casa-1': 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=600&q=80',
+  'casa-2': 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?auto=format&fit=crop&w=600&q=80',
+  'casa-3': 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=600&q=80',
+  'casa-4': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=600&q=80'
+};
+
+function getFotoProduto(nome, fotoExistente) {
+  if (fotoExistente && fotoExistente.trim()) return fotoExistente.trim();
+  if (!nome) return '';
+  if (FOTOS_PRODUTOS_MAP[nome]) return FOTOS_PRODUTOS_MAP[nome];
+  const p1 = nome.split(' ')[0].toLowerCase();
+  for (const [k, url] of Object.entries(FOTOS_PRODUTOS_MAP)) {
+    if (k.toLowerCase().includes(p1) || nome.toLowerCase().includes(k.split(' ')[0].toLowerCase())) {
+      return url;
+    }
+  }
+  return '';
+}
+
+function getFotoCasa(casaId, fotoExistente) {
+  if (fotoExistente && fotoExistente.trim()) return fotoExistente.trim();
+  if (FOTOS_CASAS_MAP[casaId]) return FOTOS_CASAS_MAP[casaId];
+  return 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=600&q=80';
+}
+
+function abrirFotoZoom(url, titulo) {
+  if (!url) return;
+  const modal = document.getElementById('modal-foto-zoom');
+  const img = document.getElementById('foto-zoom-img');
+  const tit = document.getElementById('foto-zoom-titulo');
+  if (img) img.src = url;
+  if (tit) tit.textContent = titulo || 'Visualização do Item';
+  if (modal) modal.classList.remove('hidden');
+}
+
+// ==========================================
 // SEEDS INICIAIS (FALLBACK OFFLINE)
 // ==========================================
 const SEEDS_GALPAO = [
-  { id: 'item-1', nome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', unidade: 'Unidade', saldoAtual: 10, estoqueMinimo: 4, localizacao: 'Setor Móveis - Pavilhão A', custoUnitario: 580.00, icone: 'fa-bed' },
-  { id: 'item-2', nome: 'Colchão Solteiro Espuma D33 Antiácaro', categoria: 'Móveis & Equipamentos', unidade: 'Unidade', saldoAtual: 25, estoqueMinimo: 8, localizacao: 'Setor Móveis - Prateleira M1', custoUnitario: 240.00, icone: 'fa-mattress-pillow' },
-  { id: 'item-3', nome: 'Ar-Condicionado Split 12.000 BTUs Frio', categoria: 'Móveis & Equipamentos', unidade: 'Unidade', saldoAtual: 8, estoqueMinimo: 3, localizacao: 'Setor Eletro - Box 02', custoUnitario: 1850.00, icone: 'fa-snowflake' },
-  { id: 'item-4', nome: 'Armário Metálico Vestiário 4 Portas c/ Chave', categoria: 'Móveis & Equipamentos', unidade: 'Unidade', saldoAtual: 12, estoqueMinimo: 4, localizacao: 'Setor Móveis - Pavilhão B', custoUnitario: 420.00, icone: 'fa-door-closed' },
-  { id: 'item-5', nome: 'Geladeira Duplex Frost Free 380L', categoria: 'Móveis & Equipamentos', unidade: 'Unidade', saldoAtual: 3, estoqueMinimo: 2, localizacao: 'Setor Eletro - Box 01', custoUnitario: 2600.00, icone: 'fa-refrigerator' },
-  { id: 'item-6', nome: 'Mesa de Refeição 6 Lugares c/ Cadeiras', categoria: 'Móveis & Equipamentos', unidade: 'Unidade', saldoAtual: 4, estoqueMinimo: 2, localizacao: 'Setor Móveis - Pavilhão C', custoUnitario: 650.00, icone: 'fa-table' },
-  { id: 'item-7', nome: 'Desinfetante Concentrado Pinho 5 Litros (Caixa c/ 4)', categoria: 'Produtos de Limpeza', unidade: 'Caixa', saldoAtual: 40, estoqueMinimo: 10, localizacao: 'Depósito Químicos - Prateleira C', custoUnitario: 54.00, icone: 'fa-spray-can-sparkles' },
-  { id: 'item-8', nome: 'Papel Higiênico Folha Dupla (Fardo c/ 64 rolos)', categoria: 'Produtos de Limpeza', unidade: 'Fardo', saldoAtual: 60, estoqueMinimo: 15, localizacao: 'Pallet 01 - Almox Central', custoUnitario: 78.00, icone: 'fa-toilet-paper' },
-  { id: 'item-9', nome: 'Água Sanitária 5 Litros (Galão)', categoria: 'Produtos de Limpeza', unidade: 'Galão', saldoAtual: 15, estoqueMinimo: 8, localizacao: 'Depósito Químicos - Prateleira B', custoUnitario: 16.50, icone: 'fa-bottle-droplet' },
-  { id: 'item-10', nome: 'Vassoura de Piaçava c/ Cabo Reforçado', categoria: 'Produtos de Limpeza', unidade: 'Unidade', saldoAtual: 20, estoqueMinimo: 6, localizacao: 'Suporte Utilitários', custoUnitario: 18.00, icone: 'fa-broom' },
-  { id: 'item-11', nome: 'Saco de Lixo Reforçado 100L (Pacote c/ 100)', categoria: 'Produtos de Limpeza', unidade: 'Pacote', saldoAtual: 18, estoqueMinimo: 5, localizacao: 'Prateleira Limpeza A', custoUnitario: 42.00, icone: 'fa-trash-can' },
-  { id: 'item-12', nome: 'Travesseiro Alojamento c/ Capa Impermeável', categoria: 'Kits e Enxoval', unidade: 'Unidade', saldoAtual: 30, estoqueMinimo: 10, localizacao: 'Armário Têxtil 01', custoUnitario: 32.00, icone: 'fa-bed' },
-  { id: 'item-13', nome: 'Lençol Solteiro com Elástico Percal', categoria: 'Kits e Enxoval', unidade: 'Unidade', saldoAtual: 50, estoqueMinimo: 15, localizacao: 'Armário Têxtil 02', custoUnitario: 28.00, icone: 'fa-rug' },
-  { id: 'item-14', nome: 'Lâmpada LED 15W Bivolt E27', categoria: 'Manutenção Rápida', unidade: 'Unidade', saldoAtual: 50, estoqueMinimo: 15, localizacao: 'Gaveteiro Elétrica - Gaveta 1', custoUnitario: 9.50, icone: 'fa-lightbulb' },
-  { id: 'item-15', nome: 'Chuveiro Elétrico 220V 5500W Blindado', categoria: 'Manutenção Rápida', unidade: 'Unidade', saldoAtual: 20, estoqueMinimo: 5, localizacao: 'Setor Hidráulica - Prateleira H', custoUnitario: 75.00, icone: 'fa-shower' },
-  { id: 'item-16', nome: 'Fechadura Tubular para Porta com Chave', categoria: 'Manutenção Rápida', unidade: 'Unidade', saldoAtual: 12, estoqueMinimo: 4, localizacao: 'Gaveteiro Almoxarife - Gaveta 3', custoUnitario: 45.00, icone: 'fa-key' }
+  { id: 'item-1', nome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', unidade: 'Unidade', saldoAtual: 10, estoqueMinimo: 4, localizacao: 'Setor Móveis - Pavilhão A', custoUnitario: 580.00, icone: 'fa-bed', fotoUrl: FOTOS_PRODUTOS_MAP['Beliche Metálica Tubular Reforçada'] },
+  { id: 'item-2', nome: 'Colchão Solteiro Espuma D33 Antiácaro', categoria: 'Móveis & Equipamentos', unidade: 'Unidade', saldoAtual: 25, estoqueMinimo: 8, localizacao: 'Setor Móveis - Prateleira M1', custoUnitario: 240.00, icone: 'fa-mattress-pillow', fotoUrl: FOTOS_PRODUTOS_MAP['Colchão Solteiro Espuma D33 Antiácaro'] },
+  { id: 'item-3', nome: 'Ar-Condicionado Split 12.000 BTUs Frio', categoria: 'Móveis & Equipamentos', unidade: 'Unidade', saldoAtual: 8, estoqueMinimo: 3, localizacao: 'Setor Eletro - Box 02', custoUnitario: 1850.00, icone: 'fa-snowflake', fotoUrl: FOTOS_PRODUTOS_MAP['Ar-Condicionado Split 12.000 BTUs Frio'] },
+  { id: 'item-4', nome: 'Armário Metálico Vestiário 4 Portas c/ Chave', categoria: 'Móveis & Equipamentos', unidade: 'Unidade', saldoAtual: 12, estoqueMinimo: 4, localizacao: 'Setor Móveis - Pavilhão B', custoUnitario: 420.00, icone: 'fa-door-closed', fotoUrl: FOTOS_PRODUTOS_MAP['Armário Metálico Vestiário 4 Portas c/ Chave'] },
+  { id: 'item-5', nome: 'Geladeira Duplex Frost Free 380L', categoria: 'Móveis & Equipamentos', unidade: 'Unidade', saldoAtual: 3, estoqueMinimo: 2, localizacao: 'Setor Eletro - Box 01', custoUnitario: 2600.00, icone: 'fa-refrigerator', fotoUrl: FOTOS_PRODUTOS_MAP['Geladeira Duplex Frost Free 380L'] },
+  { id: 'item-6', nome: 'Mesa de Refeição 6 Lugares c/ Cadeiras', categoria: 'Móveis & Equipamentos', unidade: 'Unidade', saldoAtual: 4, estoqueMinimo: 2, localizacao: 'Setor Móveis - Pavilhão C', custoUnitario: 650.00, icone: 'fa-table', fotoUrl: FOTOS_PRODUTOS_MAP['Mesa de Refeição 6 Lugares c/ Cadeiras'] },
+  { id: 'item-7', nome: 'Desinfetante Concentrado Pinho 5 Litros (Caixa c/ 4)', categoria: 'Produtos de Limpeza', unidade: 'Caixa', saldoAtual: 40, estoqueMinimo: 10, localizacao: 'Depósito Químicos - Prateleira C', custoUnitario: 54.00, icone: 'fa-spray-can-sparkles', fotoUrl: FOTOS_PRODUTOS_MAP['Desinfetante Concentrado Pinho 5 Litros (Caixa c/ 4)'] },
+  { id: 'item-8', nome: 'Papel Higiênico Folha Dupla (Fardo c/ 64 rolos)', categoria: 'Produtos de Limpeza', unidade: 'Fardo', saldoAtual: 60, estoqueMinimo: 15, localizacao: 'Pallet 01 - Almox Central', custoUnitario: 78.00, icone: 'fa-toilet-paper', fotoUrl: FOTOS_PRODUTOS_MAP['Papel Higiênico Folha Dupla (Fardo c/ 64 rolos)'] },
+  { id: 'item-9', nome: 'Água Sanitária 5 Litros (Galão)', categoria: 'Produtos de Limpeza', unidade: 'Galão', saldoAtual: 15, estoqueMinimo: 8, localizacao: 'Depósito Químicos - Prateleira B', custoUnitario: 16.50, icone: 'fa-bottle-droplet', fotoUrl: FOTOS_PRODUTOS_MAP['Água Sanitária 5 Litros (Galão)'] },
+  { id: 'item-10', nome: 'Vassoura de Piaçava c/ Cabo Reforçado', categoria: 'Produtos de Limpeza', unidade: 'Unidade', saldoAtual: 20, estoqueMinimo: 6, localizacao: 'Suporte Utilitários', custoUnitario: 18.00, icone: 'fa-broom', fotoUrl: FOTOS_PRODUTOS_MAP['Vassoura de Piaçava c/ Cabo Reforçado'] },
+  { id: 'item-11', nome: 'Saco de Lixo Reforçado 100L (Pacote c/ 100)', categoria: 'Produtos de Limpeza', unidade: 'Pacote', saldoAtual: 18, estoqueMinimo: 5, localizacao: 'Prateleira Limpeza A', custoUnitario: 42.00, icone: 'fa-trash-can', fotoUrl: FOTOS_PRODUTOS_MAP['Saco de Lixo Reforçado 100L (Pacote c/ 100)'] },
+  { id: 'item-12', nome: 'Travesseiro Alojamento c/ Capa Impermeável', categoria: 'Kits e Enxoval', unidade: 'Unidade', saldoAtual: 30, estoqueMinimo: 10, localizacao: 'Armário Têxtil 01', custoUnitario: 32.00, icone: 'fa-bed', fotoUrl: FOTOS_PRODUTOS_MAP['Travesseiro Alojamento c/ Capa Impermeável'] },
+  { id: 'item-13', nome: 'Lençol Solteiro com Elástico Percal', categoria: 'Kits e Enxoval', unidade: 'Unidade', saldoAtual: 50, estoqueMinimo: 15, localizacao: 'Armário Têxtil 02', custoUnitario: 28.00, icone: 'fa-rug', fotoUrl: FOTOS_PRODUTOS_MAP['Lençol Solteiro com Elástico Percal'] },
+  { id: 'item-14', nome: 'Lâmpada LED 15W Bivolt E27', categoria: 'Manutenção Rápida', unidade: 'Unidade', saldoAtual: 50, estoqueMinimo: 15, localizacao: 'Gaveteiro Elétrica - Gaveta 1', custoUnitario: 9.50, icone: 'fa-lightbulb', fotoUrl: FOTOS_PRODUTOS_MAP['Lâmpada LED 15W Bivolt E27'] },
+  { id: 'item-15', nome: 'Chuveiro Elétrico 220V 5500W Blindado', categoria: 'Manutenção Rápida', unidade: 'Unidade', saldoAtual: 20, estoqueMinimo: 5, localizacao: 'Setor Hidráulica - Prateleira H', custoUnitario: 75.00, icone: 'fa-shower', fotoUrl: FOTOS_PRODUTOS_MAP['Chuveiro Elétrico 220V 5500W Blindado'] },
+  { id: 'item-16', nome: 'Fechadura Tubular para Porta com Chave', categoria: 'Manutenção Rápida', unidade: 'Unidade', saldoAtual: 12, estoqueMinimo: 4, localizacao: 'Gaveteiro Almoxarife - Gaveta 3', custoUnitario: 45.00, icone: 'fa-key', fotoUrl: FOTOS_PRODUTOS_MAP['Fechadura Tubular para Porta com Chave'] }
 ];
 
 const SEEDS_CASAS = [
@@ -73,7 +131,8 @@ const SEEDS_CASAS = [
     responsavelTelefone: '(11) 98765-4321',
     responsavelQuarto: 'Quarto 01 - Cama A',
     dataCautela: '2026-09-10',
-    observacoes: 'Alojamento da equipe de alvenaria e blocagem estrutural.'
+    observacoes: 'Alojamento da equipe de alvenaria e blocagem estrutural.',
+    fotoUrl: FOTOS_CASAS_MAP['casa-1']
   },
   {
     id: 'casa-2',
@@ -87,7 +146,8 @@ const SEEDS_CASAS = [
     responsavelTelefone: '(21) 99887-1122',
     responsavelQuarto: 'Quarto 01 - Cama B',
     dataCautela: '2026-09-12',
-    observacoes: 'Equipe de armação pesada e carpinteiros.'
+    observacoes: 'Equipe de armação pesada e carpinteiros.',
+    fotoUrl: FOTOS_CASAS_MAP['casa-2']
   },
   {
     id: 'casa-3',
@@ -101,7 +161,8 @@ const SEEDS_CASAS = [
     responsavelTelefone: '(31) 97123-4567',
     responsavelQuarto: 'Quarto 02 - Cama A',
     dataCautela: '2026-09-15',
-    observacoes: 'Equipe técnica de instalações elétricas e sanitárias.'
+    observacoes: 'Equipe técnica de instalações elétricas e sanitárias.',
+    fotoUrl: FOTOS_CASAS_MAP['casa-3']
   },
   {
     id: 'casa-4',
@@ -115,33 +176,34 @@ const SEEDS_CASAS = [
     responsavelTelefone: '(41) 98456-7890',
     responsavelQuarto: 'Quarto 01 - Cama A',
     dataCautela: '2026-09-18',
-    observacoes: 'Possui 2 vagas livres disponíveis para novos alojados.'
+    observacoes: 'Possui 2 vagas livres disponíveis para novos alojados.',
+    fotoUrl: FOTOS_CASAS_MAP['casa-4']
   }
 ];
 
 const SEEDS_CASA_MOVEIS = [
-  { id: 'cm-1', casaId: 'casa-1', itemNome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', quantidade: 4, estado: 'Bom', patrimonio: 'PAT-C01-01', observacoes: 'Beliches completas com escada' },
-  { id: 'cm-2', casaId: 'casa-1', itemNome: 'Colchão Solteiro Espuma D33 Antiácaro', categoria: 'Móveis & Equipamentos', quantidade: 8, estado: 'Bom', patrimonio: 'PAT-C01-02', observacoes: 'Com capas impermeáveis' },
-  { id: 'cm-3', casaId: 'casa-1', itemNome: 'Armário Metálico Vestiário 4 Portas c/ Chave', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C01-03', observacoes: 'Com todas as chaves' },
-  { id: 'cm-4', casaId: 'casa-1', itemNome: 'Geladeira Duplex Frost Free 380L', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Bom', patrimonio: 'PAT-C01-04', observacoes: 'Cozinha da casa 01' },
-  { id: 'cm-5', casaId: 'casa-1', itemNome: 'Ar-Condicionado Split 12.000 BTUs Frio', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C01-05', observacoes: '1 no Quarto A, 1 no Quarto B' },
-  { id: 'cm-6', casaId: 'casa-1', itemNome: 'Mesa de Refeição 6 Lugares c/ Cadeiras', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Regular', patrimonio: 'PAT-C01-06', observacoes: '2 cadeiras com desgaste' },
+  { id: 'cm-1', casaId: 'casa-1', itemNome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', quantidade: 4, estado: 'Bom', patrimonio: 'PAT-C01-01', observacoes: 'Beliches completas com escada', fotoUrl: FOTOS_PRODUTOS_MAP['Beliche Metálica Tubular Reforçada'] },
+  { id: 'cm-2', casaId: 'casa-1', itemNome: 'Colchão Solteiro Espuma D33 Antiácaro', categoria: 'Móveis & Equipamentos', quantidade: 8, estado: 'Bom', patrimonio: 'PAT-C01-02', observacoes: 'Com capas impermeáveis', fotoUrl: FOTOS_PRODUTOS_MAP['Colchão Solteiro Espuma D33 Antiácaro'] },
+  { id: 'cm-3', casaId: 'casa-1', itemNome: 'Armário Metálico Vestiário 4 Portas c/ Chave', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C01-03', observacoes: 'Com todas as chaves', fotoUrl: FOTOS_PRODUTOS_MAP['Armário Metálico Vestiário 4 Portas c/ Chave'] },
+  { id: 'cm-4', casaId: 'casa-1', itemNome: 'Geladeira Duplex Frost Free 380L', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Bom', patrimonio: 'PAT-C01-04', observacoes: 'Cozinha da casa 01', fotoUrl: FOTOS_PRODUTOS_MAP['Geladeira Duplex Frost Free 380L'] },
+  { id: 'cm-5', casaId: 'casa-1', itemNome: 'Ar-Condicionado Split 12.000 BTUs Frio', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C01-05', observacoes: '1 no Quarto A, 1 no Quarto B', fotoUrl: FOTOS_PRODUTOS_MAP['Ar-Condicionado Split 12.000 BTUs Frio'] },
+  { id: 'cm-6', casaId: 'casa-1', itemNome: 'Mesa de Refeição 6 Lugares c/ Cadeiras', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Regular', patrimonio: 'PAT-C01-06', observacoes: '2 cadeiras com desgaste', fotoUrl: FOTOS_PRODUTOS_MAP['Mesa de Refeição 6 Lugares c/ Cadeiras'] },
 
-  { id: 'cm-7', casaId: 'casa-2', itemNome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', quantidade: 3, estado: 'Bom', patrimonio: 'PAT-C02-01', observacoes: 'Em perfeito estado' },
-  { id: 'cm-8', casaId: 'casa-2', itemNome: 'Colchão Solteiro Espuma D33 Antiácaro', categoria: 'Móveis & Equipamentos', quantidade: 6, estado: 'Bom', patrimonio: 'PAT-C02-02', observacoes: 'Higienizados' },
-  { id: 'cm-9', casaId: 'casa-2', itemNome: 'Armário Metálico Vestiário 4 Portas c/ Chave', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C02-03', observacoes: 'Trancas funcionando' },
-  { id: 'cm-10', casaId: 'casa-2', itemNome: 'Geladeira Duplex Frost Free 380L', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Bom', patrimonio: 'PAT-C02-04', observacoes: 'Funcionando 100%' },
-  { id: 'cm-11', casaId: 'casa-2', itemNome: 'Ar-Condicionado Split 12.000 BTUs Frio', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Danificado - Solicitar Troca', patrimonio: 'PAT-C02-05', observacoes: 'Compressor parou de gelar no Quarto 01 - Troca urgente solicitada' },
+  { id: 'cm-7', casaId: 'casa-2', itemNome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', quantidade: 3, estado: 'Bom', patrimonio: 'PAT-C02-01', observacoes: 'Em perfeito estado', fotoUrl: FOTOS_PRODUTOS_MAP['Beliche Metálica Tubular Reforçada'] },
+  { id: 'cm-8', casaId: 'casa-2', itemNome: 'Colchão Solteiro Espuma D33 Antiácaro', categoria: 'Móveis & Equipamentos', quantidade: 6, estado: 'Bom', patrimonio: 'PAT-C02-02', observacoes: 'Higienizados', fotoUrl: FOTOS_PRODUTOS_MAP['Colchão Solteiro Espuma D33 Antiácaro'] },
+  { id: 'cm-9', casaId: 'casa-2', itemNome: 'Armário Metálico Vestiário 4 Portas c/ Chave', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C02-03', observacoes: 'Trancas funcionando', fotoUrl: FOTOS_PRODUTOS_MAP['Armário Metálico Vestiário 4 Portas c/ Chave'] },
+  { id: 'cm-10', casaId: 'casa-2', itemNome: 'Geladeira Duplex Frost Free 380L', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Bom', patrimonio: 'PAT-C02-04', observacoes: 'Funcionando 100%', fotoUrl: FOTOS_PRODUTOS_MAP['Geladeira Duplex Frost Free 380L'] },
+  { id: 'cm-11', casaId: 'casa-2', itemNome: 'Ar-Condicionado Split 12.000 BTUs Frio', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Danificado - Solicitar Troca', patrimonio: 'PAT-C02-05', observacoes: 'Compressor parou de gelar no Quarto 01 - Troca urgente solicitada', fotoUrl: FOTOS_PRODUTOS_MAP['Ar-Condicionado Split 12.000 BTUs Frio'] },
 
-  { id: 'cm-12', casaId: 'casa-3', itemNome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', quantidade: 3, estado: 'Novo', patrimonio: 'PAT-C03-01', observacoes: 'Lote novo instalado em Setembro' },
-  { id: 'cm-13', casaId: 'casa-3', itemNome: 'Colchão Solteiro Espuma D33 Antiácaro', categoria: 'Móveis & Equipamentos', quantidade: 6, estado: 'Novo', patrimonio: 'PAT-C03-02', observacoes: 'Novos lacrados' },
-  { id: 'cm-14', casaId: 'casa-3', itemNome: 'Armário Metálico Vestiário 4 Portas c/ Chave', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C03-03', observacoes: 'Pintura epóxi intacta' },
-  { id: 'cm-15', casaId: 'casa-3', itemNome: 'Geladeira Duplex Frost Free 380L', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Regular', patrimonio: 'PAT-C03-04', observacoes: 'Borracha da porta superior' },
+  { id: 'cm-12', casaId: 'casa-3', itemNome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', quantidade: 3, estado: 'Novo', patrimonio: 'PAT-C03-01', observacoes: 'Lote novo instalado em Setembro', fotoUrl: FOTOS_PRODUTOS_MAP['Beliche Metálica Tubular Reforçada'] },
+  { id: 'cm-13', casaId: 'casa-3', itemNome: 'Colchão Solteiro Espuma D33 Antiácaro', categoria: 'Móveis & Equipamentos', quantidade: 6, estado: 'Novo', patrimonio: 'PAT-C03-02', observacoes: 'Novos lacrados', fotoUrl: FOTOS_PRODUTOS_MAP['Colchão Solteiro Espuma D33 Antiácaro'] },
+  { id: 'cm-14', casaId: 'casa-3', itemNome: 'Armário Metálico Vestiário 4 Portas c/ Chave', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C03-03', observacoes: 'Pintura epóxi intacta', fotoUrl: FOTOS_PRODUTOS_MAP['Armário Metálico Vestiário 4 Portas c/ Chave'] },
+  { id: 'cm-15', casaId: 'casa-3', itemNome: 'Geladeira Duplex Frost Free 380L', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Regular', patrimonio: 'PAT-C03-04', observacoes: 'Borracha da porta superior', fotoUrl: FOTOS_PRODUTOS_MAP['Geladeira Duplex Frost Free 380L'] },
 
-  { id: 'cm-16', casaId: 'casa-4', itemNome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C04-01', observacoes: 'Estrutura firme' },
-  { id: 'cm-17', casaId: 'casa-4', itemNome: 'Colchão Solteiro Espuma D33 Antiácaro', categoria: 'Móveis & Equipamentos', quantidade: 4, estado: 'Bom', patrimonio: 'PAT-C04-02', observacoes: 'Ensacados com capa' },
-  { id: 'cm-18', casaId: 'casa-4', itemNome: 'Armário Metálico Vestiário 4 Portas c/ Chave', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Bom', patrimonio: 'PAT-C04-03', observacoes: '4 portas com chave' },
-  { id: 'cm-19', casaId: 'casa-4', itemNome: 'Ar-Condicionado Split 12.000 BTUs Frio', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Regular', patrimonio: 'PAT-C04-04', observacoes: 'Filtro limpo recentemente' }
+  { id: 'cm-16', casaId: 'casa-4', itemNome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C04-01', observacoes: 'Estrutura firme', fotoUrl: FOTOS_PRODUTOS_MAP['Beliche Metálica Tubular Reforçada'] },
+  { id: 'cm-17', casaId: 'casa-4', itemNome: 'Colchão Solteiro Espuma D33 Antiácaro', categoria: 'Móveis & Equipamentos', quantidade: 4, estado: 'Bom', patrimonio: 'PAT-C04-02', observacoes: 'Ensacados com capa', fotoUrl: FOTOS_PRODUTOS_MAP['Colchão Solteiro Espuma D33 Antiácaro'] },
+  { id: 'cm-18', casaId: 'casa-4', itemNome: 'Armário Metálico Vestiário 4 Portas c/ Chave', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Bom', patrimonio: 'PAT-C04-03', observacoes: '4 portas com chave', fotoUrl: FOTOS_PRODUTOS_MAP['Armário Metálico Vestiário 4 Portas c/ Chave'] },
+  { id: 'cm-19', casaId: 'casa-4', itemNome: 'Ar-Condicionado Split 12.000 BTUs Frio', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Regular', patrimonio: 'PAT-C04-04', observacoes: 'Filtro limpo recentemente', fotoUrl: FOTOS_PRODUTOS_MAP['Ar-Condicionado Split 12.000 BTUs Frio'] }
 ];
 
 const SEEDS_CASA_ENTREGAS = [
@@ -361,7 +423,8 @@ async function inicializarTursoSeDisponivel() {
           id: r.id, nome: r.nome, categoria: r.categoria, unidade: r.unidade,
           saldoAtual: Number(r.saldo_atual) || 0, estoqueMinimo: Number(r.estoque_minimo) || 0,
           localizacao: r.localizacao || '', custoUnitario: Number(r.custo_unitario) || 0,
-          icone: r.icone || 'fa-box'
+          icone: r.icone || 'fa-box',
+          fotoUrl: getFotoProduto(r.nome, r.foto_url)
         }));
       }
 
@@ -371,7 +434,8 @@ async function inicializarTursoSeDisponivel() {
           moradoresAtuais: Number(r.moradores_atuais) || 0, status: r.status,
           responsavelNome: r.responsavel_nome, responsavelEmpresa: r.responsavel_empresa,
           responsavelTelefone: r.responsavel_telefone, responsavelQuarto: r.responsavel_quarto,
-          dataCautela: r.data_cautela, observacoes: r.observacoes
+          dataCautela: r.data_cautela, observacoes: r.observacoes,
+          fotoUrl: getFotoCasa(r.id, r.foto_url)
         }));
       }
 
@@ -379,7 +443,8 @@ async function inicializarTursoSeDisponivel() {
         appState.casaMoveis = cm.map(r => ({
           id: r.id, casaId: r.casa_id, itemNome: r.item_nome, categoria: r.categoria,
           quantidade: Number(r.quantidade) || 1, estado: r.estado, patrimonio: r.patrimonio,
-          observacoes: r.observacoes
+          observacoes: r.observacoes,
+          fotoUrl: getFotoProduto(r.item_nome, r.foto_url)
         }));
       }
 
@@ -445,23 +510,23 @@ async function sincronizarTudoTurso() {
     const reqs = [];
     appState.galpao.forEach(i => {
       reqs.push({
-        sql: `INSERT OR REPLACE INTO galpao_itens (id, nome, categoria, unidade, saldo_atual, estoque_minimo, localizacao, custo_unitario, icone, data_cadastro)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        args: [i.id, i.nome, i.categoria, i.unidade, i.saldoAtual, i.estoqueMinimo, i.localizacao, i.custoUnitario, i.icone || 'fa-box', new Date().toISOString()]
+        sql: `INSERT OR REPLACE INTO galpao_itens (id, nome, categoria, unidade, saldo_atual, estoque_minimo, localizacao, custo_unitario, icone, foto_url, data_cadastro)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        args: [i.id, i.nome, i.categoria, i.unidade, i.saldoAtual, i.estoqueMinimo, i.localizacao, i.custoUnitario, i.icone || 'fa-box', i.fotoUrl || '', new Date().toISOString()]
       });
     });
     appState.casas.forEach(c => {
       reqs.push({
-        sql: `INSERT OR REPLACE INTO casas (id, nome, bloco, capacidade, moradores_atuais, status, responsavel_nome, responsavel_empresa, responsavel_telefone, responsavel_quarto, data_cautela, observacoes)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        args: [c.id, c.nome, c.bloco, c.capacidade, c.moradoresAtuais, c.status, c.responsavelNome, c.responsavelEmpresa, c.responsavelTelefone, c.responsavelQuarto, c.dataCautela, c.observacoes]
+        sql: `INSERT OR REPLACE INTO casas (id, nome, bloco, capacidade, moradores_atuais, status, responsavel_nome, responsavel_empresa, responsavel_telefone, responsavel_quarto, data_cautela, observacoes, foto_url)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        args: [c.id, c.nome, c.bloco, c.capacidade, c.moradoresAtuais, c.status, c.responsavelNome, c.responsavelEmpresa, c.responsavelTelefone, c.responsavelQuarto, c.dataCautela, c.observacoes, c.fotoUrl || '']
       });
     });
     appState.casaMoveis.forEach(m => {
       reqs.push({
-        sql: `INSERT OR REPLACE INTO casa_moveis (id, casa_id, item_nome, categoria, quantidade, estado, patrimonio, observacoes)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        args: [m.id, m.casaId, m.itemNome, m.categoria, m.quantidade, m.estado, m.patrimonio, m.observacoes]
+        sql: `INSERT OR REPLACE INTO casa_moveis (id, casa_id, item_nome, categoria, quantidade, estado, patrimonio, observacoes, foto_url)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        args: [m.id, m.casaId, m.itemNome, m.categoria, m.quantidade, m.estado, m.patrimonio, m.observacoes, m.fotoUrl || '']
       });
     });
     if (reqs.length > 0) {
@@ -664,12 +729,17 @@ function renderUltimasMovimentacoes() {
     const isSubst = m.tipo === 'SUBSTITUICAO';
     const cor = isEntrada ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' : (isSubst ? 'text-blue-400 bg-blue-500/10 border-blue-500/30' : 'text-amber-400 bg-amber-500/10 border-amber-500/30');
     const icone = isEntrada ? 'fa-plus' : (isSubst ? 'fa-arrows-rotate' : 'fa-truck-ramp-box');
+    const fotoMov = getFotoProduto(m.itemNome);
 
     return `
       <div class="py-3 px-2 flex items-center justify-between hover:bg-slate-800/40 rounded-xl transition">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-xl ${cor} border flex items-center justify-center text-sm shrink-0">
-            <i class="fa-solid ${icone}"></i>
+          <div class="w-10 h-10 rounded-xl overflow-hidden bg-slate-900 border ${cor} flex items-center justify-center text-sm shrink-0 relative">
+            ${fotoMov ? `
+              <img src="${fotoMov}" alt="${m.itemNome}" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition" onclick="abrirFotoZoom('${fotoMov}', '${m.itemNome.replace(/'/g, "\\'")}')">
+            ` : `
+              <i class="fa-solid ${icone}"></i>
+            `}
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -740,6 +810,7 @@ function renderCasas() {
     const moveisCasa = appState.casaMoveis.filter(m => m.casaId === casa.id);
     const totalPecasMoveis = moveisCasa.reduce((a, b) => a + (Number(b.quantidade) || 0), 0);
     const temDano = moveisCasa.some(m => m.estado && m.estado.includes('Danificado'));
+    const fotoCasaFinal = getFotoCasa(casa.id, casa.fotoUrl);
 
     // Percentual de ocupação
     const cap = Number(casa.capacidade) || 1;
@@ -752,28 +823,36 @@ function renderCasas() {
     return `
       <div class="bg-[#151f32] border ${temDano ? 'border-rose-500/70 shadow-rose-950/20' : 'border-[#23324d] hover:border-amber-500/50'} rounded-2xl p-4 flex flex-col justify-between transition group shadow-xl">
         <div>
-          <!-- Topo do Card da Casa -->
-          <div class="flex items-start justify-between gap-2 mb-2">
-            <div>
-              <span class="text-[11px] font-bold text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded-md border border-slate-700/60">
+          <!-- Foto da Fachada / Alojamento com Badges -->
+          <div class="relative w-full h-32 mb-3 rounded-xl overflow-hidden bg-slate-900 border border-slate-800/80 group-hover:border-amber-500/40 transition">
+            ${fotoCasaFinal ? `
+              <img src="${fotoCasaFinal}" alt="${casa.nome}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300 cursor-pointer" onclick="abrirFotoZoom('${fotoCasaFinal}', '${casa.nome.replace(/'/g, "\\'")}')">
+            ` : `
+              <div class="w-full h-full flex flex-col items-center justify-center text-slate-600 gap-1 bg-gradient-to-b from-slate-900 to-slate-950">
+                <i class="fa-solid fa-house-chimney text-3xl text-amber-500/40"></i>
+              </div>
+            `}
+            <div class="absolute top-2 left-2">
+              <span class="text-[11px] font-bold text-slate-200 bg-black/75 px-2 py-0.5 rounded-md border border-white/20 backdrop-blur-sm">
                 ${casa.bloco || 'Alojamento'}
               </span>
-              <h3 class="text-lg font-bold text-white group-hover:text-amber-400 transition mt-1">
-                ${casa.nome}
-              </h3>
             </div>
-            <div class="flex flex-col items-end gap-1">
-              <span class="inline-flex items-center gap-1.5 text-xs px-2.5 py-0.5 rounded-full font-bold border ${casa.status === 'Ocupada' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-blue-500/10 text-blue-400 border-blue-500/30'}">
+            <div class="absolute top-2 right-2 flex flex-col items-end gap-1">
+              <span class="inline-flex items-center gap-1.5 text-xs px-2.5 py-0.5 rounded-full font-bold border backdrop-blur-md ${casa.status === 'Ocupada' ? 'bg-emerald-950/80 text-emerald-400 border-emerald-500/40' : 'bg-blue-950/80 text-blue-400 border-blue-500/40'}">
                 <span class="w-1.5 h-1.5 rounded-full ${casa.status === 'Ocupada' ? 'bg-emerald-500' : 'bg-blue-500'}"></span>
                 ${casa.status}
               </span>
               ${temDano ? `
-                <span class="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse">
+                <span class="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full font-bold bg-rose-950/90 text-rose-300 border border-rose-500/50 backdrop-blur-md animate-pulse">
                   <i class="fa-solid fa-triangle-exclamation"></i> Móvel Danificado
                 </span>
               ` : ''}
             </div>
           </div>
+
+          <h3 class="text-base font-bold text-white group-hover:text-amber-400 transition mb-2">
+            ${casa.nome}
+          </h3>
 
           <!-- Responsável Nominal -->
           <div class="p-3 bg-slate-900/80 rounded-xl border border-slate-800/80 my-2 space-y-1">
@@ -892,12 +971,19 @@ function renderDossieMoveis() {
     let corEstado = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
     if (m.estado === 'Regular') corEstado = 'bg-amber-500/10 text-amber-400 border-amber-500/30';
     if (isDanificado) corEstado = 'bg-rose-500/20 text-rose-300 border-rose-500/50 font-bold animate-pulse';
+    const fotoMovel = getFotoProduto(m.itemNome, m.fotoUrl);
 
     return `
       <div class="p-3.5 bg-slate-900/90 ${isDanificado ? 'border-2 border-rose-500/60' : 'border border-slate-800'} rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl ${isDanificado ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-800 text-amber-400'} flex items-center justify-center text-lg shrink-0">
-            <i class="fa-solid fa-couch"></i>
+          <div class="w-14 h-14 rounded-xl overflow-hidden bg-slate-950 border ${isDanificado ? 'border-rose-500/60' : 'border-slate-800'} flex items-center justify-center shrink-0 relative group/img">
+            ${fotoMovel ? `
+              <img src="${fotoMovel}" alt="${m.itemNome}" loading="lazy" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition" onclick="abrirFotoZoom('${fotoMovel}', '${m.itemNome.replace(/'/g, "\\'")}')">
+            ` : `
+              <div class="w-full h-full ${isDanificado ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-800 text-amber-400'} flex items-center justify-center text-lg">
+                <i class="fa-solid fa-couch"></i>
+              </div>
+            `}
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -952,21 +1038,35 @@ function renderDossieEntregas() {
     return;
   }
 
-  container.innerHTML = entregas.map(e => `
-    <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center justify-between text-xs">
-      <div>
-        <h4 class="font-bold text-white text-sm">${e.itemNome}</h4>
-        <p class="text-slate-400 mt-0.5">
-          <span>Recebido por: <strong class="text-slate-200">${e.responsavelRecebimento || '-'}</strong></span> • 
-          <span>${formatarDataHora(e.dataEntrega)}</span>
-        </p>
-        ${e.observacoes ? `<p class="text-slate-500 italic mt-0.5">"${e.observacoes}"</p>` : ''}
+  container.innerHTML = entregas.map(e => {
+    const fotoEntrega = getFotoProduto(e.itemNome);
+    return `
+      <div class="p-3 bg-slate-900/80 border border-slate-800 rounded-xl flex items-center justify-between text-xs">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-lg overflow-hidden bg-slate-950 border border-slate-800 shrink-0 flex items-center justify-center relative">
+            ${fotoEntrega ? `
+              <img src="${fotoEntrega}" alt="${e.itemNome}" loading="lazy" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition" onclick="abrirFotoZoom('${fotoEntrega}', '${e.itemNome.replace(/'/g, "\\'")}')">
+            ` : `
+              <div class="w-full h-full bg-slate-800 text-amber-400 flex items-center justify-center text-sm">
+                <i class="fa-solid fa-box"></i>
+              </div>
+            `}
+          </div>
+          <div>
+            <h4 class="font-bold text-white text-sm">${e.itemNome}</h4>
+            <p class="text-slate-400 mt-0.5">
+              <span>Recebido por: <strong class="text-slate-200">${e.responsavelRecebimento || '-'}</strong></span> • 
+              <span>${formatarDataHora(e.dataEntrega)}</span>
+            </p>
+            ${e.observacoes ? `<p class="text-slate-500 italic mt-0.5">"${e.observacoes}"</p>` : ''}
+          </div>
+        </div>
+        <div class="text-right">
+          <span class="font-bold text-amber-400 text-sm">${e.quantidade} ${e.unidade || 'un'}</span>
+        </div>
       </div>
-      <div class="text-right">
-        <span class="font-bold text-amber-400 text-sm">${e.quantidade} ${e.unidade || 'un'}</span>
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 // ==========================================
@@ -1165,28 +1265,36 @@ function renderGalpao() {
       statusTxt = 'Alerta Baixo';
     }
 
+    const fotoItem = getFotoProduto(item.nome, item.fotoUrl);
     const valorItemTotal = (saldo * (Number(item.custoUnitario) || 0)).toFixed(2);
 
     return `
-      <div class="bg-[#151f32] border border-[#23324d] hover:border-slate-600 rounded-2xl p-4 flex flex-col justify-between transition group shadow-lg">
+      <div class="bg-[#151f32] border border-[#23324d] hover:border-slate-600 rounded-2xl p-3 sm:p-4 flex flex-col justify-between transition group shadow-lg">
         <div>
-          <div class="flex items-start justify-between gap-2 mb-2">
-            <span class="text-[11px] font-semibold text-slate-400 bg-slate-800 px-2 py-0.5 rounded-md truncate">
-              ${item.categoria || 'Geral'}
-            </span>
-            <span class="text-[11px] px-2 py-0.5 rounded-full font-bold border ${badgeCor}">
-              ${statusTxt}
-            </span>
+          <!-- Foto do Produto com Badge de Status -->
+          <div class="relative w-full h-36 mb-3 rounded-xl overflow-hidden bg-slate-900 border border-slate-800/80 group-hover:border-amber-500/40 transition">
+            ${fotoItem ? `
+              <img src="${fotoItem}" alt="${item.nome}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300 cursor-pointer" onclick="abrirFotoZoom('${fotoItem}', '${item.nome.replace(/'/g, "\\'")}')">
+            ` : `
+              <div class="w-full h-full flex flex-col items-center justify-center text-slate-600 gap-1 bg-gradient-to-b from-slate-900 to-slate-950">
+                <i class="fa-solid ${item.icone || 'fa-box'} text-3xl text-amber-500/40"></i>
+              </div>
+            `}
+            <div class="absolute top-2 right-2">
+              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold border ${badgeCor} backdrop-blur-md shadow-md">
+                ${statusTxt}
+              </span>
+            </div>
+            <div class="absolute bottom-2 left-2 max-w-[85%]">
+              <span class="text-[10px] font-semibold text-slate-200 bg-black/75 px-2 py-0.5 rounded backdrop-blur-md border border-white/10 truncate block">
+                ${item.categoria || 'Geral'}
+              </span>
+            </div>
           </div>
 
-          <div class="flex items-center gap-2.5 my-1">
-            <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-sm shrink-0">
-              <i class="fa-solid ${item.icone || 'fa-box'}"></i>
-            </div>
-            <h3 class="text-sm font-bold text-white group-hover:text-amber-400 transition leading-snug">
-              ${item.nome}
-            </h3>
-          </div>
+          <h3 class="text-sm font-bold text-white group-hover:text-amber-400 transition leading-snug line-clamp-2 min-h-[2.5rem]">
+            ${item.nome}
+          </h3>
 
           <p class="text-xs text-slate-400 flex items-center gap-1.5 mt-1.5">
             <i class="fa-solid fa-location-dot text-slate-500"></i>
@@ -1567,9 +1675,13 @@ function salvarCasa(e) {
       casaAlvo.responsavelEmpresa = respEmp;
       casaAlvo.responsavelTelefone = respTel;
       casaAlvo.responsavelQuarto = respQuarto;
+      if (document.getElementById('casa-foto')?.value.trim()) {
+        casaAlvo.fotoUrl = document.getElementById('casa-foto').value.trim();
+      }
       mostrarToast(`Casa "${nome}" atualizada com sucesso!`, 'success');
     }
   } else {
+    const fotoInput = document.getElementById('casa-foto')?.value.trim();
     casaAlvo = {
       id: 'casa-' + Date.now(),
       nome: nome,
@@ -1582,7 +1694,8 @@ function salvarCasa(e) {
       responsavelTelefone: respTel,
       responsavelQuarto: respQuarto,
       dataCautela: new Date().toISOString().split('T')[0],
-      observacoes: ''
+      observacoes: '',
+      fotoUrl: fotoInput || getFotoCasa('casa-1')
     };
     appState.casas.push(casaAlvo);
     mostrarToast(`Nova casa "${nome}" cadastrada com sucesso!`, 'success');
@@ -1596,9 +1709,9 @@ function salvarCasa(e) {
   renderApp();
 
   if (appState.config.turso?.ativo && casaAlvo) {
-    executarTurso(`INSERT OR REPLACE INTO casas (id, nome, bloco, capacidade, moradores_atuais, status, responsavel_nome, responsavel_empresa, responsavel_telefone, responsavel_quarto, data_cautela, observacoes)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [casaAlvo.id, casaAlvo.nome, casaAlvo.bloco, casaAlvo.capacidade, casaAlvo.moradoresAtuais, casaAlvo.status, casaAlvo.responsavelNome, casaAlvo.responsavelEmpresa, casaAlvo.responsavelTelefone, casaAlvo.responsavelQuarto, casaAlvo.dataCautela, casaAlvo.observacoes || '']
+    executarTurso(`INSERT OR REPLACE INTO casas (id, nome, bloco, capacidade, moradores_atuais, status, responsavel_nome, responsavel_empresa, responsavel_telefone, responsavel_quarto, data_cautela, observacoes, foto_url)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [casaAlvo.id, casaAlvo.nome, casaAlvo.bloco, casaAlvo.capacidade, casaAlvo.moradoresAtuais, casaAlvo.status, casaAlvo.responsavelNome, casaAlvo.responsavelEmpresa, casaAlvo.responsavelTelefone, casaAlvo.responsavelQuarto, casaAlvo.dataCautela, casaAlvo.observacoes || '', casaAlvo.fotoUrl || '']
     ).catch(console.error);
   }
 }
@@ -1612,6 +1725,8 @@ function salvarNovoItemGalpao(e) {
   const saldoInicial = parseInt(document.getElementById('item-galpao-saldo').value, 10) || 0;
   const localizacao = document.getElementById('item-galpao-localizacao').value.trim();
   const custo = parseFloat(document.getElementById('item-galpao-custo').value) || 0;
+  const fotoInput = document.getElementById('item-galpao-foto')?.value.trim();
+  const fotoFinal = fotoInput || getFotoProduto(nome);
 
   const novoItem = {
     id: 'item-' + Date.now(),
@@ -1622,7 +1737,8 @@ function salvarNovoItemGalpao(e) {
     estoqueMinimo: estoqueMinimo,
     localizacao: localizacao,
     custoUnitario: custo,
-    icone: categoria === 'Móveis & Equipamentos' ? 'fa-couch' : (categoria === 'Produtos de Limpeza' ? 'fa-broom' : 'fa-box')
+    icone: categoria === 'Móveis & Equipamentos' ? 'fa-couch' : (categoria === 'Produtos de Limpeza' ? 'fa-broom' : 'fa-box'),
+    fotoUrl: fotoFinal
   };
 
   appState.galpao.push(novoItem);
@@ -1633,9 +1749,9 @@ function salvarNovoItemGalpao(e) {
   mostrarToast(`Item "${nome}" cadastrado no Galpão com sucesso!`, 'success');
 
   if (appState.config.turso?.ativo) {
-    executarTurso(`INSERT INTO galpao_itens (id, nome, categoria, unidade, saldo_atual, estoque_minimo, localizacao, custo_unitario, icone, data_cadastro)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [novoItem.id, novoItem.nome, novoItem.categoria, novoItem.unidade, novoItem.saldoAtual, novoItem.estoqueMinimo, novoItem.localizacao, novoItem.custoUnitario, novoItem.icone, new Date().toISOString()]
+    executarTurso(`INSERT INTO galpao_itens (id, nome, categoria, unidade, saldo_atual, estoque_minimo, localizacao, custo_unitario, icone, foto_url, data_cadastro)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [novoItem.id, novoItem.nome, novoItem.categoria, novoItem.unidade, novoItem.saldoAtual, novoItem.estoqueMinimo, novoItem.localizacao, novoItem.custoUnitario, novoItem.icone, novoItem.fotoUrl, new Date().toISOString()]
     ).catch(console.error);
   }
 }
@@ -1684,6 +1800,8 @@ function editarResponsavelCasaAtual() {
   document.getElementById('casa-resp-empresa').value = casa.responsavelEmpresa || '';
   document.getElementById('casa-resp-telefone').value = casa.responsavelTelefone || '';
   document.getElementById('casa-resp-quarto').value = casa.responsavelQuarto || '';
+  const campoFoto = document.getElementById('casa-foto');
+  if (campoFoto) campoFoto.value = casa.fotoUrl || '';
 
   document.getElementById('modal-casa-title').textContent = 'Editar Casa / Responsável';
   closeModal('modal-dossie-casa');
