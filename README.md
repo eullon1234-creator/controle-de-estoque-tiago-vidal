@@ -6,6 +6,18 @@
 
 ---
 
+## ⚡ Status Geral & Conexão do Sistema
+
+| Componente | Status | Detalhes & Infraestrutura |
+| :--- | :---: | :--- |
+| **Banco de Dados Cloud** | 🟢 **Conectado** | **Turso Database (LibSQL Cloud)** ativo com sincronização em nuvem e persistência contínua. |
+| **Modo Offline & Cache** | 🟢 **Ativo** | **PWA Offline-First** com fallback inteligente para `LocalStorage` e Service Worker (`sw.js`). |
+| **Deploy em Produção** | 🟢 **Online** | [Acessar no GitHub Pages](https://eullon1234-creator.github.io/controle-de-estoque-tiago-vidal/) com carregamento instantâneo. |
+| **Servidor Local** | 🟢 **Pronto** | Execução imediata via `iniciar.bat` ou `node server.js` (porta local `3000`). |
+| **Controle de Versão** | 🟢 **Sincronizado** | Repositório Git com branch `main` estável e atualizada. |
+
+---
+
 ## 🎯 Visão Geral do Sistema
 O **Canteiro PRO** é um aplicativo web progressivo (**PWA / Mobile-First**) moderno, de alto impacto visual e pronto para uso pelo **Prefeito da Obra / Gestor de Alojamentos**.
 
