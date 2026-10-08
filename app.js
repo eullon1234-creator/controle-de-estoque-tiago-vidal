@@ -227,6 +227,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   carregarDadosLocais();
   configurarDataTopo();
   configurarEventosRede();
+  configurarMascarasEValidacoes();
   renderApp();
   await inicializarTursoSeDisponivel();
 });
@@ -607,20 +608,144 @@ function renderUrgentBanner() {
   }
 }
 
+// ==========================================
+// MÁSCARAS & USABILIDADE ANTI-ERRO
+// ==========================================
+function formatarTelefone(valor) {
+  let v = (valor || '').replace(/\D/g, '');
+  if (v.length > 11) v = v.slice(0, 11);
+  if (v.length === 0) return '';
+  if (v.length <= 2) return `(${v}`;
+  if (v.length <= 6) return `(${v.slice(0, 2)}) ${v.slice(2)}`;
+  if (v.length <= 10) return `(${v.slice(0, 2)}) ${v.slice(2, 6)}-${v.slice(6)}`;
+  return `(${v.slice(0, 2)}) ${v.slice(2, 7)}-${v.slice(7)}`;
+}
+
+function configurarMascarasEValidacoes() {
+  const telInput = document.getElementById('casa-resp-telefone');
+  if (telInput) {
+    telInput.addEventListener('input', (e) => {
+      e.target.value = formatarTelefone(e.target.value);
+    });
+  }
+
+  const selCasas = document.getElementById('filtro-status-casas');
+  if (selCasas) {
+    selCasas.addEventListener('change', () => {
+      atualizarEstiloChipsCasas(selCasas.value);
+    });
+  }
+
+  const selStatusGalpao = document.getElementById('filtro-status-galpao');
+  const selCatGalpao = document.getElementById('filtro-categoria-galpao');
+  if (selStatusGalpao) {
+    selStatusGalpao.addEventListener('change', () => {
+      atualizarEstiloChipsGalpao();
+    });
+  }
+  if (selCatGalpao) {
+    selCatGalpao.addEventListener('change', () => {
+      atualizarEstiloChipsGalpao();
+    });
+  }
+}
+
+// CHIPS DE FILTRO - CASAS
+function setChipFiltroCasas(val) {
+  const sel = document.getElementById('filtro-status-casas');
+  if (sel) sel.value = val;
+  atualizarEstiloChipsCasas(val);
+  renderCasas();
+}
+
+function atualizarEstiloChipsCasas(valAtual) {
+  const chips = document.querySelectorAll('.chip-casas');
+  chips.forEach(btn => {
+    btn.className = 'chip-casas px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 font-medium whitespace-nowrap transition hover:border-amber-500/40 active:scale-95';
+  });
+
+  let activeId = 'chip-casas-todas';
+  if (valAtual === 'dano') activeId = 'chip-casas-dano';
+  else if (valAtual === 'Disponível') activeId = 'chip-casas-disponivel';
+  else if (valAtual === 'Ocupada') activeId = 'chip-casas-ocupada';
+
+  const activeBtn = document.getElementById(activeId);
+  if (activeBtn) {
+    if (activeId === 'chip-casas-dano') {
+      activeBtn.className = 'chip-casas px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/50 font-semibold whitespace-nowrap transition active:scale-95 flex items-center gap-1.5';
+    } else {
+      activeBtn.className = 'chip-casas px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 font-semibold whitespace-nowrap transition active:scale-95';
+    }
+  }
+}
+
 function filtrarCasasComDano() {
   switchTab('casas');
   const sel = document.getElementById('filtro-status-casas');
   if (sel) {
     sel.value = 'dano';
+    atualizarEstiloChipsCasas('dano');
     renderCasas();
+  }
+}
+
+// CHIPS DE FILTRO - GALPÃO
+function setChipFiltroGalpao(tipo, val) {
+  const selCat = document.getElementById('filtro-categoria-galpao');
+  const selSt = document.getElementById('filtro-status-galpao');
+
+  if (tipo === 'todos') {
+    if (selCat) selCat.value = '';
+    if (selSt) selSt.value = '';
+  } else if (tipo === 'status') {
+    if (selSt) selSt.value = val;
+    if (selCat) selCat.value = '';
+  } else if (tipo === 'cat') {
+    if (selCat) selCat.value = val;
+    if (selSt) selSt.value = '';
+  }
+
+  atualizarEstiloChipsGalpao();
+  renderGalpao();
+}
+
+function atualizarEstiloChipsGalpao() {
+  const selCat = document.getElementById('filtro-categoria-galpao');
+  const selSt = document.getElementById('filtro-status-galpao');
+  const catVal = selCat ? selCat.value : '';
+  const stVal = selSt ? selSt.value : '';
+
+  const chips = document.querySelectorAll('.chip-galpao');
+  chips.forEach(btn => {
+    btn.className = 'chip-galpao px-3 py-1.5 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 font-medium whitespace-nowrap transition hover:border-amber-500/40 active:scale-95';
+  });
+
+  let activeId = 'chip-galpao-todos';
+  if (stVal === 'critico') activeId = 'chip-galpao-critico';
+  else if (stVal === 'alerta') activeId = 'chip-galpao-alerta';
+  else if (catVal === 'Móveis & Equipamentos') activeId = 'chip-galpao-moveis';
+  else if (catVal === 'Produtos de Limpeza') activeId = 'chip-galpao-limpeza';
+  else if (catVal === 'Kits e Enxoval') activeId = 'chip-galpao-enxoval';
+  else if (catVal === 'Manutenção Rápida') activeId = 'chip-galpao-manutencao';
+
+  const activeBtn = document.getElementById(activeId);
+  if (activeBtn) {
+    if (activeId === 'chip-galpao-critico') {
+      activeBtn.className = 'chip-galpao px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/50 font-semibold whitespace-nowrap transition active:scale-95 flex items-center gap-1.5';
+    } else {
+      activeBtn.className = 'chip-galpao px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 font-semibold whitespace-nowrap transition active:scale-95';
+    }
   }
 }
 
 function filtrarGalpaoAlertas() {
   switchTab('galpao');
-  const sel = document.getElementById('filtro-status-galpao');
-  if (sel) {
-    sel.value = 'alerta';
+  const selCat = document.getElementById('filtro-categoria-galpao');
+  const selSt = document.getElementById('filtro-status-galpao');
+  if (selCat) selCat.value = '';
+  if (selSt) {
+    selSt.value = 'alerta';
+    atualizarEstiloChipsGalpao();
     renderGalpao();
   }
 }
@@ -1480,21 +1605,94 @@ function atualizarInfoItemEntrega() {
   const valSaldo = document.getElementById('entrega-saldo-val');
   const inputQtd = document.getElementById('entrega-quantidade');
   const secaoMovel = document.getElementById('secao-campos-movel');
+  const boxAtalhos = document.getElementById('box-atalhos-qtd-entrega');
 
   const item = appState.galpao.find(g => g.id === itemId);
   if (item) {
-    boxSaldo.classList.remove('hidden');
-    valSaldo.textContent = `${item.saldoAtual} ${item.unidade}`;
-    inputQtd.max = item.saldoAtual;
+    if (boxSaldo) boxSaldo.classList.remove('hidden');
+    if (boxAtalhos) boxAtalhos.classList.remove('hidden');
+    if (valSaldo) valSaldo.textContent = `${item.saldoAtual} ${item.unidade}`;
+    if (inputQtd) {
+      inputQtd.max = item.saldoAtual;
+      if (!inputQtd.value || parseInt(inputQtd.value, 10) === 0) {
+        inputQtd.value = item.saldoAtual > 0 ? 1 : 0;
+      }
+    }
 
     if (item.categoria === 'Móveis & Equipamentos') {
-      secaoMovel.classList.remove('hidden');
+      if (secaoMovel) secaoMovel.classList.remove('hidden');
     } else {
-      secaoMovel.classList.add('hidden');
+      if (secaoMovel) secaoMovel.classList.add('hidden');
     }
   } else {
-    boxSaldo.classList.add('hidden');
-    secaoMovel.classList.add('hidden');
+    if (boxSaldo) boxSaldo.classList.add('hidden');
+    if (boxAtalhos) boxAtalhos.classList.add('hidden');
+    if (secaoMovel) secaoMovel.classList.add('hidden');
+  }
+
+  validarQuantidadeEntrega();
+}
+
+function setQuantidadeEntrega(qtd) {
+  const itemId = document.getElementById('entrega-item-id')?.value;
+  const item = appState.galpao.find(g => g.id === itemId);
+  const inQtd = document.getElementById('entrega-quantidade');
+  if (!inQtd) return;
+
+  if (qtd === 'max') {
+    inQtd.value = item ? item.saldoAtual : 1;
+  } else {
+    const atual = parseInt(inQtd.value, 10) || 0;
+    const novaQtd = (inQtd.value === '' ? 0 : atual) + Number(qtd);
+    inQtd.value = item ? Math.min(novaQtd, item.saldoAtual) : novaQtd;
+  }
+  validarQuantidadeEntrega();
+}
+
+function validarQuantidadeEntrega() {
+  const itemId = document.getElementById('entrega-item-id')?.value;
+  const inQtd = document.getElementById('entrega-quantidade');
+  const alertaBox = document.getElementById('alerta-estoque-insuficiente');
+  const txtAlerta = document.getElementById('txt-alerta-estoque');
+  const btnSubmit = document.getElementById('btn-confirmar-entrega');
+
+  if (!inQtd || !itemId) return;
+
+  const item = appState.galpao.find(g => g.id === itemId);
+  if (!item) return;
+
+  const valor = parseInt(inQtd.value, 10);
+  const saldo = Number(item.saldoAtual) || 0;
+
+  if (isNaN(valor) || valor <= 0) {
+    if (alertaBox) alertaBox.classList.add('hidden');
+    inQtd.classList.remove('border-rose-500', 'text-rose-400');
+    if (btnSubmit) {
+      btnSubmit.disabled = false;
+      btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+    return;
+  }
+
+  if (valor > saldo) {
+    if (alertaBox) {
+      alertaBox.classList.remove('hidden');
+      if (txtAlerta) txtAlerta.textContent = `Atenção: Saldo insuficiente! Estoque disponível no galpão é de apenas ${saldo} ${item.unidade}.`;
+    }
+    inQtd.classList.add('border-rose-500', 'text-rose-400');
+    inQtd.classList.remove('focus:border-amber-500');
+    if (btnSubmit) {
+      btnSubmit.disabled = true;
+      btnSubmit.classList.add('opacity-50', 'cursor-not-allowed');
+    }
+  } else {
+    if (alertaBox) alertaBox.classList.add('hidden');
+    inQtd.classList.remove('border-rose-500', 'text-rose-400');
+    inQtd.classList.add('focus:border-amber-500');
+    if (btnSubmit) {
+      btnSubmit.disabled = false;
+      btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
   }
 }
 
@@ -1670,7 +1868,7 @@ function salvarCasa(e) {
   const mor = parseInt(document.getElementById('casa-moradores').value, 10) || 0;
   const respNome = document.getElementById('casa-resp-nome').value.trim();
   const respEmp = document.getElementById('casa-resp-empresa').value.trim();
-  const respTel = document.getElementById('casa-resp-telefone').value.trim();
+  const respTel = formatarTelefone(document.getElementById('casa-resp-telefone').value.trim());
   const respQuarto = document.getElementById('casa-resp-quarto').value.trim();
 
   let casaAlvo;
