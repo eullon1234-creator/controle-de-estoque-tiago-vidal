@@ -313,7 +313,7 @@
           <span class="text-xs sm:text-sm">Entrada no Galpão</span>
         </button>
 
-        <button onclick="openModal('modal-nova-casa')" class="p-3.5 bg-[#1a263d] hover:bg-[#202e49] text-slate-200 border border-[#2d3f60] font-semibold rounded-xl flex items-center justify-center gap-2 transition active:scale-95">
+        <button onclick="abrirModalNovaCasa()" class="p-3.5 bg-[#1a263d] hover:bg-[#202e49] text-slate-200 border border-[#2d3f60] font-semibold rounded-xl flex items-center justify-center gap-2 transition active:scale-95">
           <i class="fa-solid fa-house-medical text-amber-400"></i>
           <span class="text-xs sm:text-sm">Cadastrar Casa</span>
         </button>
@@ -408,7 +408,7 @@
             <option value="dano">🔴 Com Móvel Danificado (Troca Pendente)</option>
           </select>
 
-          <button onclick="openModal('modal-nova-casa')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-sm flex items-center justify-center gap-2 transition shadow-md shadow-amber-500/20 whitespace-nowrap">
+          <button onclick="abrirModalNovaCasa()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-4 py-2 rounded-xl text-sm flex items-center justify-center gap-2 transition shadow-md shadow-amber-500/20 whitespace-nowrap">
             <i class="fa-solid fa-plus"></i>
             <span>Nova Casa</span>
           </button>
@@ -702,8 +702,9 @@
       <!-- Cabeçalho do Dossiê -->
       <div class="bg-gradient-to-r from-amber-600/30 via-[#151f32] to-[#151f32] border-b border-[#23324d] p-4 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center text-lg">
-            <i class="fa-solid fa-house-chimney"></i>
+          <div id="dossie-casa-foto-container" class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center text-lg overflow-hidden shrink-0 cursor-pointer shadow-md transition hover:scale-105" title="Clique para ampliar foto da casa">
+            <i id="dossie-casa-icone-padrao" class="fa-solid fa-house-chimney"></i>
+            <img id="dossie-casa-foto-img" class="w-full h-full object-cover hidden" src="" alt="Fachada da Casa">
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -1129,9 +1130,55 @@
             </div>
           </div>
 
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">URL da Foto / Fachada da Casa (Opcional)</label>
-            <input type="url" id="casa-foto" placeholder="https://images.unsplash.com/..." class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+          <!-- SEÇÃO FOTO DA FACHADA / CASA COM IMGBB -->
+          <div class="pt-2 border-t border-[#23324d] space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-amber-400 uppercase tracking-wider block">
+                <i class="fa-solid fa-camera mr-1"></i> Foto da Fachada / Casa
+              </span>
+              <span class="text-[10px] text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded border border-slate-700">ImgBB Cloud</span>
+            </div>
+
+            <!-- Input file oculto para aceitar imagens da Galeria ou Câmera do Celular/PC -->
+            <input type="file" id="casa-foto-file" accept="image/*" class="hidden" onchange="fazerUploadFotoCasaImgbb(event)">
+
+            <!-- Botões de ação para escolher da galeria ou limpar -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <button type="button" onclick="document.getElementById('casa-foto-file').click()" id="btn-escolher-foto-casa" class="w-full py-2.5 px-3 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/40 text-amber-300 font-semibold text-xs flex items-center justify-center gap-2 transition active:scale-95 shadow-sm">
+                <i class="fa-solid fa-images text-sm text-amber-400"></i>
+                <span>Foto da Galeria / PC</span>
+              </button>
+              <button type="button" onclick="limparFotoCasa()" title="Remover Foto Atual" class="w-full py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-rose-400 text-xs font-semibold flex items-center justify-center gap-2 transition active:scale-95">
+                <i class="fa-solid fa-trash-can text-sm"></i>
+                <span>Remover Foto</span>
+              </button>
+            </div>
+
+            <!-- Campo de URL direta (preenchido automaticamente pelo ImgBB ou manual) -->
+            <div>
+              <label class="block text-[11px] font-medium text-slate-400 mb-1">Link Direto da Foto (ImgBB ou Web)</label>
+              <div class="flex gap-2">
+                <input type="url" id="casa-foto" oninput="atualizarPreviewFotoCasa()" placeholder="https://i.ibb.co/..." class="flex-1 min-w-0 bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+                <button type="button" onclick="atualizarPreviewFotoCasa()" title="Recarregar Prévia" class="px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs transition shrink-0">
+                  <i class="fa-solid fa-arrows-rotate"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Card de Pré-visualização com status do upload -->
+            <div id="preview-foto-casa-box" class="p-2.5 bg-[#0b1120] border border-[#23324d] rounded-xl flex items-center gap-3">
+              <div class="w-16 h-16 rounded-lg bg-slate-900 border border-slate-800 overflow-hidden flex items-center justify-center shrink-0 relative">
+                <img id="preview-foto-casa-img" src="" alt="Prévia da Casa" class="w-full h-full object-cover hidden cursor-pointer" onclick="abrirFotoZoom(this.src, 'Fachada da Casa')">
+                <i id="preview-foto-casa-placeholder" class="fa-solid fa-house-chimney text-slate-600 text-2xl"></i>
+                <div id="preview-foto-casa-spinner" class="absolute inset-0 bg-black/75 hidden flex items-center justify-center">
+                  <i class="fa-solid fa-circle-notch fa-spin text-amber-400 text-lg"></i>
+                </div>
+              </div>
+              <div class="text-xs flex-1 min-w-0">
+                <p id="preview-foto-casa-status" class="font-semibold text-slate-300 truncate">Nenhuma foto selecionada</p>
+                <p id="preview-foto-casa-desc" class="text-[11px] text-slate-500 leading-tight mt-0.5">Toque em "Foto da Galeria / PC" para enviar a foto direto ao banco de imagens ImgBB.</p>
+              </div>
+            </div>
           </div>
         </div>
 

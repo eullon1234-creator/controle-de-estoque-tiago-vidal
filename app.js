@@ -82,6 +82,9 @@ function getFotoProduto(nome, fotoExistente) {
   return '';
 }
 
+// Chave da API do ImgBB para upload de fotos das casas da galeria
+const IMGBB_API_KEY = '655783f08b2e45a3cd6b1b7a7e6ce91b';
+
 function getFotoCasa(casaId, fotoExistente) {
   if (fotoExistente && fotoExistente.trim()) return fotoExistente.trim();
   if (FOTOS_CASAS_MAP[casaId]) return FOTOS_CASAS_MAP[casaId];
@@ -1143,6 +1146,31 @@ function abrirDossieCasa(casaId) {
       <i class="fa-solid fa-plus"></i><span>Adicionar Localização</span>
     </button>
   `;
+
+  // Foto da Fachada no Cabeçalho do Dossiê
+  const fotoContainer = document.getElementById('dossie-casa-foto-container');
+  const fotoImg = document.getElementById('dossie-casa-foto-img');
+  const iconePadrao = document.getElementById('dossie-casa-icone-padrao');
+  const fotoCasaFinal = getFotoCasa(casa.id, casa.fotoUrl);
+  if (fotoImg && iconePadrao) {
+    if (fotoCasaFinal) {
+      fotoImg.src = fotoCasaFinal;
+      fotoImg.classList.remove('hidden');
+      iconePadrao.classList.add('hidden');
+      if (fotoContainer) {
+        fotoContainer.onclick = () => abrirFotoZoom(fotoCasaFinal, casa.nome);
+        fotoContainer.title = 'Clique para ver foto da fachada ampliada';
+      }
+    } else {
+      fotoImg.src = '';
+      fotoImg.classList.add('hidden');
+      iconePadrao.classList.remove('hidden');
+      if (fotoContainer) {
+        fotoContainer.onclick = null;
+        fotoContainer.title = '';
+      }
+    }
+  }
 
   switchDossieTab('moveis');
   openModal('modal-dossie-casa');
@@ -2347,6 +2375,136 @@ function salvarEntradaGalpao(e) {
   }
 }
 
+// ==========================================
+// FOTO DA CASA & UPLOAD IMGBB
+// ==========================================
+function abrirModalNovaCasa() {
+  const form = document.getElementById('form-casa');
+  if (form) form.reset();
+  const editId = document.getElementById('casa-edit-id');
+  if (editId) editId.value = '';
+  const title = document.getElementById('modal-casa-title');
+  if (title) title.textContent = 'Cadastrar Casa / Alojamento';
+  const inputFile = document.getElementById('casa-foto-file');
+  if (inputFile) inputFile.value = '';
+  const inputFoto = document.getElementById('casa-foto');
+  if (inputFoto) inputFoto.value = '';
+  atualizarPreviewFotoCasa();
+  openModal('modal-nova-casa');
+}
+
+function limparFotoCasa() {
+  const inputUrl = document.getElementById('casa-foto');
+  const inputFile = document.getElementById('casa-foto-file');
+  if (inputUrl) inputUrl.value = '';
+  if (inputFile) inputFile.value = '';
+  atualizarPreviewFotoCasa();
+  mostrarToast('Foto da casa removida.', 'info');
+}
+
+function atualizarPreviewFotoCasa() {
+  const url = (document.getElementById('casa-foto')?.value || '').trim();
+  const imgEl = document.getElementById('preview-foto-casa-img');
+  const placeholderEl = document.getElementById('preview-foto-casa-placeholder');
+  const statusEl = document.getElementById('preview-foto-casa-status');
+  const descEl = document.getElementById('preview-foto-casa-desc');
+  if (!imgEl || !placeholderEl || !statusEl) return;
+
+  if (url) {
+    imgEl.src = url;
+    imgEl.classList.remove('hidden');
+    placeholderEl.classList.add('hidden');
+    const isImgbb = url.includes('ibb.co');
+    statusEl.innerHTML = `<span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> ${isImgbb ? 'Foto ImgBB Cloud' : 'Foto Carregada'}</span>`;
+    if (descEl) descEl.textContent = 'Foto pronta para exibição nos cards e dossiê.';
+  } else {
+    imgEl.src = '';
+    imgEl.classList.add('hidden');
+    placeholderEl.classList.remove('hidden');
+    statusEl.innerHTML = `<span class="text-slate-400">Nenhuma foto selecionada</span>`;
+    if (descEl) descEl.textContent = 'Toque em "Foto da Galeria / PC" para enviar a foto direto ao banco de imagens ImgBB.';
+  }
+}
+
+async function fazerUploadFotoCasaImgbb(event) {
+  const file = event?.target?.files?.[0];
+  if (!file) return;
+
+  if (!file.type.startsWith('image/')) {
+    mostrarToast('Por favor, selecione um arquivo de imagem válido (JPG, PNG, WEBP, etc.).', 'error');
+    return;
+  }
+
+  const imgEl = document.getElementById('preview-foto-casa-img');
+  const placeholderEl = document.getElementById('preview-foto-casa-placeholder');
+  const spinnerEl = document.getElementById('preview-foto-casa-spinner');
+  const statusEl = document.getElementById('preview-foto-casa-status');
+  const descEl = document.getElementById('preview-foto-casa-desc');
+  const btnSalvar = document.querySelector('#form-casa button[type="submit"]');
+  const btnEscolher = document.getElementById('btn-escolher-foto-casa');
+
+  // Pré-visualização instantânea local via FileReader
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    if (imgEl) {
+      imgEl.src = e.target.result;
+      imgEl.classList.remove('hidden');
+    }
+    if (placeholderEl) placeholderEl.classList.add('hidden');
+  };
+  reader.readAsDataURL(file);
+
+  // Status visual de envio
+  if (spinnerEl) spinnerEl.classList.remove('hidden');
+  if (statusEl) statusEl.innerHTML = `<span class="text-amber-400 font-bold"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Enviando para o ImgBB...</span>`;
+  if (descEl) descEl.textContent = `Fazendo upload de "${file.name}" para a nuvem ImgBB...`;
+  if (btnSalvar) {
+    btnSalvar.disabled = true;
+    btnSalvar.classList.add('opacity-50', 'cursor-not-allowed');
+  }
+  if (btnEscolher) btnEscolher.disabled = true;
+
+  try {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      const errTxt = await response.text();
+      throw new Error(`Servidor ImgBB retornou erro ${response.status}: ${errTxt}`);
+    }
+
+    const data = await response.json();
+    if (data && data.success && data.data) {
+      const urlFinal = data.data.display_url || data.data.url;
+      const inputUrl = document.getElementById('casa-foto');
+      if (inputUrl) inputUrl.value = urlFinal;
+
+      if (statusEl) statusEl.innerHTML = `<span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check mr-1"></i> Foto salva no ImgBB!</span>`;
+      if (descEl) descEl.textContent = 'Imagem hospedada com sucesso na nuvem do ImgBB.';
+      mostrarToast('Foto enviada e vinculada com sucesso no ImgBB!', 'success');
+    } else {
+      throw new Error(data?.error?.message || 'Erro inesperado no retorno do ImgBB');
+    }
+  } catch (err) {
+    console.error('Erro upload ImgBB:', err);
+    if (statusEl) statusEl.innerHTML = `<span class="text-rose-400 font-bold"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Falha no upload</span>`;
+    if (descEl) descEl.textContent = 'Não foi possível enviar ao ImgBB. Verifique sua conexão ou tente novamente.';
+    mostrarToast(`Erro ao enviar imagem ao ImgBB: ${err.message}`, 'error');
+  } finally {
+    if (spinnerEl) spinnerEl.classList.add('hidden');
+    if (btnSalvar) {
+      btnSalvar.disabled = false;
+      btnSalvar.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+    if (btnEscolher) btnEscolher.disabled = false;
+  }
+}
+
 function salvarCasa(e) {
   e.preventDefault();
   const editId = document.getElementById('casa-edit-id').value;
@@ -2360,6 +2518,7 @@ function salvarCasa(e) {
   const respQuarto = document.getElementById('casa-resp-quarto').value.trim();
   const endereco = document.getElementById('casa-endereco')?.value.trim() || '';
   const localizacaoUrl = document.getElementById('casa-localizacao')?.value.trim() || '';
+  const fotoInput = (document.getElementById('casa-foto')?.value || '').trim();
 
   let casaAlvo;
   if (editId) {
@@ -2376,13 +2535,10 @@ function salvarCasa(e) {
       casaAlvo.responsavelQuarto = respQuarto;
       casaAlvo.endereco = endereco;
       casaAlvo.localizacaoUrl = localizacaoUrl;
-      if (document.getElementById('casa-foto')?.value.trim()) {
-        casaAlvo.fotoUrl = document.getElementById('casa-foto').value.trim();
-      }
+      casaAlvo.fotoUrl = fotoInput;
       mostrarToast(`Casa "${nome}" atualizada com sucesso!`, 'success');
     }
   } else {
-    const fotoInput = document.getElementById('casa-foto')?.value.trim();
     casaAlvo = {
       id: 'casa-' + Date.now(),
       nome: nome,
@@ -2408,6 +2564,9 @@ function salvarCasa(e) {
   closeModal('modal-nova-casa');
   document.getElementById('form-casa').reset();
   document.getElementById('casa-edit-id').value = '';
+  const inputFile = document.getElementById('casa-foto-file');
+  if (inputFile) inputFile.value = '';
+  atualizarPreviewFotoCasa();
   document.getElementById('modal-casa-title').textContent = 'Cadastrar Casa / Alojamento';
   renderApp();
 
@@ -2652,6 +2811,9 @@ function abrirEdicaoCasa(casaId) {
   document.getElementById('casa-localizacao').value = casa.localizacaoUrl || '';
   const campoFoto = document.getElementById('casa-foto');
   if (campoFoto) campoFoto.value = casa.fotoUrl || '';
+  const inputFile = document.getElementById('casa-foto-file');
+  if (inputFile) inputFile.value = '';
+  atualizarPreviewFotoCasa();
 
   document.getElementById('modal-casa-title').textContent = 'Editar Casa / Responsável';
   closeModal('modal-dossie-casa');

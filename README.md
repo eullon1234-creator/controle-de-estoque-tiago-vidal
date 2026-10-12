@@ -96,6 +96,8 @@ node server.js
 - **HTML5 Semântico & Tailwind CSS (Design Mobile-First moderno)**
 - **JavaScript Moderno (ES6+ / Vanilla)**
 - **Turso Database / LibSQL HTTP Pipeline API**
+- **ImgBB Cloud API** (Upload direto de fotos da galeria do PC/celular para as casas)
 - **Chart.js** (Gráficos visuais de ocupação e categorias)
 - **SheetJS (xlsx.full.min.js)** (Exportação para planilhas Excel)
 - **PWA (Manifest + Service Worker)** (Instalação no celular)
+
