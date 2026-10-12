@@ -334,28 +334,28 @@ function removerParticaoCasa(idx) {
 }
 
 const SEEDS_CASA_MOVEIS = [
-  { id: 'cm-1', casaId: 'casa-1', itemNome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', quantidade: 4, estado: 'Bom', patrimonio: 'PAT-C01-01', observacoes: 'Beliches completas com escada', fotoUrl: FOTOS_PRODUTOS_MAP['Beliche Metálica Tubular Reforçada'] },
-  { id: 'cm-2', casaId: 'casa-1', itemNome: 'Colchão Solteiro Espuma D33 Antiácaro', categoria: 'Móveis & Equipamentos', quantidade: 8, estado: 'Bom', patrimonio: 'PAT-C01-02', observacoes: 'Com capas impermeáveis', fotoUrl: FOTOS_PRODUTOS_MAP['Colchão Solteiro Espuma D33 Antiácaro'] },
-  { id: 'cm-3', casaId: 'casa-1', itemNome: 'Armário Metálico Vestiário 4 Portas c/ Chave', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C01-03', observacoes: 'Com todas as chaves', fotoUrl: FOTOS_PRODUTOS_MAP['Armário Metálico Vestiário 4 Portas c/ Chave'] },
-  { id: 'cm-4', casaId: 'casa-1', itemNome: 'Geladeira Duplex Frost Free 380L', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Bom', patrimonio: 'PAT-C01-04', observacoes: 'Cozinha da casa 01', fotoUrl: FOTOS_PRODUTOS_MAP['Geladeira Duplex Frost Free 380L'] },
-  { id: 'cm-5', casaId: 'casa-1', itemNome: 'Ar-Condicionado Split 12.000 BTUs Frio', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C01-05', observacoes: '1 no Quarto A, 1 no Quarto B', fotoUrl: FOTOS_PRODUTOS_MAP['Ar-Condicionado Split 12.000 BTUs Frio'] },
-  { id: 'cm-6', casaId: 'casa-1', itemNome: 'Mesa de Refeição 6 Lugares c/ Cadeiras', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Regular', patrimonio: 'PAT-C01-06', observacoes: '2 cadeiras com desgaste', fotoUrl: FOTOS_PRODUTOS_MAP['Mesa de Refeição 6 Lugares c/ Cadeiras'] },
+  { id: 'cm-1', casaId: 'casa-1', itemNome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', quantidade: 4, estado: 'Bom', patrimonio: 'PAT-C01-01', comodo: 'Quarto 1', observacoes: 'Beliches completas com escada', fotoUrl: FOTOS_PRODUTOS_MAP['Beliche Metálica Tubular Reforçada'] },
+  { id: 'cm-2', casaId: 'casa-1', itemNome: 'Colchão Solteiro Espuma D33 Antiácaro', categoria: 'Móveis & Equipamentos', quantidade: 8, estado: 'Bom', patrimonio: 'PAT-C01-02', comodo: 'Quarto 1', observacoes: 'Com capas impermeáveis', fotoUrl: FOTOS_PRODUTOS_MAP['Colchão Solteiro Espuma D33 Antiácaro'] },
+  { id: 'cm-3', casaId: 'casa-1', itemNome: 'Armário Metálico Vestiário 4 Portas c/ Chave', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C01-03', comodo: 'Quarto 1', observacoes: 'Com todas as chaves', fotoUrl: FOTOS_PRODUTOS_MAP['Armário Metálico Vestiário 4 Portas c/ Chave'] },
+  { id: 'cm-4', casaId: 'casa-1', itemNome: 'Geladeira Duplex Frost Free 380L', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Bom', patrimonio: 'PAT-C01-04', comodo: 'Cozinha', observacoes: 'Cozinha da casa 01', fotoUrl: FOTOS_PRODUTOS_MAP['Geladeira Duplex Frost Free 380L'] },
+  { id: 'cm-5', casaId: 'casa-1', itemNome: 'Ar-Condicionado Split 12.000 BTUs Frio', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C01-05', comodo: 'Quarto 2', observacoes: '1 no Quarto 1, 1 no Quarto 2', fotoUrl: FOTOS_PRODUTOS_MAP['Ar-Condicionado Split 12.000 BTUs Frio'] },
+  { id: 'cm-6', casaId: 'casa-1', itemNome: 'Mesa de Refeição 6 Lugares c/ Cadeiras', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Regular', patrimonio: 'PAT-C01-06', comodo: 'Sala 1', observacoes: '2 cadeiras com desgaste', fotoUrl: FOTOS_PRODUTOS_MAP['Mesa de Refeição 6 Lugares c/ Cadeiras'] },
 
-  { id: 'cm-7', casaId: 'casa-2', itemNome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', quantidade: 3, estado: 'Bom', patrimonio: 'PAT-C02-01', observacoes: 'Em perfeito estado', fotoUrl: FOTOS_PRODUTOS_MAP['Beliche Metálica Tubular Reforçada'] },
-  { id: 'cm-8', casaId: 'casa-2', itemNome: 'Colchão Solteiro Espuma D33 Antiácaro', categoria: 'Móveis & Equipamentos', quantidade: 6, estado: 'Bom', patrimonio: 'PAT-C02-02', observacoes: 'Higienizados', fotoUrl: FOTOS_PRODUTOS_MAP['Colchão Solteiro Espuma D33 Antiácaro'] },
-  { id: 'cm-9', casaId: 'casa-2', itemNome: 'Armário Metálico Vestiário 4 Portas c/ Chave', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C02-03', observacoes: 'Trancas funcionando', fotoUrl: FOTOS_PRODUTOS_MAP['Armário Metálico Vestiário 4 Portas c/ Chave'] },
-  { id: 'cm-10', casaId: 'casa-2', itemNome: 'Geladeira Duplex Frost Free 380L', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Bom', patrimonio: 'PAT-C02-04', observacoes: 'Funcionando 100%', fotoUrl: FOTOS_PRODUTOS_MAP['Geladeira Duplex Frost Free 380L'] },
-  { id: 'cm-11', casaId: 'casa-2', itemNome: 'Ar-Condicionado Split 12.000 BTUs Frio', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Danificado - Solicitar Troca', patrimonio: 'PAT-C02-05', observacoes: 'Compressor parou de gelar no Quarto 01 - Troca urgente solicitada', fotoUrl: FOTOS_PRODUTOS_MAP['Ar-Condicionado Split 12.000 BTUs Frio'] },
+  { id: 'cm-7', casaId: 'casa-2', itemNome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', quantidade: 3, estado: 'Bom', patrimonio: 'PAT-C02-01', comodo: 'Quarto 1', observacoes: 'Em perfeito estado', fotoUrl: FOTOS_PRODUTOS_MAP['Beliche Metálica Tubular Reforçada'] },
+  { id: 'cm-8', casaId: 'casa-2', itemNome: 'Colchão Solteiro Espuma D33 Antiácaro', categoria: 'Móveis & Equipamentos', quantidade: 6, estado: 'Bom', patrimonio: 'PAT-C02-02', comodo: 'Quarto 1', observacoes: 'Higienizados', fotoUrl: FOTOS_PRODUTOS_MAP['Colchão Solteiro Espuma D33 Antiácaro'] },
+  { id: 'cm-9', casaId: 'casa-2', itemNome: 'Armário Metálico Vestiário 4 Portas c/ Chave', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C02-03', comodo: 'Quarto 2', observacoes: 'Trancas funcionando', fotoUrl: FOTOS_PRODUTOS_MAP['Armário Metálico Vestiário 4 Portas c/ Chave'] },
+  { id: 'cm-10', casaId: 'casa-2', itemNome: 'Geladeira Duplex Frost Free 380L', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Bom', patrimonio: 'PAT-C02-04', comodo: 'Cozinha', observacoes: 'Funcionando 100%', fotoUrl: FOTOS_PRODUTOS_MAP['Geladeira Duplex Frost Free 380L'] },
+  { id: 'cm-11', casaId: 'casa-2', itemNome: 'Ar-Condicionado Split 12.000 BTUs Frio', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Danificado - Solicitar Troca', patrimonio: 'PAT-C02-05', comodo: 'Quarto 1', observacoes: 'Compressor parou de gelar no Quarto 01 - Troca urgente solicitada', fotoUrl: FOTOS_PRODUTOS_MAP['Ar-Condicionado Split 12.000 BTUs Frio'] },
 
-  { id: 'cm-12', casaId: 'casa-3', itemNome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', quantidade: 3, estado: 'Novo', patrimonio: 'PAT-C03-01', observacoes: 'Lote novo instalado em Setembro', fotoUrl: FOTOS_PRODUTOS_MAP['Beliche Metálica Tubular Reforçada'] },
-  { id: 'cm-13', casaId: 'casa-3', itemNome: 'Colchão Solteiro Espuma D33 Antiácaro', categoria: 'Móveis & Equipamentos', quantidade: 6, estado: 'Novo', patrimonio: 'PAT-C03-02', observacoes: 'Novos lacrados', fotoUrl: FOTOS_PRODUTOS_MAP['Colchão Solteiro Espuma D33 Antiácaro'] },
-  { id: 'cm-14', casaId: 'casa-3', itemNome: 'Armário Metálico Vestiário 4 Portas c/ Chave', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C03-03', observacoes: 'Pintura epóxi intacta', fotoUrl: FOTOS_PRODUTOS_MAP['Armário Metálico Vestiário 4 Portas c/ Chave'] },
-  { id: 'cm-15', casaId: 'casa-3', itemNome: 'Geladeira Duplex Frost Free 380L', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Regular', patrimonio: 'PAT-C03-04', observacoes: 'Borracha da porta superior', fotoUrl: FOTOS_PRODUTOS_MAP['Geladeira Duplex Frost Free 380L'] },
+  { id: 'cm-12', casaId: 'casa-3', itemNome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', quantidade: 3, estado: 'Novo', patrimonio: 'PAT-C03-01', comodo: 'Quarto 1', observacoes: 'Lote novo instalado em Setembro', fotoUrl: FOTOS_PRODUTOS_MAP['Beliche Metálica Tubular Reforçada'] },
+  { id: 'cm-13', casaId: 'casa-3', itemNome: 'Colchão Solteiro Espuma D33 Antiácaro', categoria: 'Móveis & Equipamentos', quantidade: 6, estado: 'Novo', patrimonio: 'PAT-C03-02', comodo: 'Quarto 1', observacoes: 'Novos lacrados', fotoUrl: FOTOS_PRODUTOS_MAP['Colchão Solteiro Espuma D33 Antiácaro'] },
+  { id: 'cm-14', casaId: 'casa-3', itemNome: 'Armário Metálico Vestiário 4 Portas c/ Chave', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C03-03', comodo: 'Quarto 2', observacoes: 'Pintura epóxi intacta', fotoUrl: FOTOS_PRODUTOS_MAP['Armário Metálico Vestiário 4 Portas c/ Chave'] },
+  { id: 'cm-15', casaId: 'casa-3', itemNome: 'Geladeira Duplex Frost Free 380L', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Regular', patrimonio: 'PAT-C03-04', comodo: 'Cozinha', observacoes: 'Borracha da porta superior', fotoUrl: FOTOS_PRODUTOS_MAP['Geladeira Duplex Frost Free 380L'] },
 
-  { id: 'cm-16', casaId: 'casa-4', itemNome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C04-01', observacoes: 'Estrutura firme', fotoUrl: FOTOS_PRODUTOS_MAP['Beliche Metálica Tubular Reforçada'] },
-  { id: 'cm-17', casaId: 'casa-4', itemNome: 'Colchão Solteiro Espuma D33 Antiácaro', categoria: 'Móveis & Equipamentos', quantidade: 4, estado: 'Bom', patrimonio: 'PAT-C04-02', observacoes: 'Ensacados com capa', fotoUrl: FOTOS_PRODUTOS_MAP['Colchão Solteiro Espuma D33 Antiácaro'] },
-  { id: 'cm-18', casaId: 'casa-4', itemNome: 'Armário Metálico Vestiário 4 Portas c/ Chave', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Bom', patrimonio: 'PAT-C04-03', observacoes: '4 portas com chave', fotoUrl: FOTOS_PRODUTOS_MAP['Armário Metálico Vestiário 4 Portas c/ Chave'] },
-  { id: 'cm-19', casaId: 'casa-4', itemNome: 'Ar-Condicionado Split 12.000 BTUs Frio', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Regular', patrimonio: 'PAT-C04-04', observacoes: 'Filtro limpo recentemente', fotoUrl: FOTOS_PRODUTOS_MAP['Ar-Condicionado Split 12.000 BTUs Frio'] }
+  { id: 'cm-16', casaId: 'casa-4', itemNome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', quantidade: 2, estado: 'Bom', patrimonio: 'PAT-C04-01', comodo: 'Quarto 1', observacoes: 'Estrutura firme', fotoUrl: FOTOS_PRODUTOS_MAP['Beliche Metálica Tubular Reforçada'] },
+  { id: 'cm-17', casaId: 'casa-4', itemNome: 'Colchão Solteiro Espuma D33 Antiácaro', categoria: 'Móveis & Equipamentos', quantidade: 4, estado: 'Bom', patrimonio: 'PAT-C04-02', comodo: 'Quarto 1', observacoes: 'Ensacados com capa', fotoUrl: FOTOS_PRODUTOS_MAP['Colchão Solteiro Espuma D33 Antiácaro'] },
+  { id: 'cm-18', casaId: 'casa-4', itemNome: 'Armário Metálico Vestiário 4 Portas c/ Chave', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Bom', patrimonio: 'PAT-C04-03', comodo: 'Quarto 1', observacoes: '4 portas com chave', fotoUrl: FOTOS_PRODUTOS_MAP['Armário Metálico Vestiário 4 Portas c/ Chave'] },
+  { id: 'cm-19', casaId: 'casa-4', itemNome: 'Ar-Condicionado Split 12.000 BTUs Frio', categoria: 'Móveis & Equipamentos', quantidade: 1, estado: 'Regular', patrimonio: 'PAT-C04-04', comodo: 'Quarto 1', observacoes: 'Filtro limpo recentemente', fotoUrl: FOTOS_PRODUTOS_MAP['Ar-Condicionado Split 12.000 BTUs Frio'] }
 ];
 
 const SEEDS_CASA_ENTREGAS = [
@@ -417,6 +417,18 @@ function carregarDadosLocais() {
     }
   });
   appState.casaMoveis = cm ? JSON.parse(cm) : [...SEEDS_CASA_MOVEIS];
+  // Garante que cada móvel tenha o cômodo definido ou recuperado
+  appState.casaMoveis.forEach(m => {
+    if (!m.comodo) {
+      const seedRef = SEEDS_CASA_MOVEIS.find(s => s.id === m.id);
+      if (seedRef && seedRef.comodo) {
+        m.comodo = seedRef.comodo;
+      } else if (m.observacoes) {
+        const match = m.observacoes.match(/(?:Cômodo|Comodo|Local):\s*([^•\n,]+)/i);
+        if (match) m.comodo = match[1].trim();
+      }
+    }
+  });
   appState.casaEntregas = ce ? JSON.parse(ce) : [...SEEDS_CASA_ENTREGAS];
   appState.casaDespesas = cd ? JSON.parse(cd) : [...SEEDS_CASA_DESPESAS];
   appState.movimentacoes = m ? JSON.parse(m) : [...SEEDS_MOVS];
@@ -581,6 +593,7 @@ async function garantirSchemaTurso() {
     { sql: 'ALTER TABLE casas ADD COLUMN endereco TEXT' },
     { sql: 'ALTER TABLE casas ADD COLUMN localizacao_url TEXT' },
     { sql: 'ALTER TABLE casas ADD COLUMN particoes TEXT' },
+    { sql: 'ALTER TABLE casa_moveis ADD COLUMN comodo TEXT' },
     {
       sql: `CREATE TABLE IF NOT EXISTS casa_despesas (
               id TEXT PRIMARY KEY,
@@ -661,6 +674,7 @@ async function inicializarTursoSeDisponivel() {
         appState.casaMoveis = cm.map(r => ({
           id: r.id, casaId: r.casa_id, itemNome: r.item_nome, categoria: r.categoria,
           quantidade: Number(r.quantidade) || 1, estado: r.estado, patrimonio: r.patrimonio,
+          comodo: r.comodo || '',
           observacoes: r.observacoes,
           fotoUrl: getFotoProduto(r.item_nome, r.foto_url)
         }));
@@ -1374,15 +1388,22 @@ function abrirDossieCasa(casaId) {
         </div>
       `;
     } else {
-      listaParticoesEl.innerHTML = particoes.map(p => `
-        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/90 border border-slate-700/80 text-xs text-slate-200 shadow-sm">
-          <i class="fa-solid ${getIconeParticao(p)} text-amber-400 text-xs"></i>
-          <span class="font-medium">${escaparHtml(p)}</span>
-        </span>
-      `).join('');
+      const moveisCasa = appState.casaMoveis.filter(m => m.casaId === casa.id);
+      listaParticoesEl.innerHTML = particoes.map(p => {
+        const pecasNoCmd = moveisCasa.filter(m => (m.comodo || '').trim().toLowerCase() === p.trim().toLowerCase())
+                                     .reduce((a, b) => a + (Number(b.quantidade) || 0), 0);
+        return `
+          <button type="button" onclick="filtrarMoveisPorComodoNoDossie('${p.replace(/'/g, "\\'")}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-700/90 border border-slate-700/80 hover:border-amber-500/50 text-xs text-slate-200 shadow-sm transition active:scale-95" title="Ver o que tem neste cômodo">
+            <i class="fa-solid ${getIconeParticao(p)} text-amber-400 text-xs"></i>
+            <span class="font-medium">${escaparHtml(p)}</span>
+            <span class="text-[10px] px-1.5 py-0.2 rounded-full bg-slate-900 text-amber-400 font-bold border border-slate-700">${pecasNoCmd}</span>
+          </button>
+        `;
+      }).join('');
     }
   }
 
+  filtroComodoDossie = 'todos';
   switchDossieTab('moveis');
   openModal('modal-dossie-casa');
 }
@@ -1405,81 +1426,426 @@ function switchDossieTab(tab) {
   else if (tab === 'despesas') renderDossieDespesas();
 }
 
+// Estado de visualização do Dossiê de Móveis
+let visaoMoveisDossie = 'comodos'; // 'comodos' | 'lista'
+let filtroComodoDossie = 'todos';  // 'todos' | nome do cômodo
+
+function alternarVisaoMoveisDossie(modo) {
+  visaoMoveisDossie = modo;
+  const btnComodos = document.getElementById('btn-view-comodos');
+  const btnLista = document.getElementById('btn-view-lista');
+
+  if (modo === 'comodos') {
+    if (btnComodos) btnComodos.className = 'px-2.5 py-1 rounded-lg font-semibold transition text-amber-400 bg-amber-500/20';
+    if (btnLista) btnLista.className = 'px-2.5 py-1 rounded-lg font-semibold transition text-slate-400 hover:text-slate-200';
+  } else {
+    if (btnComodos) btnComodos.className = 'px-2.5 py-1 rounded-lg font-semibold transition text-slate-400 hover:text-slate-200';
+    if (btnLista) btnLista.className = 'px-2.5 py-1 rounded-lg font-semibold transition text-amber-400 bg-amber-500/20';
+  }
+
+  renderDossieMoveis();
+}
+
+function filtrarMoveisPorComodoNoDossie(comodo) {
+  filtroComodoDossie = comodo;
+  renderDossieMoveis();
+}
+
 function renderDossieMoveis() {
   const container = document.getElementById('dossie-lista-moveis');
   const contador = document.getElementById('dossie-contador-moveis');
+  const filtroBar = document.getElementById('dossie-filtro-comodos-bar');
   if (!container) return;
 
+  const casa = appState.casas.find(c => c.id === appState.dossieCasaAtualId);
   const moveis = appState.casaMoveis.filter(m => m.casaId === appState.dossieCasaAtualId);
   const totalPecas = moveis.reduce((a, b) => a + (Number(b.quantidade) || 0), 0);
 
-  if (contador) contador.textContent = `${moveis.length} tipo(s) de móvel • Total de ${totalPecas} peças na casa`;
+  // Lista de cômodos cadastrados na casa
+  const particoesCasa = casa ? (Array.isArray(casa.particoes) ? casa.particoes : normalizarParticoes(casa.particoes)) : [];
+
+  // Descobre todos os cômodos presentes (cadastrados + eventuais avulsos nos móveis)
+  const todosComodosSet = new Set(particoesCasa);
+  moveis.forEach(m => {
+    if (m.comodo) todosComodosSet.add(m.comodo);
+  });
+  const listaComodosGeral = Array.from(todosComodosSet);
+
+  // Renderiza a barra de chips de filtro por cômodo
+  if (filtroBar) {
+    if (listaComodosGeral.length > 0) {
+      filtroBar.classList.remove('hidden');
+      const isTodos = filtroComodoDossie === 'todos';
+      let chipsHtml = `
+        <button type="button" onclick="filtrarMoveisPorComodoNoDossie('todos')" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition border ${isTodos ? 'bg-amber-500 text-slate-950 border-amber-500 shadow-sm' : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200'}">
+          Todos (${totalPecas})
+        </button>
+      `;
+
+      listaComodosGeral.forEach(cmd => {
+        const pecasNoCmd = moveis.filter(m => (m.comodo || '').trim().toLowerCase() === cmd.trim().toLowerCase())
+                                 .reduce((a, b) => a + (Number(b.quantidade) || 0), 0);
+        const isActive = filtroComodoDossie.trim().toLowerCase() === cmd.trim().toLowerCase();
+        const icone = getIconeParticao(cmd);
+
+        chipsHtml += `
+          <button type="button" onclick="filtrarMoveisPorComodoNoDossie('${cmd.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition border flex items-center gap-1.5 ${isActive ? 'bg-amber-500 text-slate-950 border-amber-500 shadow-sm' : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200'}">
+            <i class="fa-solid ${icone} ${isActive ? 'text-slate-950' : 'text-amber-400'} text-[11px]"></i>
+            <span>${escaparHtml(cmd)}</span>
+            <span class="text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-slate-950/20 text-slate-950 font-bold' : 'bg-slate-800 text-slate-300'}">${pecasNoCmd}</span>
+          </button>
+        `;
+      });
+
+      // Se houver móveis sem cômodo definido
+      const semComodoCount = moveis.filter(m => !m.comodo).reduce((a, b) => a + (Number(b.quantidade) || 0), 0);
+      if (semComodoCount > 0) {
+        const isSemCmd = filtroComodoDossie === '__sem_comodo__';
+        chipsHtml += `
+          <button type="button" onclick="filtrarMoveisPorComodoNoDossie('__sem_comodo__')" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition border flex items-center gap-1.5 ${isSemCmd ? 'bg-amber-500 text-slate-950 border-amber-500 shadow-sm' : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200'}">
+            <i class="fa-solid fa-circle-question text-[11px] ${isSemCmd ? 'text-slate-950' : 'text-slate-500'}"></i>
+            <span>Geral / Sem Cômodo</span>
+            <span class="text-[10px] px-1.5 py-0.2 rounded-full ${isSemCmd ? 'bg-slate-950/20 text-slate-950 font-bold' : 'bg-slate-800 text-slate-300'}">${semComodoCount}</span>
+          </button>
+        `;
+      }
+
+      filtroBar.innerHTML = chipsHtml;
+    } else {
+      filtroBar.classList.add('hidden');
+      filtroBar.innerHTML = '';
+    }
+  }
+
+  // Filtra móveis pelo filtro selecionado
+  let moveisFiltrados = moveis;
+  if (filtroComodoDossie !== 'todos') {
+    if (filtroComodoDossie === '__sem_comodo__') {
+      moveisFiltrados = moveis.filter(m => !m.comodo);
+    } else {
+      moveisFiltrados = moveis.filter(m => (m.comodo || '').trim().toLowerCase() === filtroComodoDossie.trim().toLowerCase());
+    }
+  }
+
+  const totalFiltradosPecas = moveisFiltrados.reduce((a, b) => a + (Number(b.quantidade) || 0), 0);
+
+  if (contador) {
+    if (filtroComodoDossie === 'todos') {
+      contador.textContent = `${moveis.length} tipo(s) de móvel • Total de ${totalPecas} peças na casa`;
+    } else {
+      const nomeFiltro = filtroComodoDossie === '__sem_comodo__' ? 'Sem Cômodo' : filtroComodoDossie;
+      contador.textContent = `${moveisFiltrados.length} tipo(s) em "${nomeFiltro}" • ${totalFiltradosPecas} peça(s)`;
+    }
+  }
 
   if (moveis.length === 0) {
     container.innerHTML = `
-      <div class="p-6 text-center bg-slate-900/60 rounded-xl border border-slate-800 text-slate-400 text-xs">
-        <i class="fa-solid fa-couch text-3xl mb-2 text-slate-600 block"></i>
-        Nenhum móvel vinculado a esta casa ainda. Clique em "+ Adicionar Móvel do Galpão" para alocar beliches, colchões ou eletros.
+      <div class="p-8 text-center bg-slate-900/60 rounded-2xl border border-slate-800 text-slate-400 text-xs space-y-3">
+        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto text-xl">
+          <i class="fa-solid fa-couch"></i>
+        </div>
+        <p class="font-medium text-slate-300">Nenhum móvel vinculado a esta casa ainda.</p>
+        <p class="text-slate-500 max-w-sm mx-auto">Clique em "+ Adicionar Móvel" acima para alocar beliches, colchões, armários ou eletros direto do Galpão com o cômodo desejado.</p>
+        <button onclick="abrirModalAdicionarMovelCasa()" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition shadow-md">
+          <i class="fa-solid fa-plus"></i> Alocar Primeiro Móvel
+        </button>
       </div>
     `;
     return;
   }
 
-  container.innerHTML = moveis.map(m => {
-    const isDanificado = m.estado && m.estado.includes('Danificado');
-    let corEstado = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
-    if (m.estado === 'Regular') corEstado = 'bg-amber-500/10 text-amber-400 border-amber-500/30';
-    if (isDanificado) corEstado = 'bg-rose-500/20 text-rose-300 border-rose-500/50 font-bold animate-pulse';
-    const fotoMovel = getFotoProduto(m.itemNome, m.fotoUrl);
-
-    return `
-      <div class="p-3.5 bg-slate-900/90 ${isDanificado ? 'border-2 border-rose-500/60' : 'border border-slate-800'} rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div class="flex items-center gap-3">
-          <div class="w-14 h-14 rounded-xl overflow-hidden bg-slate-950 border ${isDanificado ? 'border-rose-500/60' : 'border-slate-800'} flex items-center justify-center shrink-0 relative group/img">
-            ${fotoMovel ? `
-              <img src="${fotoMovel}" alt="${m.itemNome}" loading="lazy" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition" onclick="abrirFotoZoom('${fotoMovel}', '${m.itemNome.replace(/'/g, "\\'")}')">
-            ` : `
-              <div class="w-full h-full ${isDanificado ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-800 text-amber-400'} flex items-center justify-center text-lg">
-                <i class="fa-solid fa-couch"></i>
-              </div>
-            `}
-          </div>
-          <div>
-            <div class="flex items-center gap-2">
-              <h4 class="text-sm font-bold text-white">${m.itemNome}</h4>
-              <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md">${m.quantidade}x</span>
-            </div>
-            <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400 mt-1">
-              <span class="text-[11px] px-2 py-0.5 rounded-full border ${corEstado}">
-                ${m.estado || 'Bom'}
-              </span>
-              ${m.comodo ? `<span class="text-[11px] px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 font-medium"><i class="fa-solid ${getIconeParticao(m.comodo)} mr-1"></i>${escaparHtml(m.comodo)}</span>` : ''}
-              ${m.patrimonio ? `<span class="font-mono text-slate-300 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">${m.patrimonio}</span>` : ''}
-              ${m.observacoes ? `<span class="italic text-slate-400 truncate max-w-[200px]">"${m.observacoes}"</span>` : ''}
-            </div>
-          </div>
-        </div>
-
-        <!-- Ações do Móvel: Substituição em 1 Clique e Devolução -->
-        <div class="flex items-center gap-2 w-full sm:w-auto justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800">
-          ${isDanificado ? `
-            <button onclick="substituirMovelEm1Clique('${m.id}')" class="px-3.5 py-2 bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-lg shadow-rose-600/30 transition active:scale-95">
-              <i class="fa-solid fa-arrows-rotate"></i>
-              <span>Substituir pelo Galpão</span>
-            </button>
-          ` : `
-            <button onclick="marcarMovelDanificado('${m.id}')" title="Sinalizar que este móvel quebrou ou estragou" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-rose-400 rounded-lg text-xs font-medium border border-slate-700 transition">
-              <i class="fa-solid fa-wrench"></i> Sinalizar Dano
-            </button>
-          `}
-
-          <button onclick="devolverMovelGalpao('${m.id}')" title="Devolver móvel da casa para o estoque do Galpão" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium border border-slate-700 transition">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i> Devolver
+  if (moveisFiltrados.length === 0) {
+    container.innerHTML = `
+      <div class="p-6 text-center bg-slate-900/60 rounded-xl border border-slate-800 text-slate-400 text-xs">
+        <i class="fa-solid fa-door-open text-2xl mb-2 text-slate-600 block"></i>
+        Nenhum móvel alocado neste cômodo ainda.
+        <div class="mt-3">
+          <button onclick="abrirModalAdicionarMovelCasa('${filtroComodoDossie === '__sem_comodo__' ? '' : filtroComodoDossie.replace(/'/g, "\\'")}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold text-xs">
+            <i class="fa-solid fa-plus mr-1"></i> Alocar Móvel aqui
           </button>
         </div>
       </div>
     `;
-  }).join('');
+    return;
+  }
+
+  // MODO 1: VISUALIZAÇÃO POR CÔMODO (Agrupado com headers)
+  if (visaoMoveisDossie === 'comodos') {
+    // Determina grupos de cômodos
+    let grupos = [];
+
+    if (filtroComodoDossie === 'todos') {
+      // Exibe todos os cômodos da casa na ordem definida
+      particoesCasa.forEach(p => {
+        const itens = moveis.filter(m => (m.comodo || '').trim().toLowerCase() === p.trim().toLowerCase());
+        grupos.push({ nome: p, itens: itens, icone: getIconeParticao(p) });
+      });
+
+      // Inclui cômodos avulsos que possam estar nos móveis mas não nas partições da casa
+      moveis.forEach(m => {
+        if (m.comodo && !particoesCasa.some(p => p.trim().toLowerCase() === m.comodo.trim().toLowerCase())) {
+          if (!grupos.some(g => g.nome.trim().toLowerCase() === m.comodo.trim().toLowerCase())) {
+            const itens = moveis.filter(x => (x.comodo || '').trim().toLowerCase() === m.comodo.trim().toLowerCase());
+            grupos.push({ nome: m.comodo, itens: itens, icone: getIconeParticao(m.comodo) });
+          }
+        }
+      });
+
+      // Móveis sem cômodo definido
+      const semComodo = moveis.filter(m => !m.comodo);
+      if (semComodo.length > 0) {
+        grupos.push({ nome: 'Área Comum / Não Especificado', itens: semComodo, icone: 'fa-layer-group', semComodo: true });
+      }
+    } else {
+      // Filtro específico ativado
+      if (filtroComodoDossie === '__sem_comodo__') {
+        grupos.push({ nome: 'Área Comum / Não Especificado', itens: moveisFiltrados, icone: 'fa-layer-group', semComodo: true });
+      } else {
+        grupos.push({ nome: filtroComodoDossie, itens: moveisFiltrados, icone: getIconeParticao(filtroComodoDossie) });
+      }
+    }
+
+    container.innerHTML = grupos.map(grupo => {
+      const totalPecasGrupo = grupo.itens.reduce((a, b) => a + (Number(b.quantidade) || 0), 0);
+      const comodoParam = grupo.semComodo ? '' : grupo.nome.replace(/'/g, "\\'");
+
+      return `
+        <div class="bg-slate-900/90 border border-[#23324d] rounded-2xl p-3 sm:p-4 shadow-sm space-y-3">
+          <!-- Cabeçalho do Cômodo -->
+          <div class="flex items-center justify-between pb-2.5 border-b border-[#23324d]">
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center text-sm">
+                <i class="fa-solid ${grupo.icone}"></i>
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                  <span>${escaparHtml(grupo.nome)}</span>
+                  <span class="text-[11px] font-semibold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                    ${totalPecasGrupo} peça${totalPecasGrupo !== 1 ? 's' : ''} (${grupo.itens.length} item${grupo.itens.length !== 1 ? 'ns' : ''})
+                  </span>
+                </h4>
+              </div>
+            </div>
+
+            <button type="button" onclick="abrirModalAdicionarMovelCasa('${comodoParam}')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white px-2.5 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1.5" title="Alocar móvel neste cômodo">
+              <i class="fa-solid fa-plus text-amber-400"></i>
+              <span class="hidden sm:inline">+ Móvel aqui</span>
+            </button>
+          </div>
+
+          <!-- Lista de Itens do Cômodo -->
+          ${grupo.itens.length === 0 ? `
+            <div class="py-3 text-center text-slate-500 text-xs italic">
+              Nenhum móvel alocado neste cômodo ainda. Toque em "+ Móvel aqui" para vincular.
+            </div>
+          ` : `
+            <div class="space-y-2.5">
+              ${grupo.itens.map(m => renderCardMovelHtml(m)).join('')}
+            </div>
+          `}
+        </div>
+      `;
+    }).join('');
+
+    return;
+  }
+
+  // MODO 2: LISTA GERAL (Flat)
+  container.innerHTML = `
+    <div class="space-y-2.5">
+      ${moveisFiltrados.map(m => renderCardMovelHtml(m)).join('')}
+    </div>
+  `;
+}
+
+// Renderiza o card individual de um móvel com ações completas
+function renderCardMovelHtml(m) {
+  const isDanificado = m.estado && m.estado.includes('Danificado');
+  let corEstado = 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+  if (m.estado === 'Regular') corEstado = 'bg-amber-500/10 text-amber-400 border-amber-500/30';
+  if (isDanificado) corEstado = 'bg-rose-500/20 text-rose-300 border-rose-500/50 font-bold animate-pulse';
+  const fotoMovel = getFotoProduto(m.itemNome, m.fotoUrl);
+
+  return `
+    <div class="p-3 bg-[#0f172a] ${isDanificado ? 'border-2 border-rose-500/60' : 'border border-[#23324d]'} rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 hover:border-slate-700 transition">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-12 h-12 rounded-xl overflow-hidden bg-slate-950 border ${isDanificado ? 'border-rose-500/60' : 'border-slate-800'} flex items-center justify-center shrink-0 relative group/img">
+          ${fotoMovel ? `
+            <img src="${fotoMovel}" alt="${m.itemNome}" loading="lazy" class="w-full h-full object-cover cursor-pointer hover:scale-105 transition" onclick="abrirFotoZoom('${fotoMovel}', '${m.itemNome.replace(/'/g, "\\'")}')">
+          ` : `
+            <div class="w-full h-full ${isDanificado ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-800 text-amber-400'} flex items-center justify-center text-base">
+              <i class="fa-solid fa-couch"></i>
+            </div>
+          `}
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <h4 class="text-sm font-bold text-white truncate">${m.itemNome}</h4>
+            <span class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">${m.quantidade}x</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-1.5 text-xs text-slate-400 mt-1">
+            <span class="text-[10px] px-2 py-0.5 rounded-full border ${corEstado}">
+              ${m.estado || 'Bom'}
+            </span>
+            ${m.comodo ? `
+              <button type="button" onclick="abrirModalMudarComodo('${m.id}')" title="Clique para transferir para outro cômodo" class="text-[10px] px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30 font-semibold flex items-center gap-1 transition">
+                <i class="fa-solid ${getIconeParticao(m.comodo)}"></i>
+                <span>${escaparHtml(m.comodo)}</span>
+                <i class="fa-solid fa-pen text-[8px] opacity-70"></i>
+              </button>
+            ` : `
+              <button type="button" onclick="abrirModalMudarComodo('${m.id}')" title="Definir cômodo deste móvel" class="text-[10px] px-2 py-0.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-amber-400 border border-slate-700 font-medium flex items-center gap-1 transition">
+                <i class="fa-solid fa-door-open text-[9px]"></i>
+                <span>Sem Cômodo (Definir)</span>
+              </button>
+            `}
+            ${m.patrimonio ? `<span class="font-mono text-[10px] text-slate-300 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">${m.patrimonio}</span>` : ''}
+            ${m.observacoes ? `<span class="italic text-[11px] text-slate-400 truncate max-w-[180px]">"${escaparHtml(m.observacoes)}"</span>` : ''}
+          </div>
+        </div>
+      </div>
+
+      <!-- Ações do Móvel: Mudar Cômodo, Substituição em 1 Clique e Devolução -->
+      <div class="flex items-center gap-1.5 w-full sm:w-auto justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800 shrink-0">
+        <button type="button" onclick="abrirModalMudarComodo('${m.id}')" title="Mudar cômodo deste móvel" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-amber-400 rounded-lg text-xs font-medium border border-slate-700 transition flex items-center gap-1">
+          <i class="fa-solid fa-door-open text-xs"></i>
+          <span class="hidden md:inline">Mudar Cômodo</span>
+        </button>
+
+        ${isDanificado ? `
+          <button onclick="substituirMovelEm1Clique('${m.id}')" class="px-3 py-1.5 bg-gradient-to-r from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-md shadow-rose-600/30 transition active:scale-95">
+            <i class="fa-solid fa-arrows-rotate"></i>
+            <span>Substituir</span>
+          </button>
+        ` : `
+          <button onclick="marcarMovelDanificado('${m.id}')" title="Sinalizar que este móvel quebrou ou estragou" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-rose-400 rounded-lg text-xs font-medium border border-slate-700 transition">
+            <i class="fa-solid fa-wrench"></i> <span class="hidden md:inline">Dano</span>
+          </button>
+        `}
+
+        <button onclick="devolverMovelGalpao('${m.id}')" title="Devolver móvel da casa para o estoque do Galpão" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium border border-slate-700 transition">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> <span class="hidden md:inline">Devolver</span>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// ==========================================
+// MODAL: MUDAR CÔMODO DO MÓVEL
+// ==========================================
+function abrirModalMudarComodo(movelId) {
+  const movel = appState.casaMoveis.find(m => m.id === movelId);
+  if (!movel) return;
+
+  const casa = appState.casas.find(c => c.id === movel.casaId);
+  const inId = document.getElementById('mudar-comodo-movel-id');
+  const txtNome = document.getElementById('mudar-comodo-movel-nome');
+  const selComodo = document.getElementById('mudar-comodo-select');
+  const inputCustom = document.getElementById('mudar-comodo-custom-input');
+
+  if (inId) inId.value = movel.id;
+  if (txtNome) txtNome.textContent = `${movel.quantidade}x ${movel.itemNome} • ${casa ? casa.nome : ''}`;
+  if (inputCustom) {
+    inputCustom.value = '';
+    inputCustom.classList.add('hidden');
+    inputCustom.required = false;
+  }
+
+  if (selComodo) {
+    selComodo.innerHTML = '';
+    const optVazio = document.createElement('option');
+    optVazio.value = '';
+    optVazio.textContent = 'Sem cômodo (Área Geral)';
+    selComodo.appendChild(optVazio);
+
+    const particoes = casa ? (Array.isArray(casa.particoes) ? casa.particoes : normalizarParticoes(casa.particoes)) : [];
+    particoes.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p;
+      opt.textContent = p;
+      if (movel.comodo && movel.comodo.toLowerCase() === p.toLowerCase()) {
+        opt.selected = true;
+      }
+      selComodo.appendChild(opt);
+    });
+
+    // Se o móvel tem um cômodo que não está na lista oficial
+    if (movel.comodo && !particoes.some(p => p.toLowerCase() === movel.comodo.toLowerCase())) {
+      const optAtual = document.createElement('option');
+      optAtual.value = movel.comodo;
+      optAtual.textContent = `${movel.comodo} (Atual)`;
+      optAtual.selected = true;
+      selComodo.appendChild(optAtual);
+    }
+
+    const optNovo = document.createElement('option');
+    optNovo.value = '__novo__';
+    optNovo.textContent = '➕ Outro cômodo...';
+    selComodo.appendChild(optNovo);
+  }
+
+  openModal('modal-mudar-comodo');
+}
+
+function verificarComodoCustomMudanca() {
+  const sel = document.getElementById('mudar-comodo-select');
+  const inputCustom = document.getElementById('mudar-comodo-custom-input');
+  if (!sel || !inputCustom) return;
+
+  if (sel.value === '__novo__') {
+    inputCustom.classList.remove('hidden');
+    inputCustom.required = true;
+    inputCustom.focus();
+  } else {
+    inputCustom.classList.add('hidden');
+    inputCustom.required = false;
+  }
+}
+
+function salvarMudancaComodo(e) {
+  e.preventDefault();
+  const movelId = document.getElementById('mudar-comodo-movel-id').value;
+  const sel = document.getElementById('mudar-comodo-select');
+  const custom = document.getElementById('mudar-comodo-custom-input');
+
+  const movel = appState.casaMoveis.find(m => m.id === movelId);
+  if (!movel) {
+    mostrarToast('Móvel não encontrado!', 'error');
+    return;
+  }
+
+  let novoComodo = '';
+  if (sel.value === '__novo__') {
+    novoComodo = custom.value.trim();
+  } else {
+    novoComodo = sel.value.trim();
+  }
+
+  movel.comodo = novoComodo;
+
+  // Se o novo cômodo foi criado manualmente e a casa ainda não tem ele nas partições, adiciona à casa
+  const casa = appState.casas.find(c => c.id === movel.casaId);
+  if (casa && novoComodo) {
+    const parts = Array.isArray(casa.particoes) ? casa.particoes : normalizarParticoes(casa.particoes);
+    if (!parts.some(p => p.toLowerCase() === novoComodo.toLowerCase())) {
+      parts.push(novoComodo);
+      casa.particoes = parts;
+      if (appState.config.turso?.ativo) {
+        executarTurso('UPDATE casas SET particoes = ? WHERE id = ?', [JSON.stringify(parts), casa.id]).catch(console.error);
+      }
+    }
+  }
+
+  salvarLocalmente();
+  closeModal('modal-mudar-comodo');
+  renderDossieMoveis();
+  renderCasas();
+  mostrarToast(`Cômodo atualizado para "${novoComodo || 'Sem Cômodo'}"!`, 'success');
+
+  if (appState.config.turso?.ativo) {
+    executarTurso('UPDATE casa_moveis SET comodo = ? WHERE id = ?', [movel.comodo || '', movel.id]).catch(console.error);
+  }
 }
 
 function renderDossieEntregas() {
@@ -2311,12 +2677,20 @@ function abrirModalEntregaCasa() {
   openModal('modal-entrega-casa');
 }
 
-function atualizarInfoCasaEntrega() {
+function atualizarInfoCasaEntrega(comodoPreSelecionado = '') {
   const casaId = document.getElementById('entrega-casa-id').value;
   const box = document.getElementById('box-info-casa-entrega');
   const respTxt = document.getElementById('entrega-resp-txt');
   const empTxt = document.getElementById('entrega-empresa-txt');
   const comodoSelect = document.getElementById('entrega-movel-comodo');
+  const customInput = document.getElementById('entrega-movel-comodo-custom');
+  const statusLabel = document.getElementById('label-status-comodos-casa');
+
+  if (customInput) {
+    customInput.value = '';
+    customInput.classList.add('hidden');
+    customInput.required = false;
+  }
 
   const casa = appState.casas.find(c => c.id === casaId);
   if (casa) {
@@ -2327,20 +2701,57 @@ function atualizarInfoCasaEntrega() {
     if (comodoSelect) {
       comodoSelect.innerHTML = '<option value="">Selecione o cômodo de destino...</option>';
       const parts = Array.isArray(casa.particoes) ? casa.particoes : normalizarParticoes(casa.particoes);
+
       if (parts.length > 0) {
+        if (statusLabel) statusLabel.textContent = `${parts.length} cômodo(s) cadastrado(s)`;
         parts.forEach(p => {
           const opt = document.createElement('option');
           opt.value = p;
           opt.textContent = p;
+          if (comodoPreSelecionado && p.trim().toLowerCase() === comodoPreSelecionado.trim().toLowerCase()) {
+            opt.selected = true;
+          }
           comodoSelect.appendChild(opt);
         });
+      } else {
+        if (statusLabel) statusLabel.textContent = 'Sem cômodos pré-cadastrados';
       }
+
+      // Se passou um cômodo pré-selecionado que não estava na lista
+      if (comodoPreSelecionado && !parts.some(p => p.trim().toLowerCase() === comodoPreSelecionado.trim().toLowerCase())) {
+        const optPre = document.createElement('option');
+        optPre.value = comodoPreSelecionado;
+        optPre.textContent = comodoPreSelecionado;
+        optPre.selected = true;
+        comodoSelect.appendChild(optPre);
+      }
+
+      const optCustom = document.createElement('option');
+      optCustom.value = '__novo__';
+      optCustom.textContent = '➕ Outro cômodo...';
+      comodoSelect.appendChild(optCustom);
     }
   } else {
     box.classList.add('hidden');
     if (comodoSelect) {
       comodoSelect.innerHTML = '<option value="">Selecione o cômodo de destino...</option>';
     }
+    if (statusLabel) statusLabel.textContent = 'Selecione a casa';
+  }
+}
+
+function verificarComodoPersonalizadoEntrega() {
+  const sel = document.getElementById('entrega-movel-comodo');
+  const inputCustom = document.getElementById('entrega-movel-comodo-custom');
+  if (!sel || !inputCustom) return;
+
+  if (sel.value === '__novo__') {
+    inputCustom.classList.remove('hidden');
+    inputCustom.required = true;
+    inputCustom.focus();
+  } else {
+    inputCustom.classList.add('hidden');
+    inputCustom.required = false;
   }
 }
 
@@ -2469,7 +2880,24 @@ function salvarEntregaCasa(e) {
   if (item.categoria === 'Móveis & Equipamentos') {
     const estado = document.getElementById('entrega-movel-estado')?.value || 'Bom';
     const patrimonio = document.getElementById('entrega-movel-patrimonio')?.value.trim() || `PAT-${Date.now().toString().slice(-4)}`;
-    const comodo = document.getElementById('entrega-movel-comodo')?.value.trim() || '';
+    
+    let comodo = document.getElementById('entrega-movel-comodo')?.value.trim() || '';
+    if (comodo === '__novo__') {
+      comodo = document.getElementById('entrega-movel-comodo-custom')?.value.trim() || '';
+    }
+
+    // Se criou um novo cômodo na entrega e a casa não o tinha, cadastra nas partições da casa
+    if (comodo && casa) {
+      const parts = Array.isArray(casa.particoes) ? casa.particoes : normalizarParticoes(casa.particoes);
+      if (!parts.some(p => p.toLowerCase() === comodo.toLowerCase())) {
+        parts.push(comodo);
+        casa.particoes = parts;
+        if (appState.config.turso?.ativo) {
+          executarTurso('UPDATE casas SET particoes = ? WHERE id = ?', [JSON.stringify(parts), casa.id]).catch(console.error);
+        }
+      }
+    }
+
     const obsMovel = comodo ? (motivo ? `${motivo} • Cômodo: ${comodo}` : `Cômodo: ${comodo}`) : motivo;
 
     const novoMovel = {
@@ -2486,9 +2914,9 @@ function salvarEntregaCasa(e) {
     appState.casaMoveis.push(novoMovel);
 
     if (appState.config.turso?.ativo) {
-      executarTurso(`INSERT INTO casa_moveis (id, casa_id, item_nome, categoria, quantidade, estado, patrimonio, observacoes)
-                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [novoMovel.id, novoMovel.casaId, novoMovel.itemNome, novoMovel.categoria, novoMovel.quantidade, novoMovel.estado, novoMovel.patrimonio, novoMovel.observacoes]
+      executarTurso(`INSERT INTO casa_moveis (id, casa_id, item_nome, categoria, quantidade, estado, patrimonio, comodo, observacoes)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [novoMovel.id, novoMovel.casaId, novoMovel.itemNome, novoMovel.categoria, novoMovel.quantidade, novoMovel.estado, novoMovel.patrimonio, novoMovel.comodo, novoMovel.observacoes]
       ).catch(console.error);
     }
   } else {
@@ -3013,14 +3441,14 @@ function prepararEntregaItem(itemId) {
   }
 }
 
-function abrirModalAdicionarMovelCasa() {
+function abrirModalAdicionarMovelCasa(comodoPreSelecionado = '') {
   closeModal('modal-dossie-casa');
   openModal('modal-entrega-casa');
   popularSelects();
   const selCasa = document.getElementById('entrega-casa-id');
   if (selCasa && appState.dossieCasaAtualId) {
     selCasa.value = appState.dossieCasaAtualId;
-    atualizarInfoCasaEntrega();
+    atualizarInfoCasaEntrega(comodoPreSelecionado);
   }
 }
 

@@ -797,15 +797,32 @@
 
         <!-- ABA 1: MOBILIÁRIO DA CASA -->
         <div id="dossie-aba-moveis" class="space-y-3">
-          <div class="flex items-center justify-between">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <span class="text-xs text-slate-400" id="dossie-contador-moveis">0 móveis vinculados</span>
-            <button onclick="abrirModalAdicionarMovelCasa()" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition shadow-sm">
-              <i class="fa-solid fa-plus"></i>
-              <span>+ Adicionar Móvel do Galpão</span>
-            </button>
+            <div class="flex items-center gap-2">
+              <!-- Alternar Modo de Visualização: Por Cômodo vs Lista Geral -->
+              <div class="flex items-center bg-slate-900 border border-slate-800 rounded-xl p-0.5 text-xs">
+                <button type="button" id="btn-view-comodos" onclick="alternarVisaoMoveisDossie('comodos')" class="px-2.5 py-1 rounded-lg font-semibold transition text-amber-400 bg-amber-500/20" title="Ver móveis organizados por cada cômodo da casa">
+                  <i class="fa-solid fa-door-open mr-1"></i> Por Cômodo
+                </button>
+                <button type="button" id="btn-view-lista" onclick="alternarVisaoMoveisDossie('lista')" class="px-2.5 py-1 rounded-lg font-semibold transition text-slate-400 hover:text-slate-200" title="Ver lista geral de todos os móveis">
+                  <i class="fa-solid fa-list mr-1"></i> Lista Geral
+                </button>
+              </div>
+
+              <button onclick="abrirModalAdicionarMovelCasa()" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition shadow-sm shrink-0">
+                <i class="fa-solid fa-plus"></i>
+                <span>+ Adicionar Móvel</span>
+              </button>
+            </div>
           </div>
 
-          <div id="dossie-lista-moveis" class="space-y-2">
+          <!-- Barra de Filtros Rápidos por Cômodo (Chips Clicáveis) -->
+          <div id="dossie-filtro-comodos-bar" class="flex flex-wrap gap-1.5 pt-1 pb-1">
+            <!-- Dinâmico -->
+          </div>
+
+          <div id="dossie-lista-moveis" class="space-y-3">
             <!-- Dinâmico -->
           </div>
         </div>
@@ -877,6 +894,50 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: MUDAR CÔMODO DO MÓVEL               -->
+  <!-- ========================================== -->
+  <div id="modal-mudar-comodo" class="no-print fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-[#151f32] border border-[#23324d] rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden my-auto fade-in">
+      <div class="bg-gradient-to-r from-amber-600/30 via-[#151f32] to-[#151f32] border-b border-[#23324d] p-4 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-sm border border-amber-500/30">
+            <i class="fa-solid fa-arrows-split-up-and-left"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-white">Mudar Cômodo do Móvel</h3>
+            <p class="text-[11px] text-slate-400 truncate max-w-[200px]" id="mudar-comodo-movel-nome">Item</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-mudar-comodo')" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-xs"></i>
+        </button>
+      </div>
+
+      <form id="form-mudar-comodo" onsubmit="salvarMudancaComodo(event)" class="p-4 space-y-3">
+        <input type="hidden" id="mudar-comodo-movel-id" value="">
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Cômodo de Destino *</label>
+          <select id="mudar-comodo-select" onchange="verificarComodoCustomMudanca()" required class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+            <!-- Dinâmico -->
+          </select>
+          <input type="text" id="mudar-comodo-custom-input" placeholder="Digite o nome do cômodo..." class="hidden mt-2 w-full bg-[#0b1120] border border-amber-500/50 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+        </div>
+
+        <div class="pt-2 border-t border-[#23324d] flex items-center justify-end gap-2">
+          <button type="button" onclick="closeModal('modal-mudar-comodo')" class="px-3 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 transition">
+            Cancelar
+          </button>
+          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition flex items-center gap-1.5 shadow-md">
+            <i class="fa-solid fa-check"></i>
+            <span>Salvar Cômodo</span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -969,12 +1030,21 @@
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1 flex items-center justify-between">
-              <span>Cômodo / Partição de Destino</span>
-              <span class="text-[10px] text-amber-400 font-normal">Opcional</span>
+              <span class="flex items-center gap-1.5">
+                <i class="fa-solid fa-door-open text-amber-400"></i>
+                <span>Cômodo / Partição de Destino</span>
+              </span>
+              <span class="text-[10px] text-amber-400 font-semibold" id="label-status-comodos-casa">Defina o cômodo</span>
             </label>
-            <select id="entrega-movel-comodo" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
-              <option value="">Selecione o cômodo de destino...</option>
-            </select>
+            <div class="space-y-1.5">
+              <select id="entrega-movel-comodo" onchange="verificarComodoPersonalizadoEntrega()" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+                <option value="">Selecione o cômodo de destino...</option>
+              </select>
+              <input type="text" id="entrega-movel-comodo-custom" placeholder="Digite o nome do cômodo (ex: Quarto 3, Varanda)..." class="hidden w-full bg-[#0b1120] border border-amber-500/50 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">
+              Indique o cômodo onde o item será instalado para organizar o que há em cada partição da casa.
+            </p>
           </div>
         </div>
 

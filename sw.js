@@ -1,4 +1,4 @@
-const CACHE_NAME = 'almox-canteiro-v2-particoes';
+const CACHE_NAME = 'almox-canteiro-v3-moveis-por-comodo';
 const ASSETS = [
   './',
   './index.html',
