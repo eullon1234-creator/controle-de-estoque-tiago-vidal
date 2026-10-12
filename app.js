@@ -11,6 +11,7 @@ const DB_KEYS = {
   CASAS: 'canteiro_casas_v2',
   CASA_MOVEIS: 'canteiro_casa_moveis_v2',
   CASA_ENTREGAS: 'canteiro_casa_entregas_v2',
+  CASA_DESPESAS: 'canteiro_casa_despesas_v1',
   MOVIMENTACOES: 'canteiro_movs_v2',
   CONFIG: 'canteiro_config_v2'
 };
@@ -20,6 +21,7 @@ let appState = {
   casas: [],
   casaMoveis: [],
   casaEntregas: [],
+  casaDespesas: [],
   movimentacoes: [],
   config: {
     nomeObra: 'Canteiro Central - Alojamento Tiago Vidal',
@@ -130,6 +132,8 @@ const SEEDS_CASAS = [
     responsavelEmpresa: 'Empreiteira Souza Alvenaria',
     responsavelTelefone: '(11) 98765-4321',
     responsavelQuarto: 'Quarto 01 - Cama A',
+    endereco: 'Rua das Palmeiras, 142 - Bairro Industrial',
+    localizacaoUrl: 'https://maps.google.com/?q=-23.55052,-46.633308',
     dataCautela: '2026-09-10',
     observacoes: 'Alojamento da equipe de alvenaria e blocagem estrutural.',
     fotoUrl: FOTOS_CASAS_MAP['casa-1']
@@ -145,6 +149,8 @@ const SEEDS_CASAS = [
     responsavelEmpresa: 'Construtora Alfa Principal',
     responsavelTelefone: '(21) 99887-1122',
     responsavelQuarto: 'Quarto 01 - Cama B',
+    endereco: 'Av. dos Trabalhadores, 880 - Setor Sul',
+    localizacaoUrl: 'https://maps.google.com/?q=-23.55321,-46.63912',
     dataCautela: '2026-09-12',
     observacoes: 'Equipe de armação pesada e carpinteiros.',
     fotoUrl: FOTOS_CASAS_MAP['casa-2']
@@ -160,6 +166,8 @@ const SEEDS_CASAS = [
     responsavelEmpresa: 'Elétrica & Hidráulica Silva Ltda',
     responsavelTelefone: '(31) 97123-4567',
     responsavelQuarto: 'Quarto 02 - Cama A',
+    endereco: 'Rua São José, 45 - Vila Operária',
+    localizacaoUrl: 'https://maps.google.com/?q=-23.54890,-46.63120',
     dataCautela: '2026-09-15',
     observacoes: 'Equipe técnica de instalações elétricas e sanitárias.',
     fotoUrl: FOTOS_CASAS_MAP['casa-3']
@@ -175,6 +183,8 @@ const SEEDS_CASAS = [
     responsavelEmpresa: 'Pintura & Acabamentos Express',
     responsavelTelefone: '(41) 98456-7890',
     responsavelQuarto: 'Quarto 01 - Cama A',
+    endereco: 'Rua 7 de Setembro, 310 - Centro',
+    localizacaoUrl: 'https://maps.google.com/?q=-23.55210,-46.63550',
     dataCautela: '2026-09-18',
     observacoes: 'Possui 2 vagas livres disponíveis para novos alojados.',
     fotoUrl: FOTOS_CASAS_MAP['casa-4']
@@ -220,6 +230,15 @@ const SEEDS_MOVS = [
   { id: 'mov-104', tipo: 'SAIDA_CASA', itemNome: 'Papel Higiênico Folha Dupla', categoria: 'Produtos de Limpeza', unidade: 'Fardo', quantidade: 1, casaId: 'casa-1', casaNome: 'Casa 01', responsavel: 'João Silva', empresa: 'Empreiteira Souza Alvenaria', motivo: 'Consumo do alojamento', dataHora: '2026-09-20T10:05:00.000Z', saldoAnterior: 61, saldoPosterior: 60, detalhes: 'Fardo com 64 rolos' }
 ];
 
+const SEEDS_CASA_DESPESAS = [
+  { id: 'cd-1', casaId: 'casa-1', tipo: 'Água', mesReferencia: '2026-09', valor: 142.80, vencimento: '2026-10-15', status: 'Pendente', dataPagamento: '', observacoes: 'Conta Sabesp ref. Setembro' },
+  { id: 'cd-2', casaId: 'casa-1', tipo: 'Luz', mesReferencia: '2026-09', valor: 389.50, vencimento: '2026-10-10', status: 'Pago', dataPagamento: '2026-10-05', observacoes: 'Enel - Paga via PIX' },
+  { id: 'cd-3', casaId: 'casa-2', tipo: 'Água', mesReferencia: '2026-09', valor: 118.20, vencimento: '2026-10-18', status: 'Pendente', dataPagamento: '', observacoes: 'Hidrômetro C02' },
+  { id: 'cd-4', casaId: 'casa-2', tipo: 'Luz', mesReferencia: '2026-09', valor: 425.90, vencimento: '2026-10-12', status: 'Pendente', dataPagamento: '', observacoes: 'Consumo ar-condicionado' },
+  { id: 'cd-5', casaId: 'casa-3', tipo: 'Luz', mesReferencia: '2026-09', valor: 310.00, vencimento: '2026-10-08', status: 'Pago', dataPagamento: '2026-10-06', observacoes: 'Comprovante em arquivo' },
+  { id: 'cd-6', casaId: 'casa-3', tipo: 'Água', mesReferencia: '2026-09', valor: 95.40, vencimento: '2026-10-20', status: 'Pendente', dataPagamento: '', observacoes: 'Fatura digital' }
+];
+
 // ==========================================
 // INICIALIZAÇÃO DA APLICAÇÃO
 // ==========================================
@@ -237,6 +256,7 @@ function carregarDadosLocais() {
   const c = localStorage.getItem(DB_KEYS.CASAS);
   const cm = localStorage.getItem(DB_KEYS.CASA_MOVEIS);
   const ce = localStorage.getItem(DB_KEYS.CASA_ENTREGAS);
+  const cd = localStorage.getItem(DB_KEYS.CASA_DESPESAS);
   const m = localStorage.getItem(DB_KEYS.MOVIMENTACOES);
   const cfg = localStorage.getItem(DB_KEYS.CONFIG);
 
@@ -244,6 +264,7 @@ function carregarDadosLocais() {
   appState.casas = c ? JSON.parse(c) : [...SEEDS_CASAS];
   appState.casaMoveis = cm ? JSON.parse(cm) : [...SEEDS_CASA_MOVEIS];
   appState.casaEntregas = ce ? JSON.parse(ce) : [...SEEDS_CASA_ENTREGAS];
+  appState.casaDespesas = cd ? JSON.parse(cd) : [...SEEDS_CASA_DESPESAS];
   appState.movimentacoes = m ? JSON.parse(m) : [...SEEDS_MOVS];
 
   if (cfg) {
@@ -269,6 +290,7 @@ function salvarLocalmente() {
   localStorage.setItem(DB_KEYS.CASAS, JSON.stringify(appState.casas));
   localStorage.setItem(DB_KEYS.CASA_MOVEIS, JSON.stringify(appState.casaMoveis));
   localStorage.setItem(DB_KEYS.CASA_ENTREGAS, JSON.stringify(appState.casaEntregas));
+  localStorage.setItem(DB_KEYS.CASA_DESPESAS, JSON.stringify(appState.casaDespesas));
   localStorage.setItem(DB_KEYS.MOVIMENTACOES, JSON.stringify(appState.movimentacoes));
   localStorage.setItem(DB_KEYS.CONFIG, JSON.stringify(appState.config));
 }
@@ -396,6 +418,32 @@ async function executarTurso(sql, args = []) {
   return [];
 }
 
+// Garante que o banco Turso tenha as colunas/tabelas novas (localização e despesas).
+// Cada comando roda isolado no pipeline: se a coluna já existir, o erro é ignorado.
+let schemaTursoVerificado = false;
+async function garantirSchemaTurso() {
+  if (schemaTursoVerificado) return;
+  await executarTursoBatch([
+    { sql: 'ALTER TABLE casas ADD COLUMN endereco TEXT' },
+    { sql: 'ALTER TABLE casas ADD COLUMN localizacao_url TEXT' },
+    {
+      sql: `CREATE TABLE IF NOT EXISTS casa_despesas (
+              id TEXT PRIMARY KEY,
+              casa_id TEXT NOT NULL,
+              tipo TEXT NOT NULL,
+              mes_referencia TEXT,
+              valor REAL DEFAULT 0,
+              vencimento TEXT,
+              status TEXT DEFAULT 'Pendente',
+              data_pagamento TEXT,
+              observacoes TEXT,
+              data_cadastro TEXT
+            )`
+    }
+  ]);
+  schemaTursoVerificado = true;
+}
+
 async function inicializarTursoSeDisponivel() {
   if (!appState.config.turso?.url || !appState.config.turso?.token || !appState.isOnline) {
     appState.tursoConectado = false;
@@ -404,20 +452,32 @@ async function inicializarTursoSeDisponivel() {
   }
 
   try {
+    await garantirSchemaTurso();
+
     const results = await executarTursoBatch([
       { sql: 'SELECT * FROM galpao_itens ORDER BY nome ASC' },
       { sql: 'SELECT * FROM casas ORDER BY nome ASC' },
       { sql: 'SELECT * FROM casa_moveis' },
       { sql: 'SELECT * FROM casa_entregas ORDER BY data_entrega DESC' },
-      { sql: 'SELECT * FROM movimentacoes ORDER BY data_hora DESC LIMIT 100' }
+      { sql: 'SELECT * FROM movimentacoes ORDER BY data_hora DESC LIMIT 100' },
+      { sql: 'SELECT * FROM casa_despesas ORDER BY mes_referencia DESC' }
     ]);
 
-    if (results && results.every(r => r.type === 'ok')) {
+    if (results && results.slice(0, 6).every(r => r.type === 'ok')) {
       const g = parseTursoResult(results[0].response.result);
       const c = parseTursoResult(results[1].response.result);
       const cm = parseTursoResult(results[2].response.result);
       const ce = parseTursoResult(results[3].response.result);
       const m = parseTursoResult(results[4].response.result);
+      const cd = parseTursoResult(results[5].response.result);
+
+      if (cd.length > 0) {
+        appState.casaDespesas = cd.map(r => ({
+          id: r.id, casaId: r.casa_id, tipo: r.tipo, mesReferencia: r.mes_referencia,
+          valor: Number(r.valor) || 0, vencimento: r.vencimento || '', status: r.status || 'Pendente',
+          dataPagamento: r.data_pagamento || '', observacoes: r.observacoes || ''
+        }));
+      }
 
       if (g.length > 0) {
         appState.galpao = g.map(r => ({
@@ -436,6 +496,7 @@ async function inicializarTursoSeDisponivel() {
           responsavelNome: r.responsavel_nome, responsavelEmpresa: r.responsavel_empresa,
           responsavelTelefone: r.responsavel_telefone, responsavelQuarto: r.responsavel_quarto,
           dataCautela: r.data_cautela, observacoes: r.observacoes,
+          endereco: r.endereco || '', localizacaoUrl: r.localizacao_url || '',
           fotoUrl: getFotoCasa(r.id, r.foto_url)
         }));
       }
@@ -508,6 +569,7 @@ async function testarEConectarTurso() {
 async function sincronizarTudoTurso() {
   mostrarToast('Enviando dados para a nuvem...', 'info');
   try {
+    await garantirSchemaTurso();
     const reqs = [];
     appState.galpao.forEach(i => {
       reqs.push({
@@ -518,11 +580,12 @@ async function sincronizarTudoTurso() {
     });
     appState.casas.forEach(c => {
       reqs.push({
-        sql: `INSERT OR REPLACE INTO casas (id, nome, bloco, capacidade, moradores_atuais, status, responsavel_nome, responsavel_empresa, responsavel_telefone, responsavel_quarto, data_cautela, observacoes, foto_url)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        args: [c.id, c.nome, c.bloco, c.capacidade, c.moradoresAtuais, c.status, c.responsavelNome, c.responsavelEmpresa, c.responsavelTelefone, c.responsavelQuarto, c.dataCautela, c.observacoes, c.fotoUrl || '']
+        sql: `INSERT OR REPLACE INTO casas (id, nome, bloco, capacidade, moradores_atuais, status, responsavel_nome, responsavel_empresa, responsavel_telefone, responsavel_quarto, data_cautela, observacoes, foto_url, endereco, localizacao_url)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        args: [c.id, c.nome, c.bloco, c.capacidade, c.moradoresAtuais, c.status, c.responsavelNome, c.responsavelEmpresa, c.responsavelTelefone, c.responsavelQuarto, c.dataCautela, c.observacoes, c.fotoUrl || '', c.endereco || '', c.localizacaoUrl || '']
       });
     });
+    appState.casaDespesas.forEach(d => reqs.push(sqlUpsertDespesa(d)));
     appState.casaMoveis.forEach(m => {
       reqs.push({
         sql: `INSERT OR REPLACE INTO casa_moveis (id, casa_id, item_nome, categoria, quantidade, estado, patrimonio, observacoes, foto_url)
@@ -1005,6 +1068,26 @@ function renderCasas() {
             <span class="text-slate-500">Móveis instalados:</span>
             <p class="text-slate-300 font-medium truncate mt-0.5">${resumoMoveis || 'Nenhum móvel vinculado'} (+${totalPecasMoveis} peças)</p>
           </div>
+
+          ${resumoDespesasCardHtml(casa.id)}
+
+          <!-- Localização -->
+          <div class="mt-2 pt-2 border-t border-slate-800 flex items-center gap-2">
+            <i class="fa-solid fa-location-dot text-sky-400 text-xs"></i>
+            <span class="text-[11px] text-slate-400 truncate flex-1">${escaparHtml(casa.endereco) || (casa.localizacaoUrl ? 'Localização salva' : 'Sem localização cadastrada')}</span>
+            ${casa.localizacaoUrl || casa.endereco ? `
+              <button onclick="abrirMapaCasa('${casa.id}')" title="Ver no mapa" class="px-2 py-1 rounded-lg bg-sky-600/20 hover:bg-sky-600/40 text-sky-300 border border-sky-500/30 text-[11px] font-semibold transition shrink-0">
+                <i class="fa-solid fa-map-location-dot"></i> Mapa
+              </button>
+              <button onclick="compartilharLocalizacaoCasa('${casa.id}')" title="Compartilhar localização" class="px-2 py-1 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-300 border border-emerald-500/30 text-[11px] font-semibold transition shrink-0">
+                <i class="fa-solid fa-share-nodes"></i>
+              </button>
+            ` : `
+              <button onclick="abrirEdicaoCasa('${casa.id}')" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[11px] font-semibold transition shrink-0">
+                <i class="fa-solid fa-plus"></i> Adicionar
+              </button>
+            `}
+          </div>
         </div>
 
         <!-- Botões de Ação do Card -->
@@ -1045,30 +1128,42 @@ function abrirDossieCasa(casaId) {
   document.getElementById('dossie-resp-quarto').innerHTML = `<i class="fa-solid fa-bed mr-1"></i> ${casa.responsavelQuarto || 'Quarto não especificado'}`;
   document.getElementById('dossie-resp-data').innerHTML = `<i class="fa-solid fa-calendar mr-1"></i> Cautela: ${casa.dataCautela || 'Pendente'}`;
 
+  // Localização
+  const temLocal = !!(casa.localizacaoUrl || casa.endereco);
+  document.getElementById('dossie-endereco').textContent = casa.endereco || (casa.localizacaoUrl ? 'Link de localização cadastrado' : 'Endereço / localização não informados');
+  document.getElementById('dossie-botoes-local').innerHTML = temLocal ? `
+    <button onclick="abrirMapaCasa('${casa.id}')" class="text-xs bg-sky-600 hover:bg-sky-500 text-white font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
+      <i class="fa-solid fa-map-location-dot"></i><span>Ver no Mapa</span>
+    </button>
+    <button onclick="compartilharLocalizacaoCasa('${casa.id}')" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
+      <i class="fa-solid fa-share-nodes"></i><span>Compartilhar</span>
+    </button>
+  ` : `
+    <button onclick="editarResponsavelCasaAtual()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition">
+      <i class="fa-solid fa-plus"></i><span>Adicionar Localização</span>
+    </button>
+  `;
+
   switchDossieTab('moveis');
   openModal('modal-dossie-casa');
 }
 
 function switchDossieTab(tab) {
   appState.activeDossieTab = tab;
-  const btnMoveis = document.getElementById('btn-tab-dossie-moveis');
-  const btnEntregas = document.getElementById('btn-tab-dossie-entregas');
-  const secMoveis = document.getElementById('dossie-aba-moveis');
-  const secEntregas = document.getElementById('dossie-aba-entregas');
+  const abas = ['moveis', 'entregas', 'despesas'];
+  const clsAtiva = 'px-4 py-2 border-b-2 border-amber-500 text-amber-400 text-xs font-bold flex items-center gap-1.5 whitespace-nowrap';
+  const clsInativa = 'px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap';
 
-  if (tab === 'moveis') {
-    btnMoveis.className = 'px-4 py-2 border-b-2 border-amber-500 text-amber-400 text-xs font-bold flex items-center gap-1.5';
-    btnEntregas.className = 'px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 text-xs font-semibold flex items-center gap-1.5';
-    secMoveis.classList.remove('hidden');
-    secEntregas.classList.add('hidden');
-    renderDossieMoveis();
-  } else {
-    btnMoveis.className = 'px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 text-xs font-semibold flex items-center gap-1.5';
-    btnEntregas.className = 'px-4 py-2 border-b-2 border-amber-500 text-amber-400 text-xs font-bold flex items-center gap-1.5';
-    secMoveis.classList.add('hidden');
-    secEntregas.classList.remove('hidden');
-    renderDossieEntregas();
-  }
+  abas.forEach(a => {
+    const btn = document.getElementById(`btn-tab-dossie-${a}`);
+    const sec = document.getElementById(`dossie-aba-${a}`);
+    if (btn) btn.className = a === tab ? clsAtiva : clsInativa;
+    if (sec) sec.classList.toggle('hidden', a !== tab);
+  });
+
+  if (tab === 'moveis') renderDossieMoveis();
+  else if (tab === 'entregas') renderDossieEntregas();
+  else if (tab === 'despesas') renderDossieDespesas();
 }
 
 function renderDossieMoveis() {
@@ -1195,8 +1290,401 @@ function renderDossieEntregas() {
 }
 
 // ==========================================
-// SUBSTITUIÇÃO RÁPIDA EM 1 CLIQUE DO MÓVEL
+// FUNÇÕES AUXILIARES, LOCALIZAÇÃO & DESPESAS
 // ==========================================
+function escaparHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function resumoDespesasCardHtml(casaId) {
+  const desps = appState.casaDespesas.filter(d => d.casaId === casaId);
+  if (desps.length === 0) return '';
+
+  const pendentes = desps.filter(d => d.status === 'Pendente');
+  const totalPendente = pendentes.reduce((acc, d) => acc + (Number(d.valor) || 0), 0);
+
+  const tipos = [...new Set(desps.map(d => d.tipo))];
+  const icones = {
+    'Água': '💧',
+    'Luz': '⚡',
+    'Aluguel': '🏠',
+    'Internet': '📶',
+    'Gás': '🔥',
+    'Outros': '📄'
+  };
+  const badgesTipos = tipos.slice(0, 3).map(t => `${icones[t] || '📄'} ${t}`).join(' • ');
+
+  return `
+    <div class="mt-2 p-2 bg-slate-900/90 rounded-xl border ${pendentes.length > 0 ? 'border-rose-500/30' : 'border-slate-800'} text-xs">
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] text-slate-400 font-medium">${badgesTipos || 'Contas'}</span>
+        ${pendentes.length > 0 ? `
+          <span class="text-[11px] font-bold text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20">
+            R$ ${totalPendente.toLocaleString('pt-BR', { minimumFractionDigits: 2 })} a pagar
+          </span>
+        ` : `
+          <span class="text-[11px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
+            Contas em dia
+          </span>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+function abrirMapaCasa(casaId) {
+  const casa = appState.casas.find(c => c.id === casaId);
+  if (!casa) return;
+
+  if (casa.localizacaoUrl && (casa.localizacaoUrl.startsWith('http://') || casa.localizacaoUrl.startsWith('https://'))) {
+    window.open(casa.localizacaoUrl, '_blank');
+    return;
+  }
+
+  if (casa.endereco) {
+    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(casa.endereco)}`;
+    window.open(url, '_blank');
+    return;
+  }
+
+  mostrarToast('Nenhum endereço ou link cadastrado para esta casa!', 'warning');
+}
+
+async function compartilharLocalizacaoCasa(casaId) {
+  const casa = appState.casas.find(c => c.id === casaId);
+  if (!casa) return;
+
+  const urlMapa = (casa.localizacaoUrl && (casa.localizacaoUrl.startsWith('http://') || casa.localizacaoUrl.startsWith('https://'))) 
+    ? casa.localizacaoUrl 
+    : (casa.endereco ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(casa.endereco)}` : '');
+
+  if (!urlMapa && !casa.endereco) {
+    mostrarToast('Cadastre um endereço ou link antes de compartilhar!', 'warning');
+    return;
+  }
+
+  let txt = `📍 *LOCALIZAÇÃO - ${casa.nome.toUpperCase()}*\n`;
+  txt += `🏗️ *Obra:* ${appState.config.nomeObra}\n`;
+  if (casa.endereco) txt += `🏠 *Endereço:* ${casa.endereco}\n`;
+  if (casa.responsavelNome) txt += `👤 *Responsável:* ${casa.responsavelNome}${casa.responsavelTelefone ? ' (' + casa.responsavelTelefone + ')' : ''}\n`;
+  if (urlMapa) txt += `🗺️ *Abrir no Mapa:* ${urlMapa}\n`;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: `Localização ${casa.nome}`,
+        text: txt,
+        url: urlMapa || undefined
+      });
+      mostrarToast('Localização compartilhada!', 'success');
+      return;
+    } catch (err) {
+      // Ignora cancelamento do usuário
+    }
+  }
+
+  const urlWa = `https://api.whatsapp.com/send?text=${encodeURIComponent(txt)}`;
+  window.open(urlWa, '_blank');
+}
+
+function capturarLocalizacaoAtual() {
+  if (!navigator.geolocation) {
+    mostrarToast('Geolocalização não é suportada neste navegador.', 'error');
+    return;
+  }
+
+  mostrarToast('Obtendo coordenadas do GPS...', 'info');
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const lat = pos.coords.latitude.toFixed(6);
+      const lon = pos.coords.longitude.toFixed(6);
+      const link = `https://maps.google.com/?q=${lat},${lon}`;
+      const input = document.getElementById('casa-localizacao');
+      if (input) input.value = link;
+      mostrarToast(`GPS capturado: ${lat}, ${lon}`, 'success');
+    },
+    (err) => {
+      let msg = 'Não foi possível obter o GPS.';
+      if (err.code === 1) msg = 'Permissão de localização negada.';
+      else if (err.code === 2) msg = 'Posição GPS indisponível.';
+      else if (err.code === 3) msg = 'Tempo limite de GPS esgotado.';
+      mostrarToast(msg, 'error');
+    },
+    { enableHighAccuracy: true, timeout: 10000 }
+  );
+}
+
+// ------------------------------------------
+// ABA 3: DESPESAS DA CASA (ÁGUA, LUZ, ETC)
+// ------------------------------------------
+function renderDossieDespesas() {
+  const container = document.getElementById('dossie-lista-despesas');
+  if (!container) return;
+
+  const todasCasa = appState.casaDespesas.filter(d => d.casaId === appState.dossieCasaAtualId);
+
+  const totalLancado = todasCasa.reduce((acc, d) => acc + (Number(d.valor) || 0), 0);
+  const totalPago = todasCasa.filter(d => d.status === 'Pago').reduce((acc, d) => acc + (Number(d.valor) || 0), 0);
+  const totalPendente = todasCasa.filter(d => d.status !== 'Pago').reduce((acc, d) => acc + (Number(d.valor) || 0), 0);
+
+  const elTotal = document.getElementById('dossie-desp-total');
+  const elPago = document.getElementById('dossie-desp-pago');
+  const elPend = document.getElementById('dossie-desp-pendente');
+
+  if (elTotal) elTotal.textContent = `R$ ${totalLancado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+  if (elPago) elPago.textContent = `R$ ${totalPago.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+  if (elPend) elPend.textContent = `R$ ${totalPendente.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+
+  const filtro = document.getElementById('dossie-desp-filtro')?.value || '';
+  const filtradas = todasCasa.filter(d => !filtro || d.status === filtro);
+
+  if (filtradas.length === 0) {
+    container.innerHTML = `
+      <div class="p-6 text-center bg-slate-900/60 rounded-xl border border-slate-800 text-slate-400 text-xs">
+        <i class="fa-solid fa-file-invoice-dollar text-3xl mb-2 text-slate-600 block"></i>
+        Nenhuma despesa de água, luz ou outros encontrada com este filtro.
+      </div>
+    `;
+    return;
+  }
+
+  const icones = {
+    'Água': { icon: 'fa-droplet', cor: 'text-sky-400 bg-sky-500/10 border-sky-500/30' },
+    'Luz': { icon: 'fa-bolt', cor: 'text-amber-400 bg-amber-500/10 border-amber-500/30' },
+    'Aluguel': { icon: 'fa-house', cor: 'text-purple-400 bg-purple-500/10 border-purple-500/30' },
+    'Internet': { icon: 'fa-wifi', cor: 'text-blue-400 bg-blue-500/10 border-blue-500/30' },
+    'Gás': { icon: 'fa-fire', cor: 'text-orange-400 bg-orange-500/10 border-orange-500/30' },
+    'Outros': { icon: 'fa-file-lines', cor: 'text-slate-400 bg-slate-500/10 border-slate-500/30' }
+  };
+
+  container.innerHTML = filtradas.map(d => {
+    const infoIcone = icones[d.tipo] || icones['Outros'];
+    const isPago = d.status === 'Pago';
+    const valorFmt = Number(d.valor || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+    return `
+      <div class="p-3.5 bg-slate-900/90 border ${isPago ? 'border-slate-800' : 'border-rose-500/40'} rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl border flex items-center justify-center text-base shrink-0 ${infoIcone.cor}">
+            <i class="fa-solid ${infoIcone.icon}"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h4 class="font-bold text-white text-sm">${d.tipo}</h4>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded-md border ${isPago ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse'}">
+                ${isPago ? 'Pago' : 'A Pagar'}
+              </span>
+              <span class="text-[11px] text-slate-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-800 font-mono">
+                Ref: ${d.mesReferencia || '-'}
+              </span>
+            </div>
+            <p class="text-slate-400 mt-0.5">
+              ${d.vencimento ? `<span>Vence em: <strong class="text-slate-200">${formatarDataSimples(d.vencimento)}</strong></span>` : ''}
+              ${isPago && d.dataPagamento ? ` • <span>Pago em: <strong class="text-emerald-400">${formatarDataSimples(d.dataPagamento)}</strong></span>` : ''}
+            </p>
+            ${d.observacoes ? `<p class="text-slate-500 italic mt-0.5 max-w-sm truncate">"${escaparHtml(d.observacoes)}"</p>` : ''}
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800">
+          <div class="text-left sm:text-right">
+            <span class="text-base font-extrabold ${isPago ? 'text-emerald-400' : 'text-rose-400'}">R$ ${valorFmt}</span>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="alternarStatusDespesa('${d.id}')" title="${isPago ? 'Marcar como A Pagar' : 'Marcar como Pago'}" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition ${isPago ? 'bg-slate-800 hover:bg-slate-700 text-slate-300 border-slate-700' : 'bg-emerald-600 hover:bg-emerald-500 text-white border-emerald-500 shadow-sm'}">
+              <i class="fa-solid ${isPago ? 'fa-rotate-left' : 'fa-check'}"></i>
+              <span class="hidden md:inline ml-1">${isPago ? 'Desfazer' : 'Dar Baixa'}</span>
+            </button>
+            <button onclick="abrirModalDespesa('${d.id}')" title="Editar" class="p-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 rounded-lg text-xs transition">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+            <button onclick="excluirDespesa('${d.id}')" title="Excluir" class="p-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-rose-400 hover:text-rose-300 border border-slate-700 rounded-lg text-xs transition">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function formatarDataSimples(dStr) {
+  if (!dStr) return '-';
+  try {
+    const partes = dStr.split('-');
+    if (partes.length === 3) return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    return new Date(dStr).toLocaleDateString('pt-BR');
+  } catch (e) {
+    return dStr;
+  }
+}
+
+function selecionarTipoDespesa(tipo) {
+  const inTipo = document.getElementById('despesa-tipo');
+  if (inTipo) inTipo.value = tipo;
+
+  document.querySelectorAll('.desp-chip').forEach(btn => {
+    if (btn.getAttribute('data-tipo') === tipo) {
+      btn.className = 'desp-chip py-2 rounded-lg text-xs font-bold border transition bg-sky-500/20 text-sky-300 border-sky-500/50 shadow-sm';
+    } else {
+      btn.className = 'desp-chip py-2 rounded-lg text-xs font-semibold border transition bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700';
+    }
+  });
+}
+
+function abrirModalDespesa(despesaId = null) {
+  const form = document.getElementById('form-despesa');
+  if (form) form.reset();
+
+  const casa = appState.casas.find(c => c.id === appState.dossieCasaAtualId);
+  const lblCasa = document.getElementById('modal-despesa-casa');
+  if (lblCasa) lblCasa.textContent = casa ? `${casa.nome} (${casa.bloco || 'Alojamento'})` : 'Casa';
+
+  const inEditId = document.getElementById('despesa-edit-id');
+  const title = document.getElementById('modal-despesa-title');
+
+  if (despesaId) {
+    const desp = appState.casaDespesas.find(d => d.id === despesaId);
+    if (!desp) return;
+    if (inEditId) inEditId.value = desp.id;
+    if (title) title.textContent = 'Editar Despesa';
+
+    selecionarTipoDespesa(desp.tipo || 'Água');
+    document.getElementById('despesa-mes').value = desp.mesReferencia || '';
+    document.getElementById('despesa-valor').value = desp.valor || '';
+    document.getElementById('despesa-vencimento').value = desp.vencimento || '';
+    document.getElementById('despesa-status').value = desp.status || 'Pendente';
+    document.getElementById('despesa-obs').value = desp.observacoes || '';
+  } else {
+    if (inEditId) inEditId.value = '';
+    if (title) title.textContent = 'Lançar Despesa / Conta';
+    selecionarTipoDespesa('Água');
+
+    const hoje = new Date();
+    const ano = hoje.getFullYear();
+    const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+    document.getElementById('despesa-mes').value = `${ano}-${mes}`;
+    document.getElementById('despesa-status').value = 'Pendente';
+  }
+
+  openModal('modal-despesa');
+}
+
+function salvarDespesa(e) {
+  e.preventDefault();
+  const casaId = appState.dossieCasaAtualId;
+  if (!casaId) {
+    mostrarToast('Selecione uma casa primeiro!', 'warning');
+    return;
+  }
+
+  const editId = document.getElementById('despesa-edit-id')?.value;
+  const tipo = document.getElementById('despesa-tipo')?.value || 'Água';
+  const mes = document.getElementById('despesa-mes')?.value || '';
+  const valor = parseFloat(document.getElementById('despesa-valor')?.value) || 0;
+  const vencimento = document.getElementById('despesa-vencimento')?.value || '';
+  const status = document.getElementById('despesa-status')?.value || 'Pendente';
+  const obs = document.getElementById('despesa-obs')?.value.trim() || '';
+
+  if (valor <= 0) {
+    mostrarToast('Informe um valor válido para a despesa!', 'warning');
+    return;
+  }
+
+  let despAlvo;
+  if (editId) {
+    despAlvo = appState.casaDespesas.find(d => d.id === editId);
+    if (despAlvo) {
+      despAlvo.tipo = tipo;
+      despAlvo.mesReferencia = mes;
+      despAlvo.valor = valor;
+      despAlvo.vencimento = vencimento;
+      despAlvo.status = status;
+      despAlvo.observacoes = obs;
+      if (status === 'Pago' && !despAlvo.dataPagamento) {
+        despAlvo.dataPagamento = new Date().toISOString().split('T')[0];
+      }
+      mostrarToast(`Conta de ${tipo} atualizada!`, 'success');
+    }
+  } else {
+    despAlvo = {
+      id: 'cd-' + Date.now(),
+      casaId: casaId,
+      tipo: tipo,
+      mesReferencia: mes,
+      valor: valor,
+      vencimento: vencimento,
+      status: status,
+      dataPagamento: status === 'Pago' ? new Date().toISOString().split('T')[0] : '',
+      observacoes: obs
+    };
+    appState.casaDespesas.unshift(despAlvo);
+    mostrarToast(`Conta de ${tipo} lançada com sucesso!`, 'success');
+  }
+
+  salvarLocalmente();
+  closeModal('modal-despesa');
+  renderDossieDespesas();
+  renderCasas();
+
+  if (appState.config.turso?.ativo && despAlvo) {
+    executarTursoBatch([sqlUpsertDespesa(despAlvo)]).catch(console.error);
+  }
+}
+
+function alternarStatusDespesa(despesaId) {
+  const desp = appState.casaDespesas.find(d => d.id === despesaId);
+  if (!desp) return;
+
+  if (desp.status === 'Pago') {
+    desp.status = 'Pendente';
+    desp.dataPagamento = '';
+    mostrarToast(`Conta de ${desp.tipo} marcada como Pendente.`, 'info');
+  } else {
+    desp.status = 'Pago';
+    desp.dataPagamento = new Date().toISOString().split('T')[0];
+    mostrarToast(`Conta de ${desp.tipo} marcada como Paga!`, 'success');
+  }
+
+  salvarLocalmente();
+  renderDossieDespesas();
+  renderCasas();
+
+  if (appState.config.turso?.ativo) {
+    executarTursoBatch([sqlUpsertDespesa(desp)]).catch(console.error);
+  }
+}
+
+function excluirDespesa(despesaId) {
+  const desp = appState.casaDespesas.find(d => d.id === despesaId);
+  if (!desp) return;
+
+  if (!confirm(`Deseja realmente excluir a conta de ${desp.tipo} (R$ ${desp.valor})?`)) return;
+
+  appState.casaDespesas = appState.casaDespesas.filter(d => d.id !== despesaId);
+  salvarLocalmente();
+  renderDossieDespesas();
+  renderCasas();
+  mostrarToast('Despesa excluída!', 'success');
+
+  if (appState.config.turso?.ativo) {
+    executarTurso('DELETE FROM casa_despesas WHERE id = ?', [despesaId]).catch(console.error);
+  }
+}
+
+function sqlUpsertDespesa(d) {
+  return {
+    sql: `INSERT OR REPLACE INTO casa_despesas (id, casa_id, tipo, mes_referencia, valor, vencimento, status, data_pagamento, observacoes, data_cadastro)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    args: [d.id, d.casaId, d.tipo, d.mesReferencia || '', d.valor || 0, d.vencimento || '', d.status || 'Pendente', d.dataPagamento || '', d.observacoes || '', new Date().toISOString()]
+  };
+}
 async function substituirMovelEm1Clique(movelId) {
   const movel = appState.casaMoveis.find(m => m.id === movelId);
   if (!movel) return;
@@ -1870,6 +2358,8 @@ function salvarCasa(e) {
   const respEmp = document.getElementById('casa-resp-empresa').value.trim();
   const respTel = formatarTelefone(document.getElementById('casa-resp-telefone').value.trim());
   const respQuarto = document.getElementById('casa-resp-quarto').value.trim();
+  const endereco = document.getElementById('casa-endereco')?.value.trim() || '';
+  const localizacaoUrl = document.getElementById('casa-localizacao')?.value.trim() || '';
 
   let casaAlvo;
   if (editId) {
@@ -1884,6 +2374,8 @@ function salvarCasa(e) {
       casaAlvo.responsavelEmpresa = respEmp;
       casaAlvo.responsavelTelefone = respTel;
       casaAlvo.responsavelQuarto = respQuarto;
+      casaAlvo.endereco = endereco;
+      casaAlvo.localizacaoUrl = localizacaoUrl;
       if (document.getElementById('casa-foto')?.value.trim()) {
         casaAlvo.fotoUrl = document.getElementById('casa-foto').value.trim();
       }
@@ -1902,6 +2394,8 @@ function salvarCasa(e) {
       responsavelEmpresa: respEmp,
       responsavelTelefone: respTel,
       responsavelQuarto: respQuarto,
+      endereco: endereco,
+      localizacaoUrl: localizacaoUrl,
       dataCautela: new Date().toISOString().split('T')[0],
       observacoes: '',
       fotoUrl: fotoInput || getFotoCasa('casa-1')
@@ -1918,9 +2412,9 @@ function salvarCasa(e) {
   renderApp();
 
   if (appState.config.turso?.ativo && casaAlvo) {
-    executarTurso(`INSERT OR REPLACE INTO casas (id, nome, bloco, capacidade, moradores_atuais, status, responsavel_nome, responsavel_empresa, responsavel_telefone, responsavel_quarto, data_cautela, observacoes, foto_url)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [casaAlvo.id, casaAlvo.nome, casaAlvo.bloco, casaAlvo.capacidade, casaAlvo.moradoresAtuais, casaAlvo.status, casaAlvo.responsavelNome, casaAlvo.responsavelEmpresa, casaAlvo.responsavelTelefone, casaAlvo.responsavelQuarto, casaAlvo.dataCautela, casaAlvo.observacoes || '', casaAlvo.fotoUrl || '']
+    executarTurso(`INSERT OR REPLACE INTO casas (id, nome, bloco, capacidade, moradores_atuais, status, responsavel_nome, responsavel_empresa, responsavel_telefone, responsavel_quarto, data_cautela, observacoes, foto_url, endereco, localizacao_url)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [casaAlvo.id, casaAlvo.nome, casaAlvo.bloco, casaAlvo.capacidade, casaAlvo.moradoresAtuais, casaAlvo.status, casaAlvo.responsavelNome, casaAlvo.responsavelEmpresa, casaAlvo.responsavelTelefone, casaAlvo.responsavelQuarto, casaAlvo.dataCautela, casaAlvo.observacoes || '', casaAlvo.fotoUrl || '', casaAlvo.endereco || '', casaAlvo.localizacaoUrl || '']
     ).catch(console.error);
   }
 }
@@ -2138,7 +2632,11 @@ function abrirModalEntregaInsumoCasaAtual() {
 }
 
 function editarResponsavelCasaAtual() {
-  const casa = appState.casas.find(c => c.id === appState.dossieCasaAtualId);
+  abrirEdicaoCasa(appState.dossieCasaAtualId);
+}
+
+function abrirEdicaoCasa(casaId) {
+  const casa = appState.casas.find(c => c.id === casaId);
   if (!casa) return;
 
   document.getElementById('casa-edit-id').value = casa.id;
@@ -2150,6 +2648,8 @@ function editarResponsavelCasaAtual() {
   document.getElementById('casa-resp-empresa').value = casa.responsavelEmpresa || '';
   document.getElementById('casa-resp-telefone').value = casa.responsavelTelefone || '';
   document.getElementById('casa-resp-quarto').value = casa.responsavelQuarto || '';
+  document.getElementById('casa-endereco').value = casa.endereco || '';
+  document.getElementById('casa-localizacao').value = casa.localizacaoUrl || '';
   const campoFoto = document.getElementById('casa-foto');
   if (campoFoto) campoFoto.value = casa.fotoUrl || '';
 
@@ -2314,6 +2814,8 @@ function exportarExcelConsolidado() {
         'Responsável': casa.responsavelNome || '',
         'Empresa': casa.responsavelEmpresa || '',
         'Telefone': casa.responsavelTelefone || '',
+        'Endereço': casa.endereco || '',
+        'Link Localização': casa.localizacaoUrl || '',
         'Móvel': 'Sem móveis vinculados',
         'Qtd': 0,
         'Estado': '-',
@@ -2329,6 +2831,8 @@ function exportarExcelConsolidado() {
           'Responsável': casa.responsavelNome || '',
           'Empresa': casa.responsavelEmpresa || '',
           'Telefone': casa.responsavelTelefone || '',
+          'Endereço': casa.endereco || '',
+          'Link Localização': casa.localizacaoUrl || '',
           'Móvel': m.itemNome,
           'Qtd': m.quantidade,
           'Estado': m.estado || 'Bom',
@@ -2353,14 +2857,31 @@ function exportarExcelConsolidado() {
     'Saldo Pós-Operação': m.saldoPosterior
   }));
 
+  // 4. Aba Despesas de Casas (Água, Luz, Aluguel, etc.)
+  const dadosDespesas = appState.casaDespesas.map(d => {
+    const casa = appState.casas.find(c => c.id === d.casaId);
+    return {
+      'Casa / Alojamento': casa ? casa.nome : d.casaId,
+      'Bloco': casa ? (casa.bloco || '') : '',
+      'Tipo de Conta': d.tipo,
+      'Mês de Referência': d.mesReferencia || '',
+      'Valor R$': d.valor || 0,
+      'Vencimento': d.vencimento ? formatarDataSimples(d.vencimento) : '-',
+      'Situação': d.status || 'Pendente',
+      'Data de Pagamento': d.dataPagamento ? formatarDataSimples(d.dataPagamento) : '-',
+      'Observações': d.observacoes || ''
+    };
+  });
+
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dadosGalpao), '1. Galpão Central');
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dadosCasas), '2. Inventário Casas');
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dadosMovs), '3. Movimentações');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dadosDespesas), '4. Despesas (Água e Luz)');
 
   const nomeArq = `CanteiroPRO_${appState.config.nomeObra.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.xlsx`;
   XLSX.writeFile(wb, nomeArq);
-  mostrarToast('Planilha Excel de 3 Abas exportada com sucesso!', 'success');
+  mostrarToast('Planilha Excel de 4 Abas exportada com sucesso!', 'success');
 }
 
 // ==========================================
@@ -2387,6 +2908,7 @@ function fazerBackupJSON() {
     casas: appState.casas,
     casaMoveis: appState.casaMoveis,
     casaEntregas: appState.casaEntregas,
+    casaDespesas: appState.casaDespesas,
     movimentacoes: appState.movimentacoes
   };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -2409,6 +2931,7 @@ function restaurarBackupJSON(e) {
         appState.casas = d.casas;
         appState.casaMoveis = d.casaMoveis || [];
         appState.casaEntregas = d.casaEntregas || [];
+        appState.casaDespesas = d.casaDespesas || [];
         appState.movimentacoes = d.movimentacoes || [];
         salvarLocalmente();
         closeModal('modal-config');

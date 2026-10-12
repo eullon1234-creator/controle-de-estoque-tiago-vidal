@@ -745,8 +745,22 @@
           </div>
         </div>
 
-        <!-- Abas do Dossiê: 1. Mobiliário da Casa | 2. Insumos Entregues -->
-        <div class="flex border-b border-[#23324d] gap-2">
+        <!-- Localização da Casa -->
+        <div class="bg-slate-900/90 border border-sky-500/30 rounded-xl p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div class="space-y-0.5 min-w-0">
+            <span class="text-[10px] font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
+              <i class="fa-solid fa-location-dot"></i>
+              Localização da Casa
+            </span>
+            <p class="text-xs text-slate-200 truncate" id="dossie-endereco">Endereço não informado</p>
+          </div>
+          <div class="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end" id="dossie-botoes-local">
+            <!-- Dinâmico -->
+          </div>
+        </div>
+
+        <!-- Abas do Dossiê: 1. Mobiliário da Casa | 2. Insumos Entregues | 3. Despesas -->
+        <div class="flex border-b border-[#23324d] gap-1 overflow-x-auto">
           <button id="btn-tab-dossie-moveis" onclick="switchDossieTab('moveis')" class="px-4 py-2 border-b-2 border-amber-500 text-amber-400 text-xs font-bold flex items-center gap-1.5">
             <i class="fa-solid fa-couch"></i>
             <span>Mobiliário & Eletros da Casa</span>
@@ -754,6 +768,10 @@
           <button id="btn-tab-dossie-entregas" onclick="switchDossieTab('entregas')" class="px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 text-xs font-semibold flex items-center gap-1.5">
             <i class="fa-solid fa-box-open"></i>
             <span>Insumos & Entregas Recebidas</span>
+          </button>
+          <button id="btn-tab-dossie-despesas" onclick="switchDossieTab('despesas')" class="px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap">
+            <i class="fa-solid fa-file-invoice-dollar"></i>
+            <span>Despesas (Água, Luz...)</span>
           </button>
         </div>
 
@@ -783,6 +801,41 @@
           </div>
 
           <div id="dossie-lista-entregas" class="space-y-2">
+            <!-- Dinâmico -->
+          </div>
+        </div>
+
+        <!-- ABA 3: DESPESAS DA CASA -->
+        <div id="dossie-aba-despesas" class="hidden space-y-3">
+          <!-- Resumo -->
+          <div class="grid grid-cols-3 gap-2">
+            <div class="p-2.5 bg-slate-900/90 border border-slate-800 rounded-xl">
+              <p class="text-[10px] text-slate-400 uppercase font-semibold">Total Lançado</p>
+              <p class="text-sm font-extrabold text-white" id="dossie-desp-total">R$ 0,00</p>
+            </div>
+            <div class="p-2.5 bg-slate-900/90 border border-emerald-500/30 rounded-xl">
+              <p class="text-[10px] text-emerald-400 uppercase font-semibold">Pago</p>
+              <p class="text-sm font-extrabold text-emerald-400" id="dossie-desp-pago">R$ 0,00</p>
+            </div>
+            <div class="p-2.5 bg-slate-900/90 border border-rose-500/30 rounded-xl">
+              <p class="text-[10px] text-rose-400 uppercase font-semibold">A Pagar</p>
+              <p class="text-sm font-extrabold text-rose-400" id="dossie-desp-pendente">R$ 0,00</p>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between gap-2">
+            <select id="dossie-desp-filtro" onchange="renderDossieDespesas()" class="bg-[#0b1120] border border-[#23324d] rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+              <option value="">Todas</option>
+              <option value="Pendente">🔴 A Pagar</option>
+              <option value="Pago">🟢 Pagas</option>
+            </select>
+            <button onclick="abrirModalDespesa()" class="text-xs bg-sky-600 hover:bg-sky-500 text-white font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition shadow-sm">
+              <i class="fa-solid fa-plus"></i>
+              <span>Lançar Conta / Despesa</span>
+            </button>
+          </div>
+
+          <div id="dossie-lista-despesas" class="space-y-2">
             <!-- Dinâmico -->
           </div>
         </div>
@@ -1058,6 +1111,24 @@
             <input type="text" id="casa-resp-quarto" placeholder="Ex: Quarto 01 - Cama A" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
           </div>
 
+          <div class="pt-2 border-t border-[#23324d] space-y-3">
+            <span class="text-xs font-bold text-sky-400 uppercase tracking-wider block"><i class="fa-solid fa-location-dot mr-1"></i>Localização da Casa</span>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Endereço</label>
+              <input type="text" id="casa-endereco" placeholder="Ex: Rua das Flores, 120 - Centro" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-300 mb-1">Link da Localização (Google Maps / WhatsApp)</label>
+              <div class="flex gap-2">
+                <input type="text" id="casa-localizacao" placeholder="Cole aqui o link: https://maps.app.goo.gl/..." class="flex-1 min-w-0 bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+                <button type="button" onclick="capturarLocalizacaoAtual()" title="Usar minha localização atual (GPS)" class="px-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm transition shrink-0">
+                  <i class="fa-solid fa-crosshairs"></i>
+                </button>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1">Dica: no Google Maps, toque em <strong>Compartilhar → Copiar link</strong> e cole aqui. Ou, estando na casa, toque em <i class="fa-solid fa-crosshairs"></i> para usar o GPS.</p>
+            </div>
+          </div>
+
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">URL da Foto / Fachada da Casa (Opcional)</label>
             <input type="url" id="casa-foto" placeholder="https://images.unsplash.com/..." class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
@@ -1207,6 +1278,83 @@
       <div class="p-2 flex items-center justify-center bg-black/50 rounded-xl overflow-hidden min-h-[280px] max-h-[75vh]">
         <img id="foto-zoom-img" src="" alt="Zoom" class="max-h-[70vh] w-auto max-w-full rounded-lg object-contain shadow-lg">
       </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: LANÇAR / EDITAR DESPESA DA CASA     -->
+  <!-- ========================================== -->
+  <div id="modal-despesa" class="no-print fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-[#151f32] border border-[#23324d] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden my-auto fade-in">
+      <div class="bg-gradient-to-r from-sky-600/30 via-[#151f32] to-[#151f32] border-b border-[#23324d] p-4 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-sky-500/20 border border-sky-500/40 text-sky-400 flex items-center justify-center text-base">
+            <i class="fa-solid fa-file-invoice-dollar"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-white" id="modal-despesa-title">Lançar Despesa</h3>
+            <p class="text-xs text-slate-400" id="modal-despesa-casa">Casa</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-despesa')" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form id="form-despesa" onsubmit="salvarDespesa(event)" class="p-4 space-y-3.5">
+        <input type="hidden" id="despesa-edit-id" value="">
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Tipo de Conta *</label>
+          <div class="grid grid-cols-3 gap-1.5" id="despesa-tipos-chips">
+            <button type="button" data-tipo="Água" onclick="selecionarTipoDespesa('Água')" class="desp-chip py-2 rounded-lg text-xs font-semibold border transition">💧 Água</button>
+            <button type="button" data-tipo="Luz" onclick="selecionarTipoDespesa('Luz')" class="desp-chip py-2 rounded-lg text-xs font-semibold border transition">⚡ Luz</button>
+            <button type="button" data-tipo="Aluguel" onclick="selecionarTipoDespesa('Aluguel')" class="desp-chip py-2 rounded-lg text-xs font-semibold border transition">🏠 Aluguel</button>
+            <button type="button" data-tipo="Internet" onclick="selecionarTipoDespesa('Internet')" class="desp-chip py-2 rounded-lg text-xs font-semibold border transition">📶 Internet</button>
+            <button type="button" data-tipo="Gás" onclick="selecionarTipoDespesa('Gás')" class="desp-chip py-2 rounded-lg text-xs font-semibold border transition">🔥 Gás</button>
+            <button type="button" data-tipo="Outros" onclick="selecionarTipoDespesa('Outros')" class="desp-chip py-2 rounded-lg text-xs font-semibold border transition">📄 Outros</button>
+          </div>
+          <input type="hidden" id="despesa-tipo" value="Água">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Mês de Referência *</label>
+            <input type="month" id="despesa-mes" required class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Valor (R$) *</label>
+            <input type="number" id="despesa-valor" min="0" step="0.01" required inputmode="decimal" placeholder="Ex: 185,40" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Vencimento</label>
+            <input type="date" id="despesa-vencimento" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Situação</label>
+            <select id="despesa-status" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+              <option value="Pendente">🔴 A Pagar</option>
+              <option value="Pago">🟢 Pago</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Observação (Nº instalação, consumo, etc.)</label>
+          <input type="text" id="despesa-obs" placeholder="Ex: Consumo 18m³ / Instalação 0012345" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+        </div>
+
+        <div class="pt-3 border-t border-[#23324d] flex items-center justify-end gap-2">
+          <button type="button" onclick="closeModal('modal-despesa')" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition">Cancelar</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-sky-600 hover:bg-sky-500 text-white transition shadow-lg shadow-sky-600/20 flex items-center gap-2">
+            <i class="fa-solid fa-save"></i>
+            <span>Salvar Despesa</span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 

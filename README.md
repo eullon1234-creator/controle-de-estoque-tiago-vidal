@@ -34,12 +34,17 @@ Conectado ao banco de dados em nuvem **Turso (LibSQL)** de alta performance e co
 
 ### 1. 🏠 Gestão Completa de Casas & Alojamentos
 - **Cartões de Casas:** Exibição clara do endereço, responsável nominal, empresa contratada, telefone (com link direto de discagem/WhatsApp), vagas totais e ocupadas.
+- **📍 Localização & Google Maps:** Endereço completo, botão direto **"Ver no Mapa"**, captura de coordenadas via **GPS** e botão para **"Compartilhar Localização"** formatada via WhatsApp ou compartilhamento nativo do celular.
+- **💰 Controle de Despesas das Casas (Água, Luz, Aluguel):**
+  - Aba exclusiva no dossiê de cada casa com resumo financeiro (Total Lançado, Pago e A Pagar).
+  - Lançamento rápido de contas por tipo (Água, Luz, Aluguel, Internet, Gás, Outros), com mês de referência, vencimento e valor.
+  - Baixa de pagamento em 1 clique (alternar entre *Pago* e *A Pagar*) e badges de status nos cards principais.
 - **Badge de Alerta de Manutenção:** Sinalização visual imediata se a casa possui algum móvel com defeito (`1 Item Danificado`).
 - **Dossiê da Casa (Modal Completo):**
   - **Aba Móveis & Equipamentos:** Relação de todos os bens (Ar-condicionado, Beliches, Colchões, Geladeiras, Fogões, etc.) com estado de conservação (`Novo`, `Bom`, `Regular`, `Danificado - Solicitar Troca`).
+  - **Aba Insumos & Entregas:** Histórico de cada fardo de limpeza, kit de cama ou produto entregue na casa, com data e responsável pelo recebimento.
+  - **Aba Despesas:** Gestão das contas da casa com histórico e filtragem.
   - **Troca em 1 Clique:** Ao detectar um móvel danificado, o botão **"Substituir pelo Galpão"** retira 1 unidade do estoque de reserva do galpão, marca o móvel da casa como `Bom` e gera o registro no histórico de auditoria.
-  - **Aba Histórico de Entregas:** Registro de cada fardo de limpeza, kit de cama ou produto entregue na casa, com data e responsável pelo recebimento.
-  - **Adicionar Móvel e Nova Entrega:** Formulários integrados no próprio dossiê.
 
 ### 2. 📦 Galpão Central (Estoque de Reserva & Consumíveis)
 - **Categorização:** Móveis & Eletros (Reserva), Kits & Enxoval, Limpeza & Higiene, Manutenção Predial.
@@ -59,10 +64,11 @@ Conectado ao banco de dados em nuvem **Turso (LibSQL)** de alta performance e co
   - Distribuição das categorias de itens no galpão.
 
 ### 5. 📑 Relatórios e Exportação para Excel (.xlsx)
-- **Exportação Multissheet Profissional (SheetJS):**
+- **Exportação Multissheet Profissional (SheetJS em 4 Abas):**
   - **Aba 1 - Galpão Central:** Saldo atual, categorias e status de reposição.
-  - **Aba 2 - Inventário de Casas:** Relação de todas as casas, responsáveis e bens instalados.
+  - **Aba 2 - Inventário de Casas:** Relação de todas as casas, responsáveis, endereços, links de mapa e bens instalados.
   - **Aba 3 - Movimentações:** Extrato completo de substituições, entregas e entradas.
+  - **Aba 4 - Despesas:** Extrato detalhado de contas de água, luz, aluguel, valores, vencimentos e situação de pagamento.
 
 ### 6. ☁️ Banco de Dados Turso (LibSQL Cloud)
 - Dados persistidos com segurança e rapidez no banco Turso distribuído na nuvem.
