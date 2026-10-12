@@ -779,15 +779,20 @@
           </div>
         </div>
 
-        <!-- Abas do Dossiê: 1. Mobiliário da Casa | 2. Insumos Entregues | 3. Despesas -->
+        <!-- Abas do Dossiê: 1. Moradores & Quartos | 2. Mobiliário da Casa | 3. Insumos Entregues | 4. Despesas -->
         <div class="flex border-b border-[#23324d] gap-1 overflow-x-auto">
-          <button id="btn-tab-dossie-moveis" onclick="switchDossieTab('moveis')" class="px-4 py-2 border-b-2 border-amber-500 text-amber-400 text-xs font-bold flex items-center gap-1.5">
-            <i class="fa-solid fa-couch"></i>
-            <span>Mobiliário & Eletros da Casa</span>
+          <button id="btn-tab-dossie-moradores" onclick="switchDossieTab('moradores')" class="px-4 py-2 border-b-2 border-amber-500 text-amber-400 text-xs font-bold flex items-center gap-1.5 whitespace-nowrap">
+            <i class="fa-solid fa-users"></i>
+            <span>Moradores & Quartos</span>
+            <span id="dossie-badge-tab-moradores" class="text-[10px] px-1.5 py-0.2 rounded-full bg-amber-500/20 text-amber-300 font-bold ml-1">0</span>
           </button>
-          <button id="btn-tab-dossie-entregas" onclick="switchDossieTab('entregas')" class="px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 text-xs font-semibold flex items-center gap-1.5">
+          <button id="btn-tab-dossie-moveis" onclick="switchDossieTab('moveis')" class="px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap">
+            <i class="fa-solid fa-couch"></i>
+            <span>Mobiliário & Eletros</span>
+          </button>
+          <button id="btn-tab-dossie-entregas" onclick="switchDossieTab('entregas')" class="px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap">
             <i class="fa-solid fa-box-open"></i>
-            <span>Insumos & Entregas Recebidas</span>
+            <span>Insumos & Entregas</span>
           </button>
           <button id="btn-tab-dossie-despesas" onclick="switchDossieTab('despesas')" class="px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap">
             <i class="fa-solid fa-file-invoice-dollar"></i>
@@ -795,8 +800,34 @@
           </button>
         </div>
 
+        <!-- ABA 0: MORADORES & QUARTOS DA CASA -->
+        <div id="dossie-aba-moradores" class="space-y-3">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <span class="text-xs text-slate-400" id="dossie-contador-moradores">0 moradores cadastrados</span>
+              <p class="text-[11px] text-slate-500" id="dossie-vagas-status-moradores">Capacidade: 0 vagas</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="abrirModalNovoMorador()" class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition shadow-sm shrink-0">
+                <i class="fa-solid fa-user-plus"></i>
+                <span>+ Cadastrar Morador</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Filtro rápido por quarto/cômodo dos moradores -->
+          <div id="dossie-filtro-quartos-moradores-bar" class="flex flex-wrap gap-1.5 pt-1 pb-1">
+            <!-- Dinâmico -->
+          </div>
+
+          <!-- Lista de moradores organizada por quarto ou geral -->
+          <div id="dossie-lista-moradores" class="space-y-3">
+            <!-- Dinâmico -->
+          </div>
+        </div>
+
         <!-- ABA 1: MOBILIÁRIO DA CASA -->
-        <div id="dossie-aba-moveis" class="space-y-3">
+        <div id="dossie-aba-moveis" class="hidden space-y-3">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <span class="text-xs text-slate-400" id="dossie-contador-moveis">0 móveis vinculados</span>
             <div class="flex items-center gap-2">
@@ -894,6 +925,89 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODAL: CADASTRAR / EDITAR MORADOR DA CASA  -->
+  <!-- ========================================== -->
+  <div id="modal-morador" class="no-print fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-[#151f32] border border-[#23324d] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden my-auto fade-in">
+      
+      <div class="bg-gradient-to-r from-amber-600/30 via-[#151f32] to-[#151f32] border-b border-[#23324d] p-4 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-sm border border-amber-500/30">
+            <i class="fa-solid fa-user-plus" id="modal-morador-icon"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-white" id="modal-morador-title">Cadastrar Morador</h3>
+            <p class="text-[11px] text-slate-400" id="modal-morador-subtitulo">Alojamento</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-morador')" class="w-7 h-7 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark text-xs"></i>
+        </button>
+      </div>
+
+      <form id="form-morador" onsubmit="salvarMorador(event)" class="p-4 space-y-3.5">
+        <input type="hidden" id="morador-edit-id" value="">
+        <input type="hidden" id="morador-casa-id" value="">
+
+        <!-- Nome do Morador -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Nome Completo *</label>
+          <input type="text" id="morador-nome" required placeholder="Ex: Francisco de Assis, Pedro Henrique" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+        </div>
+
+        <!-- Função na Obra e WhatsApp -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Função / Cargo *</label>
+            <input type="text" id="morador-funcao" required placeholder="Ex: Pedreiro, Carpinteiro, Eletricista" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">WhatsApp / Celular *</label>
+            <input type="tel" id="morador-telefone" required maxlength="15" placeholder="(11) 98765-4321" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-amber-500">
+          </div>
+        </div>
+
+        <!-- Quarto / Cômodo onde vai ficar -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1 flex items-center justify-between">
+            <span class="flex items-center gap-1.5">
+              <i class="fa-solid fa-bed text-amber-400"></i>
+              <span>Em qual Quarto / Cômodo vai ficar? *</span>
+            </span>
+            <span class="text-[10px] text-amber-400" id="label-status-quartos-morador">Selecione o quarto</span>
+          </label>
+          <div class="space-y-1.5">
+            <select id="morador-quarto-select" onchange="verificarQuartoCustomMorador()" required class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+              <option value="">Selecione o quarto...</option>
+            </select>
+            <input type="text" id="morador-quarto-custom" placeholder="Digite o nome do quarto (ex: Quarto 3, Suíte 1)..." class="hidden w-full bg-[#0b1120] border border-amber-500/50 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1">
+            Indique o quarto para organizar a distribuição de pessoas nos dormitórios da casa.
+          </p>
+        </div>
+
+        <!-- Empresa / Empreiteira (Opcional) -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Empresa / Empreiteira (Opcional)</label>
+          <input type="text" id="morador-empresa" placeholder="Ex: Empreiteira Silva, Própria" class="w-full bg-[#0b1120] border border-[#23324d] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-amber-500">
+        </div>
+
+        <div class="pt-3 border-t border-[#23324d] flex items-center justify-end gap-2">
+          <button type="button" onclick="closeModal('modal-morador')" class="px-3.5 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 transition">
+            Cancelar
+          </button>
+          <button type="submit" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition flex items-center gap-1.5 shadow-md">
+            <i class="fa-solid fa-save"></i>
+            <span id="btn-salvar-morador-txt">Salvar Morador</span>
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 

@@ -12,6 +12,7 @@ const DB_KEYS = {
   CASA_MOVEIS: 'canteiro_casa_moveis_v2',
   CASA_ENTREGAS: 'canteiro_casa_entregas_v2',
   CASA_DESPESAS: 'canteiro_casa_despesas_v1',
+  CASA_MORADORES: 'canteiro_casa_moradores_v1',
   MOVIMENTACOES: 'canteiro_movs_v2',
   CONFIG: 'canteiro_config_v2'
 };
@@ -22,6 +23,7 @@ let appState = {
   casaMoveis: [],
   casaEntregas: [],
   casaDespesas: [],
+  casaMoradores: [],
   movimentacoes: [],
   config: {
     nomeObra: 'Canteiro Central - Alojamento Tiago Vidal',
@@ -381,6 +383,33 @@ const SEEDS_CASA_DESPESAS = [
   { id: 'cd-6', casaId: 'casa-3', tipo: 'Água', mesReferencia: '2026-09', valor: 95.40, vencimento: '2026-10-20', status: 'Pendente', dataPagamento: '', observacoes: 'Fatura digital' }
 ];
 
+const SEEDS_CASA_MORADORES = [
+  { id: 'mor-1', casaId: 'casa-1', nome: 'João da Silva Santos', funcao: 'Encarregado Geral', telefone: '(11) 98765-4321', quarto: 'Quarto 1', empresa: 'Empreiteira Souza Alvenaria', dataEntrada: '2026-09-10' },
+  { id: 'mor-2', casaId: 'casa-1', nome: 'Antônio Marcos Ferreira', funcao: 'Pedreiro de Alvenaria', telefone: '(11) 97112-3344', quarto: 'Quarto 1', empresa: 'Empreiteira Souza Alvenaria', dataEntrada: '2026-09-10' },
+  { id: 'mor-3', casaId: 'casa-1', nome: 'Claudio Barbosa Lima', funcao: 'Ajudante Prático', telefone: '(11) 96554-2211', quarto: 'Quarto 1', empresa: 'Empreiteira Souza Alvenaria', dataEntrada: '2026-09-10' },
+  { id: 'mor-4', casaId: 'casa-1', nome: 'José Raimundo Nascimento', funcao: 'Armador de Ferro', telefone: '(11) 98223-9988', quarto: 'Quarto 2', empresa: 'Empreiteira Souza Alvenaria', dataEntrada: '2026-09-12' },
+  { id: 'mor-5', casaId: 'casa-1', nome: 'Valdeci de Oliveira Santos', funcao: 'Carpinteiro de Fôrma', telefone: '(11) 97334-1100', quarto: 'Quarto 2', empresa: 'Empreiteira Souza Alvenaria', dataEntrada: '2026-09-12' },
+  { id: 'mor-6', casaId: 'casa-1', nome: 'Manoel Pereira de Jesus', funcao: 'Pedreiro de Acabamento', telefone: '(11) 99120-4455', quarto: 'Quarto 2', empresa: 'Empreiteira Souza Alvenaria', dataEntrada: '2026-09-15' },
+  { id: 'mor-7', casaId: 'casa-1', nome: 'Geraldo Magela Costa', funcao: 'Servente de Obra', telefone: '(11) 96231-7788', quarto: 'Quarto 2', empresa: 'Empreiteira Souza Alvenaria', dataEntrada: '2026-09-15' },
+  { id: 'mor-8', casaId: 'casa-1', nome: 'Lucas Gabriel dos Santos', funcao: 'Eletricista de Canteiro', telefone: '(11) 98445-6677', quarto: 'Quarto 1', empresa: 'Empreiteira Souza Alvenaria', dataEntrada: '2026-09-18' },
+
+  { id: 'mor-9', casaId: 'casa-2', nome: 'Carlos Eduardo Silveira', funcao: 'Mestre de Obras', telefone: '(21) 99887-1122', quarto: 'Quarto 1', empresa: 'Construtora Alfa Principal', dataEntrada: '2026-09-12' },
+  { id: 'mor-10', casaId: 'casa-2', nome: 'Roberto Alves de Freitas', funcao: 'Carpinteiro Líder', telefone: '(21) 98112-4433', quarto: 'Quarto 1', empresa: 'Construtora Alfa Principal', dataEntrada: '2026-09-12' },
+  { id: 'mor-11', casaId: 'casa-2', nome: 'Severino José da Silva', funcao: 'Armador Chefe', telefone: '(21) 97665-8899', quarto: 'Quarto 1', empresa: 'Construtora Alfa Principal', dataEntrada: '2026-09-13' },
+  { id: 'mor-12', casaId: 'casa-2', nome: 'Edimilson Correia Pinto', funcao: 'Operador de Guincho', telefone: '(21) 99345-0011', quarto: 'Quarto 2', empresa: 'Construtora Alfa Principal', dataEntrada: '2026-09-15' },
+  { id: 'mor-13', casaId: 'casa-2', nome: 'Damião Batista Lima', funcao: 'Ajudante Geral', telefone: '(21) 98776-5544', quarto: 'Quarto 2', empresa: 'Construtora Alfa Principal', dataEntrada: '2026-09-15' },
+
+  { id: 'mor-14', casaId: 'casa-3', nome: 'Marcos Valério de Souza', funcao: 'Encarregado de Instalações', telefone: '(31) 97123-4567', quarto: 'Quarto 2', empresa: 'Elétrica & Hidráulica Silva Ltda', dataEntrada: '2026-09-15' },
+  { id: 'mor-15', casaId: 'casa-3', nome: 'Wellington Rodrigo Dias', funcao: 'Eletrotécnico', telefone: '(31) 98455-1234', quarto: 'Quarto 1', empresa: 'Elétrica & Hidráulica Silva Ltda', dataEntrada: '2026-09-15' },
+  { id: 'mor-16', casaId: 'casa-3', nome: 'Marcio Aurélio Ramos', funcao: 'Encanador Industrial', telefone: '(31) 99234-5678', quarto: 'Quarto 1', empresa: 'Elétrica & Hidráulica Silva Ltda', dataEntrada: '2026-09-16' },
+  { id: 'mor-17', casaId: 'casa-3', nome: 'Fabiano Torres Mendes', funcao: 'Soldador Tig/Mig', telefone: '(31) 97556-9900', quarto: 'Quarto 2', empresa: 'Elétrica & Hidráulica Silva Ltda', dataEntrada: '2026-09-16' },
+  { id: 'mor-18', casaId: 'casa-3', nome: 'Jonas Ribeiro de Castro', funcao: 'Ajudante de Elétrica', telefone: '(31) 98889-0022', quarto: 'Quarto 3', empresa: 'Elétrica & Hidráulica Silva Ltda', dataEntrada: '2026-09-18' },
+  { id: 'mor-19', casaId: 'casa-3', nome: 'Gilberto Nogueira Silva', funcao: 'Auxiliar Hidráulico', telefone: '(31) 99112-3377', quarto: 'Quarto 3', empresa: 'Elétrica & Hidráulica Silva Ltda', dataEntrada: '2026-09-18' },
+
+  { id: 'mor-20', casaId: 'casa-4', nome: 'Roberto Mendes Brandão', funcao: 'Supervisor de Pintura', telefone: '(41) 98456-7890', quarto: 'Quarto 1', empresa: 'Pintura & Acabamentos Express', dataEntrada: '2026-09-18' },
+  { id: 'mor-21', casaId: 'casa-4', nome: 'Leandro Cardoso Vidal', funcao: 'Pintor Especialista', telefone: '(41) 99234-8899', quarto: 'Quarto 1', empresa: 'Pintura & Acabamentos Express', dataEntrada: '2026-09-18' }
+];
+
 // ==========================================
 // INICIALIZAÇÃO DA APLICAÇÃO
 // ==========================================
@@ -399,6 +428,7 @@ function carregarDadosLocais() {
   const cm = localStorage.getItem(DB_KEYS.CASA_MOVEIS);
   const ce = localStorage.getItem(DB_KEYS.CASA_ENTREGAS);
   const cd = localStorage.getItem(DB_KEYS.CASA_DESPESAS);
+  const cmo = localStorage.getItem(DB_KEYS.CASA_MORADORES);
   const m = localStorage.getItem(DB_KEYS.MOVIMENTACOES);
   const cfg = localStorage.getItem(DB_KEYS.CONFIG);
 
@@ -431,7 +461,11 @@ function carregarDadosLocais() {
   });
   appState.casaEntregas = ce ? JSON.parse(ce) : [...SEEDS_CASA_ENTREGAS];
   appState.casaDespesas = cd ? JSON.parse(cd) : [...SEEDS_CASA_DESPESAS];
+  appState.casaMoradores = cmo ? JSON.parse(cmo) : [...SEEDS_CASA_MORADORES];
   appState.movimentacoes = m ? JSON.parse(m) : [...SEEDS_MOVS];
+
+  // Sincroniza moradoresAtuais de cada casa com a contagem real de moradores
+  sincronizarContagemMoradoresCasas();
 
   if (cfg) {
     try {
@@ -451,12 +485,22 @@ function carregarDadosLocais() {
   if (inTursoToken && appState.config.turso?.token) inTursoToken.value = appState.config.turso.token;
 }
 
+function sincronizarContagemMoradoresCasas() {
+  if (!appState.casas || !appState.casaMoradores) return;
+  appState.casas.forEach(casa => {
+    const qtdReal = appState.casaMoradores.filter(m => m.casaId === casa.id).length;
+    casa.moradoresAtuais = qtdReal;
+    casa.status = qtdReal >= (Number(casa.capacidade) || 0) ? 'Ocupada' : 'Disponível';
+  });
+}
+
 function salvarLocalmente() {
   localStorage.setItem(DB_KEYS.GALPAO, JSON.stringify(appState.galpao));
   localStorage.setItem(DB_KEYS.CASAS, JSON.stringify(appState.casas));
   localStorage.setItem(DB_KEYS.CASA_MOVEIS, JSON.stringify(appState.casaMoveis));
   localStorage.setItem(DB_KEYS.CASA_ENTREGAS, JSON.stringify(appState.casaEntregas));
   localStorage.setItem(DB_KEYS.CASA_DESPESAS, JSON.stringify(appState.casaDespesas));
+  localStorage.setItem(DB_KEYS.CASA_MORADORES, JSON.stringify(appState.casaMoradores));
   localStorage.setItem(DB_KEYS.MOVIMENTACOES, JSON.stringify(appState.movimentacoes));
   localStorage.setItem(DB_KEYS.CONFIG, JSON.stringify(appState.config));
 }
@@ -607,6 +651,19 @@ async function garantirSchemaTurso() {
               observacoes TEXT,
               data_cadastro TEXT
             )`
+    },
+    {
+      sql: `CREATE TABLE IF NOT EXISTS casa_moradores (
+              id TEXT PRIMARY KEY,
+              casa_id TEXT NOT NULL,
+              nome TEXT NOT NULL,
+              funcao TEXT NOT NULL,
+              telefone TEXT NOT NULL,
+              quarto TEXT,
+              empresa TEXT,
+              data_entrada TEXT,
+              observacoes TEXT
+            )`
     }
   ]);
   schemaTursoVerificado = true;
@@ -628,22 +685,32 @@ async function inicializarTursoSeDisponivel() {
       { sql: 'SELECT * FROM casa_moveis' },
       { sql: 'SELECT * FROM casa_entregas ORDER BY data_entrega DESC' },
       { sql: 'SELECT * FROM movimentacoes ORDER BY data_hora DESC LIMIT 100' },
-      { sql: 'SELECT * FROM casa_despesas ORDER BY mes_referencia DESC' }
+      { sql: 'SELECT * FROM casa_despesas ORDER BY mes_referencia DESC' },
+      { sql: 'SELECT * FROM casa_moradores ORDER BY nome ASC' }
     ]);
 
-    if (results && results.slice(0, 6).every(r => r.type === 'ok')) {
+    if (results && results.slice(0, 7).every(r => r.type === 'ok')) {
       const g = parseTursoResult(results[0].response.result);
       const c = parseTursoResult(results[1].response.result);
       const cm = parseTursoResult(results[2].response.result);
       const ce = parseTursoResult(results[3].response.result);
       const m = parseTursoResult(results[4].response.result);
       const cd = parseTursoResult(results[5].response.result);
+      const cmo = parseTursoResult(results[6].response.result);
 
       if (cd.length > 0) {
         appState.casaDespesas = cd.map(r => ({
           id: r.id, casaId: r.casa_id, tipo: r.tipo, mesReferencia: r.mes_referencia,
           valor: Number(r.valor) || 0, vencimento: r.vencimento || '', status: r.status || 'Pendente',
           dataPagamento: r.data_pagamento || '', observacoes: r.observacoes || ''
+        }));
+      }
+
+      if (cmo.length > 0) {
+        appState.casaMoradores = cmo.map(r => ({
+          id: r.id, casaId: r.casa_id, nome: r.nome, funcao: r.funcao,
+          telefone: r.telefone, quarto: r.quarto || '', empresa: r.empresa || '',
+          dataEntrada: r.data_entrada || '', observacoes: r.observacoes || ''
         }));
       }
 
@@ -669,6 +736,8 @@ async function inicializarTursoSeDisponivel() {
           fotoUrl: getFotoCasa(r.id, r.foto_url)
         }));
       }
+
+      sincronizarContagemMoradoresCasas();
 
       if (cm.length > 0) {
         appState.casaMoveis = cm.map(r => ({
@@ -1170,9 +1239,13 @@ function renderCasas() {
     const temDano = moveisCasa.some(m => m.estado && m.estado.includes('Danificado'));
     const fotoCasaFinal = getFotoCasa(casa.id, casa.fotoUrl);
 
+    // Moradores da casa
+    const moradoresCasaCard = appState.casaMoradores.filter(m => m.casaId === casa.id);
+    const mor = moradoresCasaCard.length;
+    casa.moradoresAtuais = mor;
+
     // Percentual de ocupação
     const cap = Number(casa.capacidade) || 1;
-    const mor = Number(casa.moradoresAtuais) || 0;
     const pctOcupacao = Math.min(100, Math.round((mor / cap) * 100));
 
     // Partições / Cômodos
@@ -1225,10 +1298,10 @@ function renderCasas() {
             ${casa.responsavelTelefone ? `<p class="text-[11px] text-slate-500"><i class="fa-brands fa-whatsapp text-emerald-400 mr-1"></i>${casa.responsavelTelefone}</p>` : ''}
           </div>
 
-          <!-- Lotação da Casa -->
+          <!-- Lotação da Casa & Moradores -->
           <div class="my-3 space-y-1">
             <div class="flex justify-between text-xs text-slate-400">
-              <span>Lotação: <strong class="text-white">${mor}/${cap} vagas</strong></span>
+              <span>Lotação: <strong class="text-white">${mor}/${cap} moradores</strong></span>
               <span>${pctOcupacao}% cheia</span>
             </div>
             <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
@@ -1264,6 +1337,24 @@ function renderCasas() {
             `}
           </div>
 
+          <!-- Resumo dos Moradores Cadastrados -->
+          <div class="text-xs text-slate-400 pt-2 border-t border-slate-800">
+            <div class="flex items-center justify-between">
+              <span class="text-slate-500 flex items-center gap-1">
+                <i class="fa-solid fa-users text-[10px] text-amber-400"></i>
+                <span>Moradores cadastrados:</span>
+              </span>
+              <span class="text-[10px] font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.2 rounded border border-amber-500/20">${mor} pessoa${mor !== 1 ? 's' : ''}</span>
+            </div>
+            ${moradoresCasaCard.length > 0 ? `
+              <p class="text-slate-300 font-medium truncate mt-0.5">
+                ${moradoresCasaCard.slice(0, 3).map(m => `${m.nome.split(' ')[0]} (${m.quarto || 'Quarto'})`).join(', ')}${moradoresCasaCard.length > 3 ? ` +${moradoresCasaCard.length - 3}` : ''}
+              </p>
+            ` : `
+              <p class="text-slate-500 italic text-[11px] mt-0.5">Nenhum morador nominal adicionado</p>
+            `}
+          </div>
+
           <!-- Resumo do Mobiliário -->
           <div class="text-xs text-slate-400 pt-2 border-t border-slate-800">
             <span class="text-slate-500">Móveis instalados:</span>
@@ -1295,7 +1386,7 @@ function renderCasas() {
         <div class="pt-3 border-t border-[#23324d] mt-3 flex items-center gap-2">
           <button onclick="abrirDossieCasa('${casa.id}')" class="flex-1 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold rounded-xl text-xs flex items-center justify-center gap-2 transition shadow-md shadow-amber-500/10">
             <i class="fa-solid fa-folder-open"></i>
-            <span>Dossiê & Móveis</span>
+            <span>Dossiê & Moradores</span>
           </button>
 
           <button onclick="imprimirTermoCautelaDireto('${casa.id}')" title="Gerar Termo de Cautela desta Casa" class="p-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-semibold transition">
@@ -1404,13 +1495,23 @@ function abrirDossieCasa(casaId) {
   }
 
   filtroComodoDossie = 'todos';
-  switchDossieTab('moveis');
+  filtroQuartoMoradores = 'todos';
+  atualizarBadgeMoradoresDossie(casa.id);
+  switchDossieTab('moradores');
   openModal('modal-dossie-casa');
+}
+
+function atualizarBadgeMoradoresDossie(casaId) {
+  const badge = document.getElementById('dossie-badge-tab-moradores');
+  if (badge) {
+    const qtd = appState.casaMoradores.filter(m => m.casaId === casaId).length;
+    badge.textContent = qtd;
+  }
 }
 
 function switchDossieTab(tab) {
   appState.activeDossieTab = tab;
-  const abas = ['moveis', 'entregas', 'despesas'];
+  const abas = ['moradores', 'moveis', 'entregas', 'despesas'];
   const clsAtiva = 'px-4 py-2 border-b-2 border-amber-500 text-amber-400 text-xs font-bold flex items-center gap-1.5 whitespace-nowrap';
   const clsInativa = 'px-4 py-2 border-b-2 border-transparent text-slate-400 hover:text-slate-200 text-xs font-semibold flex items-center gap-1.5 whitespace-nowrap';
 
@@ -1421,9 +1522,507 @@ function switchDossieTab(tab) {
     if (sec) sec.classList.toggle('hidden', a !== tab);
   });
 
-  if (tab === 'moveis') renderDossieMoveis();
+  if (tab === 'moradores') renderDossieMoradores();
+  else if (tab === 'moveis') renderDossieMoveis();
   else if (tab === 'entregas') renderDossieEntregas();
   else if (tab === 'despesas') renderDossieDespesas();
+}
+
+// ==========================================
+// ABA: MORADORES & QUARTOS DA CASA
+// ==========================================
+let filtroQuartoMoradores = 'todos'; // 'todos' | nome do quarto
+
+function filtrarMoradoresPorQuarto(quarto) {
+  filtroQuartoMoradores = quarto;
+  renderDossieMoradores();
+}
+
+function renderDossieMoradores() {
+  const container = document.getElementById('dossie-lista-moradores');
+  const contador = document.getElementById('dossie-contador-moradores');
+  const vagasStatus = document.getElementById('dossie-vagas-status-moradores');
+  const filtroBar = document.getElementById('dossie-filtro-quartos-moradores-bar');
+  if (!container) return;
+
+  const casa = appState.casas.find(c => c.id === appState.dossieCasaAtualId);
+  if (!casa) return;
+
+  const moradoresCasa = appState.casaMoradores.filter(m => m.casaId === casa.id);
+  const totalMor = moradoresCasa.length;
+  const cap = Number(casa.capacidade) || 1;
+  const vagasRestantes = Math.max(0, cap - totalMor);
+
+  atualizarBadgeMoradoresDossie(casa.id);
+
+  if (contador) contador.textContent = `${totalMor} morador${totalMor !== 1 ? 'es' : ''} cadastrado${totalMor !== 1 ? 's' : ''}`;
+  if (vagasStatus) {
+    if (totalMor >= cap) {
+      vagasStatus.innerHTML = `<span class="text-rose-400 font-bold">Lotação Máxima Atingida (${totalMor}/${cap} vagas)</span>`;
+    } else {
+      vagasStatus.innerHTML = `Capacidade: <strong>${cap} vagas</strong> • <span class="text-emerald-400 font-bold">${vagasRestantes} vaga${vagasRestantes !== 1 ? 's' : ''} livre${vagasRestantes !== 1 ? 's' : ''}</span>`;
+    }
+  }
+
+  // Identifica quartos da casa
+  const particoesCasa = Array.isArray(casa.particoes) ? casa.particoes : normalizarParticoes(casa.particoes);
+  const quartosSet = new Set();
+  particoesCasa.forEach(p => {
+    if (p.toLowerCase().includes('quarto') || p.toLowerCase().includes('dormit') || p.toLowerCase().includes('suite')) {
+      quartosSet.add(p);
+    }
+  });
+  // Adiciona quartos que já estão vinculados aos moradores
+  moradoresCasa.forEach(m => {
+    if (m.quarto) quartosSet.add(m.quarto);
+  });
+  const listaQuartos = Array.from(quartosSet);
+
+  // Renderiza chips de filtro rápido por quarto
+  if (filtroBar) {
+    if (listaQuartos.length > 0) {
+      filtroBar.classList.remove('hidden');
+      const isTodos = filtroQuartoMoradores === 'todos';
+      let chipsHtml = `
+        <button type="button" onclick="filtrarMoradoresPorQuarto('todos')" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition border ${isTodos ? 'bg-amber-500 text-slate-950 border-amber-500 shadow-sm' : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200'}">
+          Todos (${totalMor})
+        </button>
+      `;
+
+      listaQuartos.forEach(q => {
+        const count = moradoresCasa.filter(m => (m.quarto || '').trim().toLowerCase() === q.trim().toLowerCase()).length;
+        const isActive = filtroQuartoMoradores.trim().toLowerCase() === q.trim().toLowerCase();
+        chipsHtml += `
+          <button type="button" onclick="filtrarMoradoresPorQuarto('${q.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition border flex items-center gap-1.5 ${isActive ? 'bg-amber-500 text-slate-950 border-amber-500 shadow-sm' : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200'}">
+            <i class="fa-solid fa-bed text-[11px] ${isActive ? 'text-slate-950' : 'text-amber-400'}"></i>
+            <span>${escaparHtml(q)}</span>
+            <span class="text-[10px] px-1.5 py-0.2 rounded-full ${isActive ? 'bg-slate-950/20 text-slate-950 font-bold' : 'bg-slate-800 text-slate-300'}">${count}</span>
+          </button>
+        `;
+      });
+
+      const semQuartoCount = moradoresCasa.filter(m => !m.quarto).length;
+      if (semQuartoCount > 0) {
+        const isSem = filtroQuartoMoradores === '__sem_quarto__';
+        chipsHtml += `
+          <button type="button" onclick="filtrarMoradoresPorQuarto('__sem_quarto__')" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition border flex items-center gap-1.5 ${isSem ? 'bg-amber-500 text-slate-950 border-amber-500 shadow-sm' : 'bg-slate-900 text-slate-400 border-slate-800 hover:border-slate-700 hover:text-slate-200'}">
+            <i class="fa-solid fa-circle-question text-[11px] ${isSem ? 'text-slate-950' : 'text-slate-500'}"></i>
+            <span>Sem Quarto</span>
+            <span class="text-[10px] px-1.5 py-0.2 rounded-full ${isSem ? 'bg-slate-950/20 text-slate-950 font-bold' : 'bg-slate-800 text-slate-300'}">${semQuartoCount}</span>
+          </button>
+        `;
+      }
+
+      filtroBar.innerHTML = chipsHtml;
+    } else {
+      filtroBar.classList.add('hidden');
+      filtroBar.innerHTML = '';
+    }
+  }
+
+  // Filtra moradores
+  let filtrados = moradoresCasa;
+  if (filtroQuartoMoradores !== 'todos') {
+    if (filtroQuartoMoradores === '__sem_quarto__') {
+      filtrados = moradoresCasa.filter(m => !m.quarto);
+    } else {
+      filtrados = moradoresCasa.filter(m => (m.quarto || '').trim().toLowerCase() === filtroQuartoMoradores.trim().toLowerCase());
+    }
+  }
+
+  if (moradoresCasa.length === 0) {
+    container.innerHTML = `
+      <div class="p-8 text-center bg-slate-900/60 rounded-2xl border border-slate-800 text-slate-400 text-xs space-y-3">
+        <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mx-auto text-xl">
+          <i class="fa-solid fa-users-slash"></i>
+        </div>
+        <p class="font-medium text-slate-300">Nenhum morador cadastrado nesta casa ainda.</p>
+        <p class="text-slate-500 max-w-sm mx-auto">Cadastre as pessoas que moram neste alojamento com nome, função na obra, número de WhatsApp e o quarto onde cada uma dorme.</p>
+        <button onclick="abrirModalNovoMorador()" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition shadow-md">
+          <i class="fa-solid fa-user-plus"></i> Cadastrar Primeiro Morador
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  if (filtrados.length === 0) {
+    container.innerHTML = `
+      <div class="p-6 text-center bg-slate-900/60 rounded-xl border border-slate-800 text-slate-400 text-xs">
+        <i class="fa-solid fa-bed text-2xl mb-2 text-slate-600 block"></i>
+        Nenhum morador alocado em "${filtroQuartoMoradores}".
+        <div class="mt-3">
+          <button onclick="abrirModalNovoMorador('${filtroQuartoMoradores === '__sem_quarto__' ? '' : filtroQuartoMoradores.replace(/'/g, "\\'")}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold text-xs">
+            <i class="fa-solid fa-plus mr-1"></i> Cadastrar Morador aqui
+          </button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // Agrupamento por Quarto
+  const grupos = [];
+  if (filtroQuartoMoradores === 'todos') {
+    listaQuartos.forEach(q => {
+      const itens = moradoresCasa.filter(m => (m.quarto || '').trim().toLowerCase() === q.trim().toLowerCase());
+      grupos.push({ nome: q, itens: itens, icone: 'fa-bed' });
+    });
+
+    const semQuarto = moradoresCasa.filter(m => !m.quarto);
+    if (semQuarto.length > 0) {
+      grupos.push({ nome: 'Quarto Não Especificado', itens: semQuarto, icone: 'fa-door-open', semQuarto: true });
+    }
+  } else {
+    if (filtroQuartoMoradores === '__sem_quarto__') {
+      grupos.push({ nome: 'Quarto Não Especificado', itens: filtrados, icone: 'fa-door-open', semQuarto: true });
+    } else {
+      grupos.push({ nome: filtroQuartoMoradores, itens: filtrados, icone: 'fa-bed' });
+    }
+  }
+
+  container.innerHTML = grupos.map(grupo => {
+    const quartoParam = grupo.semQuarto ? '' : grupo.nome.replace(/'/g, "\\'");
+    return `
+      <div class="bg-slate-900/90 border border-[#23324d] rounded-2xl p-3 sm:p-4 shadow-sm space-y-3">
+        <!-- Cabeçalho do Quarto -->
+        <div class="flex items-center justify-between pb-2.5 border-b border-[#23324d]">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center text-sm">
+              <i class="fa-solid ${grupo.icone}"></i>
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                <span>${escaparHtml(grupo.nome)}</span>
+                <span class="text-[11px] font-semibold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                  ${grupo.itens.length} pessoa${grupo.itens.length !== 1 ? 's' : ''}
+                </span>
+              </h4>
+            </div>
+          </div>
+
+          <button type="button" onclick="abrirModalNovoMorador('${quartoParam}')" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white px-2.5 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1.5" title="Adicionar morador neste quarto">
+            <i class="fa-solid fa-user-plus text-amber-400"></i>
+            <span class="hidden sm:inline">+ Morador aqui</span>
+          </button>
+        </div>
+
+        <!-- Lista de Moradores do Quarto -->
+        ${grupo.itens.length === 0 ? `
+          <div class="py-3 text-center text-slate-500 text-xs italic">
+            Nenhum morador neste quarto ainda. Toque em "+ Morador aqui" para cadastrar.
+          </div>
+        ` : `
+          <div class="space-y-2">
+            ${grupo.itens.map(m => renderCardMoradorHtml(m)).join('')}
+          </div>
+        `}
+      </div>
+    `;
+  }).join('');
+}
+
+function renderCardMoradorHtml(m) {
+  const zapClean = (m.telefone || '').replace(/\D/g, '');
+  const urlZap = zapClean ? `https://api.whatsapp.com/send?phone=${zapClean.length <= 11 ? '55' + zapClean : zapClean}&text=${encodeURIComponent(`Olá ${m.nome}, tudo bem? Mensagem da Gestão do Alojamento.`)}` : '';
+
+  return `
+    <div class="p-3 bg-[#0f172a] border border-[#23324d] hover:border-slate-700 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 transition">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-600/10 border border-amber-500/30 text-amber-400 flex items-center justify-center text-sm font-bold shrink-0">
+          <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <h5 class="text-sm font-bold text-white truncate">${escaparHtml(m.nome)}</h5>
+            <span class="text-[11px] font-semibold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-md border border-sky-500/20">${escaparHtml(m.funcao)}</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400 mt-1">
+            <span class="text-[11px] text-amber-400 font-medium flex items-center gap-1 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+              <i class="fa-solid fa-bed text-[10px]"></i>
+              ${escaparHtml(m.quarto || 'Sem Quarto')}
+            </span>
+            ${m.telefone ? `
+              <span class="text-[11px] text-emerald-400 font-mono flex items-center gap-1 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                <i class="fa-brands fa-whatsapp"></i>
+                ${escaparHtml(m.telefone)}
+              </span>
+            ` : ''}
+            ${m.empresa ? `
+              <span class="text-[11px] text-slate-400 truncate max-w-[150px]"><i class="fa-solid fa-building mr-1 text-[10px]"></i>${escaparHtml(m.empresa)}</span>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+
+      <!-- Ações do Morador: Chamar no WhatsApp, Editar e Remover -->
+      <div class="flex items-center gap-1.5 w-full sm:w-auto justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800 shrink-0">
+        ${urlZap ? `
+          <a href="${urlZap}" target="_blank" title="Chamar no WhatsApp" class="px-2.5 py-1.5 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/40 rounded-lg text-xs font-semibold transition flex items-center gap-1">
+            <i class="fa-brands fa-whatsapp text-sm text-emerald-400"></i>
+            <span>WhatsApp</span>
+          </a>
+        ` : ''}
+
+        <button type="button" onclick="abrirModalEditarMorador('${m.id}')" title="Editar dados do morador" class="p-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs border border-slate-700 transition">
+          <i class="fa-solid fa-pen"></i>
+        </button>
+
+        <button type="button" onclick="excluirMorador('${m.id}')" title="Remover morador da casa" class="p-1.5 px-2 bg-slate-800 hover:bg-slate-700 text-rose-400 hover:text-rose-300 rounded-lg text-xs border border-slate-700 transition">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+// Modal Novo/Editar Morador
+function abrirModalNovoMorador(quartoPreSelecionado = '') {
+  const casaId = appState.dossieCasaAtualId;
+  const casa = appState.casas.find(c => c.id === casaId);
+  if (!casa) {
+    mostrarToast('Selecione uma casa primeiro!', 'warning');
+    return;
+  }
+
+  const form = document.getElementById('form-morador');
+  if (form) form.reset();
+
+  document.getElementById('morador-edit-id').value = '';
+  document.getElementById('morador-casa-id').value = casa.id;
+  document.getElementById('modal-morador-title').textContent = 'Cadastrar Morador';
+  document.getElementById('modal-morador-subtitulo').textContent = `${casa.nome} (${casa.bloco || 'Alojamento'})`;
+  document.getElementById('modal-morador-icon').className = 'fa-solid fa-user-plus';
+  document.getElementById('btn-salvar-morador-txt').textContent = 'Cadastrar Morador';
+
+  popularSelectQuartosMorador(casa, quartoPreSelecionado);
+  openModal('modal-morador');
+}
+
+function abrirModalEditarMorador(moradorId) {
+  const morador = appState.casaMoradores.find(m => m.id === moradorId);
+  if (!morador) return;
+
+  const casa = appState.casas.find(c => c.id === morador.casaId);
+  if (!casa) return;
+
+  const form = document.getElementById('form-morador');
+  if (form) form.reset();
+
+  document.getElementById('morador-edit-id').value = morador.id;
+  document.getElementById('morador-casa-id').value = morador.casaId;
+  document.getElementById('modal-morador-title').textContent = 'Editar Morador';
+  document.getElementById('modal-morador-subtitulo').textContent = `${casa.nome} (${casa.bloco || 'Alojamento'})`;
+  document.getElementById('modal-morador-icon').className = 'fa-solid fa-user-pen';
+  document.getElementById('btn-salvar-morador-txt').textContent = 'Salvar Alterações';
+
+  document.getElementById('morador-nome').value = morador.nome || '';
+  document.getElementById('morador-funcao').value = morador.funcao || '';
+  document.getElementById('morador-telefone').value = morador.telefone || '';
+  document.getElementById('morador-empresa').value = morador.empresa || '';
+
+  popularSelectQuartosMorador(casa, morador.quarto || '');
+  openModal('modal-morador');
+}
+
+function popularSelectQuartosMorador(casa, quartoSelecionado = '') {
+  const sel = document.getElementById('morador-quarto-select');
+  const custom = document.getElementById('morador-quarto-custom');
+  const lblStatus = document.getElementById('label-status-quartos-morador');
+
+  if (custom) {
+    custom.value = '';
+    custom.classList.add('hidden');
+    custom.required = false;
+  }
+
+  if (!sel) return;
+
+  sel.innerHTML = '<option value="">Selecione o quarto onde vai ficar...</option>';
+
+  const particoes = Array.isArray(casa.particoes) ? casa.particoes : normalizarParticoes(casa.particoes);
+  // Prioriza cômodos com quarto/dormitório
+  const quartos = particoes.filter(p => p.toLowerCase().includes('quarto') || p.toLowerCase().includes('dormit') || p.toLowerCase().includes('suite'));
+  const outrosComodos = particoes.filter(p => !quartos.includes(p));
+
+  if (lblStatus) {
+    lblStatus.textContent = quartos.length > 0 ? `${quartos.length} quarto(s) disponível(is)` : 'Cadastre ou escolha o quarto';
+  }
+
+  if (quartos.length > 0) {
+    const optGroupQ = document.createElement('optgroup');
+    optGroupQ.label = 'Quartos & Dormitórios';
+    quartos.forEach(q => {
+      const opt = document.createElement('option');
+      opt.value = q;
+      opt.textContent = q;
+      if (quartoSelecionado && q.trim().toLowerCase() === quartoSelecionado.trim().toLowerCase()) {
+        opt.selected = true;
+      }
+      optGroupQ.appendChild(opt);
+    });
+    sel.appendChild(optGroupQ);
+  }
+
+  if (outrosComodos.length > 0) {
+    const optGroupO = document.createElement('optgroup');
+    optGroupO.label = 'Outros Cômodos';
+    outrosComodos.forEach(o => {
+      const opt = document.createElement('option');
+      opt.value = o;
+      opt.textContent = o;
+      if (quartoSelecionado && o.trim().toLowerCase() === quartoSelecionado.trim().toLowerCase()) {
+        opt.selected = true;
+      }
+      optGroupO.appendChild(opt);
+    });
+    sel.appendChild(optGroupO);
+  }
+
+  // Se o quarto selecionado não estiver na lista de partições da casa
+  if (quartoSelecionado && !particoes.some(p => p.trim().toLowerCase() === quartoSelecionado.trim().toLowerCase())) {
+    const optPre = document.createElement('option');
+    optPre.value = quartoSelecionado;
+    optPre.textContent = `${quartoSelecionado} (Atual)`;
+    optPre.selected = true;
+    sel.appendChild(optPre);
+  }
+
+  const optNovo = document.createElement('option');
+  optNovo.value = '__novo__';
+  optNovo.textContent = '➕ Outro quarto/cômodo...';
+  sel.appendChild(optNovo);
+}
+
+function verificarQuartoCustomMorador() {
+  const sel = document.getElementById('morador-quarto-select');
+  const custom = document.getElementById('morador-quarto-custom');
+  if (!sel || !custom) return;
+
+  if (sel.value === '__novo__') {
+    custom.classList.remove('hidden');
+    custom.required = true;
+    custom.focus();
+  } else {
+    custom.classList.add('hidden');
+    custom.required = false;
+  }
+}
+
+function salvarMorador(e) {
+  e.preventDefault();
+  const editId = document.getElementById('morador-edit-id').value;
+  const casaId = document.getElementById('morador-casa-id').value;
+  const nome = document.getElementById('morador-nome').value.trim();
+  const funcao = document.getElementById('morador-funcao').value.trim();
+  const telefone = formatarTelefone(document.getElementById('morador-telefone').value.trim());
+  const empresa = document.getElementById('morador-empresa').value.trim();
+
+  const selQuarto = document.getElementById('morador-quarto-select');
+  const customQuarto = document.getElementById('morador-quarto-custom');
+
+  let quarto = '';
+  if (selQuarto.value === '__novo__') {
+    quarto = customQuarto.value.trim();
+  } else {
+    quarto = selQuarto.value.trim();
+  }
+
+  if (!nome || !funcao || !telefone || !quarto) {
+    mostrarToast('Preencha todos os campos obrigatórios (Nome, Função, Zap e Quarto)!', 'warning');
+    return;
+  }
+
+  const casa = appState.casas.find(c => c.id === casaId);
+  if (!casa) {
+    mostrarToast('Casa não encontrada!', 'error');
+    return;
+  }
+
+  // Se criou um novo quarto e ele não está nas partições da casa, adiciona automaticamente
+  if (quarto && !casa.particoes.some(p => p.toLowerCase() === quarto.toLowerCase())) {
+    const parts = Array.isArray(casa.particoes) ? casa.particoes : normalizarParticoes(casa.particoes);
+    parts.push(quarto);
+    casa.particoes = parts;
+    if (appState.config.turso?.ativo) {
+      executarTurso('UPDATE casas SET particoes = ? WHERE id = ?', [JSON.stringify(parts), casa.id]).catch(console.error);
+    }
+  }
+
+  let moradorAlvo;
+  if (editId) {
+    moradorAlvo = appState.casaMoradores.find(m => m.id === editId);
+    if (moradorAlvo) {
+      moradorAlvo.nome = nome;
+      moradorAlvo.funcao = funcao;
+      moradorAlvo.telefone = telefone;
+      moradorAlvo.quarto = quarto;
+      moradorAlvo.empresa = empresa;
+      mostrarToast(`Morador "${nome}" atualizado com sucesso!`, 'success');
+    }
+  } else {
+    moradorAlvo = {
+      id: 'mor-' + Date.now(),
+      casaId: casa.id,
+      nome: nome,
+      funcao: funcao,
+      telefone: telefone,
+      quarto: quarto,
+      empresa: empresa || casa.responsavelEmpresa || '',
+      dataEntrada: new Date().toISOString().split('T')[0],
+      observacoes: ''
+    };
+    appState.casaMoradores.push(moradorAlvo);
+    mostrarToast(`Morador "${nome}" cadastrado no ${quarto}!`, 'success');
+  }
+
+  // Sincroniza ocupação da casa
+  sincronizarContagemMoradoresCasas();
+  salvarLocalmente();
+  closeModal('modal-morador');
+  renderDossieMoradores();
+  renderCasas();
+  renderRelatorios();
+
+  // Atualiza no Turso
+  if (appState.config.turso?.ativo && moradorAlvo) {
+    executarTursoBatch([
+      {
+        sql: `INSERT OR REPLACE INTO casa_moradores (id, casa_id, nome, funcao, telefone, quarto, empresa, data_entrada, observacoes)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        args: [moradorAlvo.id, moradorAlvo.casaId, moradorAlvo.nome, moradorAlvo.funcao, moradorAlvo.telefone, moradorAlvo.quarto, moradorAlvo.empresa || '', moradorAlvo.dataEntrada || '', moradorAlvo.observacoes || '']
+      },
+      {
+        sql: 'UPDATE casas SET moradores_atuais = ?, status = ? WHERE id = ?',
+        args: [casa.moradoresAtuais, casa.status, casa.id]
+      }
+    ]).catch(console.error);
+  }
+}
+
+function excluirMorador(moradorId) {
+  const morador = appState.casaMoradores.find(m => m.id === moradorId);
+  if (!morador) return;
+
+  const confirma = confirm(`Deseja realmente remover o morador "${morador.nome}" (${morador.funcao} - ${morador.quarto}) deste alojamento?`);
+  if (!confirma) return;
+
+  const casa = appState.casas.find(c => c.id === morador.casaId);
+  appState.casaMoradores = appState.casaMoradores.filter(m => m.id !== moradorId);
+
+  sincronizarContagemMoradoresCasas();
+  salvarLocalmente();
+  renderDossieMoradores();
+  renderCasas();
+  renderRelatorios();
+  mostrarToast(`Morador "${morador.nome}" removido do alojamento.`, 'info');
+
+  if (appState.config.turso?.ativo) {
+    executarTursoBatch([
+      { sql: 'DELETE FROM casa_moradores WHERE id = ?', args: [moradorId] },
+      { sql: 'UPDATE casas SET moradores_atuais = ?, status = ? WHERE id = ?', args: [casa ? casa.moradoresAtuais : 0, casa ? casa.status : 'Disponível', morador.casaId] }
+    ]).catch(console.error);
+  }
 }
 
 // Estado de visualização do Dossiê de Móveis
@@ -3501,6 +4100,7 @@ function imprimirTermoCautelaDireto(casaId) {
   if (!casa) return;
 
   const moveis = appState.casaMoveis.filter(m => m.casaId === casa.id);
+  const moradoresImpressao = appState.casaMoradores.filter(m => m.casaId === casa.id);
   const printArea = document.getElementById('print-area');
   const agora = new Date().toLocaleString('pt-BR');
   const particoes = Array.isArray(casa.particoes) ? casa.particoes : normalizarParticoes(casa.particoes);
@@ -3564,15 +4164,45 @@ function imprimirTermoCautelaDireto(casaId) {
         </tbody>
       </table>
 
+      <!-- Tabela de Moradores Alojados -->
+      <h3 style="font-size: 13px; text-transform: uppercase; margin: 15px 0 8px 0; border-bottom: 1px solid #000; padding-bottom: 4px;">
+        Moradores Alojados na Unidade (${moradoresImpressao.length}/${casa.capacidade} Vagas)
+      </h3>
+
+      <table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 20px;">
+        <thead>
+          <tr style="background: #e5e5e5;">
+            <th style="border: 1px solid #888; padding: 5px; text-align: left;">Nome do Morador</th>
+            <th style="border: 1px solid #888; padding: 5px; text-align: left;">Função / Cargo</th>
+            <th style="border: 1px solid #888; padding: 5px; text-align: center;">Quarto / Cômodo</th>
+            <th style="border: 1px solid #888; padding: 5px; text-align: center;">WhatsApp / Contato</th>
+            <th style="border: 1px solid #888; padding: 5px; text-align: center;">Assinatura</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${moradoresImpressao.length > 0 ? moradoresImpressao.map(m => `
+            <tr>
+              <td style="border: 1px solid #ccc; padding: 5px; font-weight: bold;">${m.nome}</td>
+              <td style="border: 1px solid #ccc; padding: 5px;">${m.funcao}</td>
+              <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">${m.quarto || '-'}</td>
+              <td style="border: 1px solid #ccc; padding: 5px; text-align: center;">${m.telefone || '-'}</td>
+              <td style="border: 1px solid #ccc; padding: 5px; text-align: center; color: #888;">____________________</td>
+            </tr>
+          `).join('') : `
+            <tr><td colspan="5" style="border: 1px solid #ccc; padding: 8px; text-align: center; color: #777;">Nenhum morador cadastrado nominalmente nesta casa.</td></tr>
+          `}
+        </tbody>
+      </table>
+
       <!-- Cláusula de Responsabilidade -->
-      <div style="font-size: 10.5px; line-height: 1.5; text-align: justify; color: #222; margin-bottom: 40px; border-top: 1px solid #ccc; padding-top: 10px;">
+      <div style="font-size: 10.5px; line-height: 1.5; text-align: justify; color: #222; margin-bottom: 30px; border-top: 1px solid #ccc; padding-top: 10px;">
         <p style="margin: 0 0 6px 0;">
-          <strong>DECLARAÇÃO DE COMPROMISSO E FIEL DEPOSITÁRIO:</strong> Declaro para os devidos fins que recebi em perfeitas condições de uso, conservação e funcionamento os bens patrimoniais acima relacionados instalados na unidade habitacional. Comprometo-me a zelar pela integridade dos mesmos, fiscalizar o uso pelos moradores da referida casa e comunicar imediatamente à Prefeitura do Canteiro qualquer avaria, furto ou extravio. No término das atividades ou desocupação, comprometo-me a devolver os bens nas mesmas condições recebidas.
+          <strong>DECLARAÇÃO DE COMPROMISSO E FIEL DEPOSITÁRIO:</strong> Declaro para os devidos fins que recebi em perfeitas condições de uso, conservação e funcionamento os bens patrimoniais acima relacionados instalados na unidade habitacional, bem como confirmo a relação de colaboradores alojados. Comprometo-me a zelar pela integridade das instalações e móveis, fiscalizar a conduta e convivência no alojamento e comunicar imediatamente à Prefeitura do Canteiro qualquer avaria, furto, extravio ou alteração no quadro de moradores.
         </p>
       </div>
 
       <!-- Assinaturas -->
-      <div style="display: flex; justify-content: space-around; font-size: 11px; margin-top: 50px;">
+      <div style="display: flex; justify-content: space-around; font-size: 11px; margin-top: 40px;">
         <div style="border-top: 1px solid #000; width: 42%; text-align: center; padding-top: 6px;">
           <strong>${casa.responsavelNome || 'Responsável pela Casa'}</strong><br>
           <span style="color: #555;">Encarregado (${casa.responsavelEmpresa || 'Empreiteira'})</span>
@@ -3594,19 +4224,33 @@ function compartilharWhatsAppCautelaCasa() {
   if (!casa) return;
 
   const moveis = appState.casaMoveis.filter(m => m.casaId === casa.id);
+  const moradores = appState.casaMoradores.filter(m => m.casaId === casa.id);
   const dataFmt = new Date().toLocaleDateString('pt-BR');
 
-  let txt = `*FICHA DE CAUTELA DE ALOJAMENTO - ${appState.config.nomeObra.toUpperCase()}*\n`;
+  let txt = `*RESUMO DO ALOJAMENTO - ${appState.config.nomeObra.toUpperCase()}*\n`;
   txt += `🏠 *Unidade:* ${casa.nome} (${casa.bloco || 'Canteiro'})\n`;
   txt += `👤 *Responsável:* ${casa.responsavelNome}\n`;
   txt += `🏢 *Empresa:* ${casa.responsavelEmpresa}\n`;
-  txt += `👥 *Lotação:* ${casa.moradoresAtuais}/${casa.capacidade} Moradores\n`;
-  txt += `📅 *Data da Auditoria:* ${dataFmt}\n\n`;
-  txt += `📋 *MOBILIÁRIO CONFERIDO NA CASA:*\n`;
+  txt += `👥 *Lotação:* ${moradores.length}/${casa.capacidade} Moradores\n`;
+  txt += `📅 *Data:* ${dataFmt}\n\n`;
 
-  moveis.forEach(m => {
-    txt += `• ${m.quantidade}x ${m.itemNome} [Estado: ${m.estado}] ${m.patrimonio ? '(Pat: ' + m.patrimonio + ')' : ''}\n`;
-  });
+  txt += `👥 *MORADORES ALOJADOS:*\n`;
+  if (moradores.length > 0) {
+    moradores.forEach(m => {
+      txt += `• *${m.nome}* (${m.funcao}) - 🛏️ ${m.quarto || 'Quarto'} | 📱 ${m.telefone || 'Sem Zap'}\n`;
+    });
+  } else {
+    txt += `(Nenhum morador nominal cadastrado)\n`;
+  }
+
+  txt += `\n📋 *MOBILIÁRIO CONFERIDO NA CASA:*\n`;
+  if (moveis.length > 0) {
+    moveis.forEach(m => {
+      txt += `• ${m.quantidade}x ${m.itemNome} [${m.comodo ? m.comodo + ' - ' : ''}${m.estado || 'Bom'}]\n`;
+    });
+  } else {
+    txt += `(Nenhum móvel vinculado)\n`;
+  }
 
   txt += `\n🔐 _Registro autenticado pelo Canteiro PRO com banco de dados centralizado._`;
 
