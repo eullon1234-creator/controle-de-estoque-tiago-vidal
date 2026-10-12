@@ -139,6 +139,7 @@ const SEEDS_CASAS = [
     localizacaoUrl: 'https://maps.google.com/?q=-23.55052,-46.633308',
     dataCautela: '2026-09-10',
     observacoes: 'Alojamento da equipe de alvenaria e blocagem estrutural.',
+    particoes: ['Quarto 1', 'Quarto 2', 'Sala 1', 'Cozinha', 'Banheiro 1', 'Área de Serviço'],
     fotoUrl: FOTOS_CASAS_MAP['casa-1']
   },
   {
@@ -156,6 +157,7 @@ const SEEDS_CASAS = [
     localizacaoUrl: 'https://maps.google.com/?q=-23.55321,-46.63912',
     dataCautela: '2026-09-12',
     observacoes: 'Equipe de armação pesada e carpinteiros.',
+    particoes: ['Quarto 1', 'Quarto 2', 'Sala 1', 'Cozinha', 'Banheiro 1'],
     fotoUrl: FOTOS_CASAS_MAP['casa-2']
   },
   {
@@ -173,6 +175,7 @@ const SEEDS_CASAS = [
     localizacaoUrl: 'https://maps.google.com/?q=-23.54890,-46.63120',
     dataCautela: '2026-09-15',
     observacoes: 'Equipe técnica de instalações elétricas e sanitárias.',
+    particoes: ['Quarto 1', 'Quarto 2', 'Quarto 3', 'Sala 1', 'Cozinha', 'Banheiro 1'],
     fotoUrl: FOTOS_CASAS_MAP['casa-3']
   },
   {
@@ -190,9 +193,145 @@ const SEEDS_CASAS = [
     localizacaoUrl: 'https://maps.google.com/?q=-23.55210,-46.63550',
     dataCautela: '2026-09-18',
     observacoes: 'Possui 2 vagas livres disponíveis para novos alojados.',
+    particoes: ['Quarto 1', 'Sala 1', 'Cozinha', 'Banheiro 1'],
     fotoUrl: FOTOS_CASAS_MAP['casa-4']
   }
 ];
+
+// ==========================================
+// FUNÇÕES AUXILIARES DE PARTIÇÕES & CÔMODOS
+// ==========================================
+let particoesCasaForm = [];
+
+function normalizarParticoes(val) {
+  if (!val) return [];
+  if (Array.isArray(val)) {
+    return val.filter(p => p && typeof p === 'string' && p.trim()).map(p => p.trim());
+  }
+  if (typeof val === 'string') {
+    const s = val.trim();
+    if (!s) return [];
+    if (s.startsWith('[') && s.endsWith(']')) {
+      try {
+        const arr = JSON.parse(s);
+        if (Array.isArray(arr)) {
+          return arr.filter(p => p && typeof p === 'string' && p.trim()).map(p => p.trim());
+        }
+      } catch (e) {}
+    }
+    return s.split(',').map(p => p.trim()).filter(Boolean);
+  }
+  return [];
+}
+
+function getIconeParticao(nome) {
+  if (!nome || typeof nome !== 'string') return 'fa-door-open';
+  const n = nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  if (n.includes('quarto') || n.includes('dormit') || n.includes('suite')) return 'fa-bed';
+  if (n.includes('sala')) return 'fa-couch';
+  if (n.includes('cozinh') || n.includes('copa')) return 'fa-utensils';
+  if (n.includes('banh') || n.includes('wc') || n.includes('lavab') || n.includes('sanit')) return 'fa-shower';
+  if (n.includes('area') || n.includes('lavand') || n.includes('servic')) return 'fa-jug-detergent';
+  if (n.includes('varand') || n.includes('sacad')) return 'fa-sun';
+  if (n.includes('garag') || n.includes('estacion')) return 'fa-car';
+  if (n.includes('escrit') || n.includes('estud')) return 'fa-briefcase';
+  if (n.includes('dispens') || n.includes('deposito')) return 'fa-boxes-stacked';
+  return 'fa-door-open';
+}
+
+function sugerirProximoNomeParticao(tipoBase) {
+  const baseNorm = tipoBase.trim().toLowerCase();
+  let maxNum = 0;
+  let temSemNumero = false;
+  particoesCasaForm.forEach(p => {
+    const pTrim = p.trim();
+    const regex = new RegExp('^' + baseNorm + '(?:\\s*(\\d+))?$', 'i');
+    const match = pTrim.match(regex);
+    if (match) {
+      if (match[1]) {
+        const num = parseInt(match[1], 10);
+        if (num > maxNum) maxNum = num;
+      } else {
+        temSemNumero = true;
+      }
+    }
+  });
+
+  if (['quarto', 'sala', 'banheiro'].includes(baseNorm)) {
+    return `${tipoBase} ${maxNum + 1}`;
+  }
+
+  if (maxNum === 0 && !temSemNumero) {
+    return tipoBase;
+  }
+  return `${tipoBase} ${Math.max(maxNum, 1) + 1}`;
+}
+
+function renderParticoesCasaForm() {
+  const container = document.getElementById('container-particoes-casa');
+  const badge = document.getElementById('badge-contador-particoes');
+  if (!container) return;
+
+  if (badge) {
+    badge.textContent = `${particoesCasaForm.length} cômodo${particoesCasaForm.length !== 1 ? 's' : ''}`;
+  }
+
+  if (particoesCasaForm.length === 0) {
+    container.innerHTML = `
+      <p class="text-xs text-slate-500 italic py-1 px-1">
+        Nenhum cômodo adicionado. Use os botões rápidos acima ou digite para adicionar.
+      </p>
+    `;
+    return;
+  }
+
+  container.innerHTML = particoesCasaForm.map((p, idx) => `
+    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-700 hover:border-amber-500/40 text-xs text-slate-200 transition group/tag shadow-sm">
+      <i class="fa-solid ${getIconeParticao(p)} text-amber-400 text-[11px]"></i>
+      <span class="font-medium">${escaparHtml(p)}</span>
+      <button type="button" onclick="removerParticaoCasa(${idx})" class="ml-1 text-slate-400 hover:text-rose-400 p-0.5 rounded transition" title="Remover ${escaparHtml(p)}">
+        <i class="fa-solid fa-xmark text-[11px]"></i>
+      </button>
+    </span>
+  `).join('');
+}
+
+function adicionarParticaoCasa(nome) {
+  if (!nome || !nome.trim()) return;
+  const nomeTrim = nome.trim();
+  const jaExiste = particoesCasaForm.some(p => p.toLowerCase() === nomeTrim.toLowerCase());
+  if (jaExiste) {
+    mostrarToast(`A partição "${nomeTrim}" já foi adicionada!`, 'warning');
+    return;
+  }
+  particoesCasaForm.push(nomeTrim);
+  renderParticoesCasaForm();
+}
+
+function adicionarParticaoRapida(tipo) {
+  const sugestao = sugerirProximoNomeParticao(tipo);
+  adicionarParticaoCasa(sugestao);
+}
+
+function adicionarParticaoDoInput() {
+  const input = document.getElementById('input-nova-particao');
+  if (!input) return;
+  const nome = input.value.trim();
+  if (!nome) {
+    input.focus();
+    return;
+  }
+  adicionarParticaoCasa(nome);
+  input.value = '';
+  input.focus();
+}
+
+function removerParticaoCasa(idx) {
+  if (idx >= 0 && idx < particoesCasaForm.length) {
+    particoesCasaForm.splice(idx, 1);
+    renderParticoesCasaForm();
+  }
+}
 
 const SEEDS_CASA_MOVEIS = [
   { id: 'cm-1', casaId: 'casa-1', itemNome: 'Beliche Metálica Tubular Reforçada', categoria: 'Móveis & Equipamentos', quantidade: 4, estado: 'Bom', patrimonio: 'PAT-C01-01', observacoes: 'Beliches completas com escada', fotoUrl: FOTOS_PRODUTOS_MAP['Beliche Metálica Tubular Reforçada'] },
@@ -265,6 +404,18 @@ function carregarDadosLocais() {
 
   appState.galpao = g ? JSON.parse(g) : [...SEEDS_GALPAO];
   appState.casas = c ? JSON.parse(c) : [...SEEDS_CASAS];
+  // Garante que cada casa tenha o array de partições normalizado
+  appState.casas.forEach(casa => {
+    if (!casa.particoes || !Array.isArray(casa.particoes)) {
+      casa.particoes = normalizarParticoes(casa.particoes);
+      if (casa.particoes.length === 0) {
+        const seedRef = SEEDS_CASAS.find(s => s.id === casa.id);
+        if (seedRef && seedRef.particoes) {
+          casa.particoes = [...seedRef.particoes];
+        }
+      }
+    }
+  });
   appState.casaMoveis = cm ? JSON.parse(cm) : [...SEEDS_CASA_MOVEIS];
   appState.casaEntregas = ce ? JSON.parse(ce) : [...SEEDS_CASA_ENTREGAS];
   appState.casaDespesas = cd ? JSON.parse(cd) : [...SEEDS_CASA_DESPESAS];
@@ -429,6 +580,7 @@ async function garantirSchemaTurso() {
   await executarTursoBatch([
     { sql: 'ALTER TABLE casas ADD COLUMN endereco TEXT' },
     { sql: 'ALTER TABLE casas ADD COLUMN localizacao_url TEXT' },
+    { sql: 'ALTER TABLE casas ADD COLUMN particoes TEXT' },
     {
       sql: `CREATE TABLE IF NOT EXISTS casa_despesas (
               id TEXT PRIMARY KEY,
@@ -500,6 +652,7 @@ async function inicializarTursoSeDisponivel() {
           responsavelTelefone: r.responsavel_telefone, responsavelQuarto: r.responsavel_quarto,
           dataCautela: r.data_cautela, observacoes: r.observacoes,
           endereco: r.endereco || '', localizacaoUrl: r.localizacao_url || '',
+          particoes: normalizarParticoes(r.particoes),
           fotoUrl: getFotoCasa(r.id, r.foto_url)
         }));
       }
@@ -1008,6 +1161,9 @@ function renderCasas() {
     const mor = Number(casa.moradoresAtuais) || 0;
     const pctOcupacao = Math.min(100, Math.round((mor / cap) * 100));
 
+    // Partições / Cômodos
+    const particoes = Array.isArray(casa.particoes) ? casa.particoes : normalizarParticoes(casa.particoes);
+
     // Resumo dos móveis
     const resumoMoveis = moveisCasa.slice(0, 3).map(m => `${m.quantidade}x ${m.itemNome.split(' ')[0]}`).join(', ');
 
@@ -1066,8 +1222,36 @@ function renderCasas() {
             </div>
           </div>
 
+          <!-- Cômodos / Partições da Casa -->
+          <div class="text-xs text-slate-400 pt-2 border-t border-slate-800">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-[11px] font-semibold text-slate-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-door-open text-amber-400 text-xs"></i>
+                <span>Partições / Cômodos:</span>
+              </span>
+              <span class="text-[10px] text-amber-300 font-bold bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/30">${particoes.length} cômodo${particoes.length !== 1 ? 's' : ''}</span>
+            </div>
+            ${particoes.length > 0 ? `
+              <div class="flex flex-wrap gap-1 mt-1">
+                ${particoes.slice(0, 4).map(p => `
+                  <span class="text-[10px] bg-slate-900 border border-slate-700/70 text-slate-300 px-2 py-0.5 rounded-md flex items-center gap-1 font-medium">
+                    <i class="fa-solid ${getIconeParticao(p)} text-amber-400/80 text-[9px]"></i>
+                    <span>${escaparHtml(p)}</span>
+                  </span>
+                `).join('')}
+                ${particoes.length > 4 ? `
+                  <span class="text-[10px] bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded-md border border-slate-700">
+                    +${particoes.length - 4} mais
+                  </span>
+                ` : ''}
+              </div>
+            ` : `
+              <p class="text-[11px] text-slate-500 italic">Nenhum cômodo cadastrado</p>
+            `}
+          </div>
+
           <!-- Resumo do Mobiliário -->
-          <div class="text-xs text-slate-400 pt-1 border-t border-slate-800">
+          <div class="text-xs text-slate-400 pt-2 border-t border-slate-800">
             <span class="text-slate-500">Móveis instalados:</span>
             <p class="text-slate-300 font-medium truncate mt-0.5">${resumoMoveis || 'Nenhum móvel vinculado'} (+${totalPecasMoveis} peças)</p>
           </div>
@@ -1172,6 +1356,33 @@ function abrirDossieCasa(casaId) {
     }
   }
 
+  // Partições & Cômodos no Dossiê
+  const particoes = Array.isArray(casa.particoes) ? casa.particoes : normalizarParticoes(casa.particoes);
+  const contadorParticoesEl = document.getElementById('dossie-contador-particoes');
+  const listaParticoesEl = document.getElementById('dossie-lista-particoes');
+  if (contadorParticoesEl) {
+    contadorParticoesEl.textContent = `${particoes.length} cômodo${particoes.length !== 1 ? 's' : ''}`;
+  }
+  if (listaParticoesEl) {
+    if (particoes.length === 0) {
+      listaParticoesEl.innerHTML = `
+        <div class="flex items-center justify-between w-full text-xs text-slate-400 py-1">
+          <span>Nenhum cômodo cadastrado nesta casa ainda.</span>
+          <button onclick="editarResponsavelCasaAtual()" class="text-amber-400 hover:text-amber-300 font-semibold flex items-center gap-1 text-[11px] bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700">
+            <i class="fa-solid fa-plus"></i> Adicionar Cômodos
+          </button>
+        </div>
+      `;
+    } else {
+      listaParticoesEl.innerHTML = particoes.map(p => `
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/90 border border-slate-700/80 text-xs text-slate-200 shadow-sm">
+          <i class="fa-solid ${getIconeParticao(p)} text-amber-400 text-xs"></i>
+          <span class="font-medium">${escaparHtml(p)}</span>
+        </span>
+      `).join('');
+    }
+  }
+
   switchDossieTab('moveis');
   openModal('modal-dossie-casa');
 }
@@ -1242,6 +1453,7 @@ function renderDossieMoveis() {
               <span class="text-[11px] px-2 py-0.5 rounded-full border ${corEstado}">
                 ${m.estado || 'Bom'}
               </span>
+              ${m.comodo ? `<span class="text-[11px] px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20 font-medium"><i class="fa-solid ${getIconeParticao(m.comodo)} mr-1"></i>${escaparHtml(m.comodo)}</span>` : ''}
               ${m.patrimonio ? `<span class="font-mono text-slate-300 bg-slate-950 px-1.5 py-0.5 rounded border border-slate-800">${m.patrimonio}</span>` : ''}
               ${m.observacoes ? `<span class="italic text-slate-400 truncate max-w-[200px]">"${m.observacoes}"</span>` : ''}
             </div>
@@ -2104,14 +2316,31 @@ function atualizarInfoCasaEntrega() {
   const box = document.getElementById('box-info-casa-entrega');
   const respTxt = document.getElementById('entrega-resp-txt');
   const empTxt = document.getElementById('entrega-empresa-txt');
+  const comodoSelect = document.getElementById('entrega-movel-comodo');
 
   const casa = appState.casas.find(c => c.id === casaId);
   if (casa) {
     box.classList.remove('hidden');
     respTxt.textContent = casa.responsavelNome || 'Não informado';
     empTxt.textContent = casa.responsavelEmpresa || 'Não informada';
+
+    if (comodoSelect) {
+      comodoSelect.innerHTML = '<option value="">Selecione o cômodo de destino...</option>';
+      const parts = Array.isArray(casa.particoes) ? casa.particoes : normalizarParticoes(casa.particoes);
+      if (parts.length > 0) {
+        parts.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p;
+          opt.textContent = p;
+          comodoSelect.appendChild(opt);
+        });
+      }
+    }
   } else {
     box.classList.add('hidden');
+    if (comodoSelect) {
+      comodoSelect.innerHTML = '<option value="">Selecione o cômodo de destino...</option>';
+    }
   }
 }
 
@@ -2240,6 +2469,8 @@ function salvarEntregaCasa(e) {
   if (item.categoria === 'Móveis & Equipamentos') {
     const estado = document.getElementById('entrega-movel-estado')?.value || 'Bom';
     const patrimonio = document.getElementById('entrega-movel-patrimonio')?.value.trim() || `PAT-${Date.now().toString().slice(-4)}`;
+    const comodo = document.getElementById('entrega-movel-comodo')?.value.trim() || '';
+    const obsMovel = comodo ? (motivo ? `${motivo} • Cômodo: ${comodo}` : `Cômodo: ${comodo}`) : motivo;
 
     const novoMovel = {
       id: 'cm-' + Date.now(),
@@ -2249,7 +2480,8 @@ function salvarEntregaCasa(e) {
       quantidade: qtd,
       estado: estado,
       patrimonio: patrimonio,
-      observacoes: motivo
+      comodo: comodo,
+      observacoes: obsMovel
     };
     appState.casaMoveis.push(novoMovel);
 
@@ -2390,6 +2622,8 @@ function abrirModalNovaCasa() {
   const inputFoto = document.getElementById('casa-foto');
   if (inputFoto) inputFoto.value = '';
   atualizarPreviewFotoCasa();
+  particoesCasaForm = [];
+  renderParticoesCasaForm();
   openModal('modal-nova-casa');
 }
 
@@ -2536,6 +2770,7 @@ function salvarCasa(e) {
       casaAlvo.endereco = endereco;
       casaAlvo.localizacaoUrl = localizacaoUrl;
       casaAlvo.fotoUrl = fotoInput;
+      casaAlvo.particoes = [...particoesCasaForm];
       mostrarToast(`Casa "${nome}" atualizada com sucesso!`, 'success');
     }
   } else {
@@ -2554,7 +2789,8 @@ function salvarCasa(e) {
       localizacaoUrl: localizacaoUrl,
       dataCautela: new Date().toISOString().split('T')[0],
       observacoes: '',
-      fotoUrl: fotoInput || getFotoCasa('casa-1')
+      fotoUrl: fotoInput || getFotoCasa('casa-1'),
+      particoes: [...particoesCasaForm]
     };
     appState.casas.push(casaAlvo);
     mostrarToast(`Nova casa "${nome}" cadastrada com sucesso!`, 'success');
@@ -2564,6 +2800,8 @@ function salvarCasa(e) {
   closeModal('modal-nova-casa');
   document.getElementById('form-casa').reset();
   document.getElementById('casa-edit-id').value = '';
+  particoesCasaForm = [];
+  renderParticoesCasaForm();
   const inputFile = document.getElementById('casa-foto-file');
   if (inputFile) inputFile.value = '';
   atualizarPreviewFotoCasa();
@@ -2571,9 +2809,9 @@ function salvarCasa(e) {
   renderApp();
 
   if (appState.config.turso?.ativo && casaAlvo) {
-    executarTurso(`INSERT OR REPLACE INTO casas (id, nome, bloco, capacidade, moradores_atuais, status, responsavel_nome, responsavel_empresa, responsavel_telefone, responsavel_quarto, data_cautela, observacoes, foto_url, endereco, localizacao_url)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [casaAlvo.id, casaAlvo.nome, casaAlvo.bloco, casaAlvo.capacidade, casaAlvo.moradoresAtuais, casaAlvo.status, casaAlvo.responsavelNome, casaAlvo.responsavelEmpresa, casaAlvo.responsavelTelefone, casaAlvo.responsavelQuarto, casaAlvo.dataCautela, casaAlvo.observacoes || '', casaAlvo.fotoUrl || '', casaAlvo.endereco || '', casaAlvo.localizacaoUrl || '']
+    executarTurso(`INSERT OR REPLACE INTO casas (id, nome, bloco, capacidade, moradores_atuais, status, responsavel_nome, responsavel_empresa, responsavel_telefone, responsavel_quarto, data_cautela, observacoes, foto_url, endereco, localizacao_url, particoes)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [casaAlvo.id, casaAlvo.nome, casaAlvo.bloco, casaAlvo.capacidade, casaAlvo.moradoresAtuais, casaAlvo.status, casaAlvo.responsavelNome, casaAlvo.responsavelEmpresa, casaAlvo.responsavelTelefone, casaAlvo.responsavelQuarto, casaAlvo.dataCautela, casaAlvo.observacoes || '', casaAlvo.fotoUrl || '', casaAlvo.endereco || '', casaAlvo.localizacaoUrl || '', JSON.stringify(casaAlvo.particoes || [])]
     ).catch(console.error);
   }
 }
@@ -2815,6 +3053,9 @@ function abrirEdicaoCasa(casaId) {
   if (inputFile) inputFile.value = '';
   atualizarPreviewFotoCasa();
 
+  particoesCasaForm = Array.isArray(casa.particoes) ? [...casa.particoes] : normalizarParticoes(casa.particoes);
+  renderParticoesCasaForm();
+
   document.getElementById('modal-casa-title').textContent = 'Editar Casa / Responsável';
   closeModal('modal-dossie-casa');
   openModal('modal-nova-casa');
@@ -2834,6 +3075,7 @@ function imprimirTermoCautelaDireto(casaId) {
   const moveis = appState.casaMoveis.filter(m => m.casaId === casa.id);
   const printArea = document.getElementById('print-area');
   const agora = new Date().toLocaleString('pt-BR');
+  const particoes = Array.isArray(casa.particoes) ? casa.particoes : normalizarParticoes(casa.particoes);
 
   printArea.innerHTML = `
     <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; border: 2px solid #000; padding: 25px; border-radius: 6px;">
@@ -2861,6 +3103,9 @@ function imprimirTermoCautelaDireto(casaId) {
           <div><strong>Contato / Tel:</strong> ${casa.responsavelTelefone || '-'}</div>
         </div>
         <div><strong>Quarto / Leito do Responsável:</strong> ${casa.responsavelQuarto || '-'}</div>
+        <div style="margin-top: 4px; border-top: 1px dashed #ccc; padding-top: 4px;">
+          <strong>Partições / Cômodos da Unidade:</strong> ${particoes.length > 0 ? particoes.join(' • ') : 'Não informado'}
+        </div>
       </div>
 
       <!-- Tabela de Móveis e Bens da Casa -->

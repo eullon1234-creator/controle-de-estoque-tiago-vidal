@@ -41,7 +41,8 @@ const CASAS_SEEDS = [
     responsavelTelefone: '(11) 98765-4321',
     responsavelQuarto: 'Quarto 01 - Cama A',
     dataCautela: '2026-09-10',
-    observacoes: 'Alojamento da equipe de alvenaria e blocagem estrutural.'
+    observacoes: 'Alojamento da equipe de alvenaria e blocagem estrutural.',
+    particoes: JSON.stringify(['Quarto 1', 'Quarto 2', 'Sala 1', 'Cozinha', 'Banheiro 1', 'Área de Serviço'])
   },
   {
     id: 'casa-2',
@@ -55,7 +56,8 @@ const CASAS_SEEDS = [
     responsavelTelefone: '(21) 99887-1122',
     responsavelQuarto: 'Quarto 01 - Cama B',
     dataCautela: '2026-09-12',
-    observacoes: 'Equipe de armação pesada e carpinteiros.'
+    observacoes: 'Equipe de armação pesada e carpinteiros.',
+    particoes: JSON.stringify(['Quarto 1', 'Quarto 2', 'Sala 1', 'Cozinha', 'Banheiro 1'])
   },
   {
     id: 'casa-3',
@@ -69,7 +71,8 @@ const CASAS_SEEDS = [
     responsavelTelefone: '(31) 97123-4567',
     responsavelQuarto: 'Quarto 02 - Cama A',
     dataCautela: '2026-09-15',
-    observacoes: 'Equipe técnica de instalações elétricas e sanitárias.'
+    observacoes: 'Equipe técnica de instalações elétricas e sanitárias.',
+    particoes: JSON.stringify(['Quarto 1', 'Quarto 2', 'Quarto 3', 'Sala 1', 'Cozinha', 'Banheiro 1'])
   },
   {
     id: 'casa-4',
@@ -83,7 +86,8 @@ const CASAS_SEEDS = [
     responsavelTelefone: '(41) 98456-7890',
     responsavelQuarto: 'Quarto 01 - Cama A',
     dataCautela: '2026-09-18',
-    observacoes: 'Possui 2 vagas livres disponíveis para novos alojados.'
+    observacoes: 'Possui 2 vagas livres disponíveis para novos alojados.',
+    particoes: JSON.stringify(['Quarto 1', 'Sala 1', 'Cozinha', 'Banheiro 1'])
   }
 ];
 
@@ -134,6 +138,11 @@ async function seed() {
   console.log('Populando dados realistas no Turso...');
   const requests = [];
 
+  requests.push({
+    type: 'execute',
+    stmt: { sql: 'ALTER TABLE casas ADD COLUMN particoes TEXT' }
+  });
+
   for (const item of GALPAO_SEEDS) {
     requests.push({
       type: 'execute',
@@ -153,13 +162,13 @@ async function seed() {
     requests.push({
       type: 'execute',
       stmt: {
-        sql: `INSERT OR REPLACE INTO casas (id, nome, bloco, capacidade, moradores_atuais, status, responsavel_nome, responsavel_empresa, responsavel_telefone, responsavel_quarto, data_cautela, observacoes)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        sql: `INSERT OR REPLACE INTO casas (id, nome, bloco, capacidade, moradores_atuais, status, responsavel_nome, responsavel_empresa, responsavel_telefone, responsavel_quarto, data_cautela, observacoes, particoes)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         args: [
           formatArg(c.id), formatArg(c.nome), formatArg(c.bloco), formatArg(c.capacidade),
           formatArg(c.moradoresAtuais), formatArg(c.status), formatArg(c.responsavelNome),
           formatArg(c.responsavelEmpresa), formatArg(c.responsavelTelefone), formatArg(c.responsavelQuarto),
-          formatArg(c.dataCautela), formatArg(c.observacoes)
+          formatArg(c.dataCautela), formatArg(c.observacoes), formatArg(c.particoes)
         ]
       }
     });
